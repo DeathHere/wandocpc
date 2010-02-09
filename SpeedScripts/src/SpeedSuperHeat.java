@@ -188,8 +188,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             wait(random(150, 500));
         }
         bank.withdraw(oreID, withdrawlFactor);
-
-        if (getInventoryCount(oreID) != withdrawlFactor || getInventoryCount(coalID) < withdrawlFactor * coalRatio) {
+        wait(1000);
+        if (getInventoryCount(coalID) < withdrawlFactor * coalRatio) {
+            log("Ores counted: " + getInventoryCount(oreID));
+            log("Coal counted: " + getInventoryCount(coalID));
+            log("Withdrawl neccessary: " + withdrawlFactor);
             return false;
         }
         return true;
