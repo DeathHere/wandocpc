@@ -59,7 +59,6 @@ import org.rsbot.script.wrappers.RSTile;
 + "</td></tr></table>"
 + "</body>\n"
 + "</html>\n")
-
 public class SpeedSuperHeat extends Script implements ServerMessageListener, PaintListener {
 
     private int oreID;
@@ -134,7 +133,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             Point itemPos = getInventoryItemPoint(startItem);
             if (itemPos.equals(new Point(-1, -1))) { //end method no more items
                 wait(750);
-                moveMouse(578, 405,10,10);
+                moveMouse(578, 405, 10, 10);
                 wait(150);
                 clickMouse(true); //cast spell at empty space
                 return true;
@@ -186,13 +185,13 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         for (int i = 0; i < coalRatio; i++) { //withdraw coal (multiple times based on ores)
             bank.withdraw(coalID, withdrawlFactor);
-            wait(random(150,500));
+            wait(random(150, 500));
         }
         bank.withdraw(oreID, withdrawlFactor);
-        
-        /*if (getInventoryCount(oreID)*coalRatio <= getInventoryCount(coalID)) {
-        return false;
-        }*/
+
+        if (getInventoryCount(oreID) != withdrawlFactor || getInventoryCount(coalID) < withdrawlFactor * coalRatio) {
+            return false;
+        }
         return true;
     }
 
