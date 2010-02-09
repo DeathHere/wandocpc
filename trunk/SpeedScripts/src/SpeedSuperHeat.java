@@ -215,6 +215,18 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+    public boolean checkOres() {
+        int coal = getInventoryCount(coalID);
+        int ore = getInventoryCount(oreID);
+        if (ore == 0) {
+            return false;
+        } else if (coal / ore == coalRatio) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public int loop() {
         if (!isLoggedIn()) {
@@ -238,21 +250,23 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         antiBan();
         setCameraAltitude(true);
-        bank.open();
-        wait(2000);
-        if ((new BankPins()).runRandom()) {
-            wait(1000);
-        }
-        if (errorCounter > 10) {
-            return -1;
-        }
-        if (!deposit()) {
-            Bot.disableRandoms = false;
-            return 1;
-        }
-        if (!withdraw()) {
-            Bot.disableRandoms = false;
-            return 1;
+        if (!checkOres()) {
+            bank.open();
+            wait(2000);
+            if ((new BankPins()).runRandom()) {
+                wait(1000);
+            }
+            if (errorCounter > 10) {
+                return -1;
+            }
+            if (!deposit()) {
+                Bot.disableRandoms = false;
+                return 1;
+            }
+            if (!withdraw()) {
+                Bot.disableRandoms = false;
+                return 1;
+            }
         }
         bank.close();
         if (!superHeat()) {
