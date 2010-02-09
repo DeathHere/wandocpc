@@ -1,9 +1,11 @@
 
+import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import org.rsbot.bot.Bot;
 import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.script.Constants;
 import org.rsbot.script.Random;
@@ -15,7 +17,7 @@ import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedHighAlch", version = 1.0, description = "<html><head></head><body>Have items in inventory in noted form with item ID ready. \n This script will keep using alchemy until 10 items or less remain. \n Paint will be added later.</body></html>")
-public class SpeedHighAlch extends Script implements ServerMessageListener {
+public class SpeedHighAlch extends Script implements ServerMessageListener, PaintListener {
 
     private int startExp = 1;
     private int startLvl = 1;
@@ -216,5 +218,9 @@ public class SpeedHighAlch extends Script implements ServerMessageListener {
             return true;
         }
         return false;
+    }
+
+    public void onRepaint(Graphics render) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
