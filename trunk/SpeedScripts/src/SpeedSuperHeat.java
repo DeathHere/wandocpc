@@ -24,9 +24,7 @@ import org.rsbot.script.wrappers.RSTile;
  *
  * @author Sunny
  */
-@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedSuperHeat", version = 1.0, description = "<html><head></head><body>Have bar ID ready. \n This script will superheat ores. \n Paint will be added later.</body></html>"
-+ "<head></head>\n"
-+ "<body>\n"
+@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedSuperHeat", version = 1.0, description = "<html><head></head><body>Have bar ID ready. \n This script will superheat ores. \n Paint will be added later."
 + "<table><tr><td bgcolor=\"000000\"><center>"
 + "<h1><font color=\"ff00ff\">VivaFletcher</font></h1>"
 + "<font size=\"4\"><font color=\"ff00ff\">By Mistersnappy, base by Vivalaraza.</font></font><br>"
