@@ -1,9 +1,11 @@
 
+import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import org.rsbot.bot.Bot;
 import org.rsbot.event.events.ServerMessageEvent;
+import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.script.Constants;
 import org.rsbot.script.Random;
@@ -23,7 +25,7 @@ import org.rsbot.script.wrappers.RSTile;
  * @author Sunny
  */
 @ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedSuperHeat", version = 1.0, description = "<html><head></head><body>Have bar ID ready. \n This script will superheat ores. \n Paint will be added later.</body></html>")
-public class SpeedSuperHeat extends Script implements ServerMessageListener {
+public class SpeedSuperHeat extends Script implements ServerMessageListener, PaintListener {
 
     private int oreID;
     private boolean recordInitial = false;
@@ -301,5 +303,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener {
             wait(random(4500, 10500));
             stopScript();
         }
+    }
+
+    public void onRepaint(Graphics render) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
