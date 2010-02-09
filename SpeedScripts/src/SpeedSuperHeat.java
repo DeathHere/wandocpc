@@ -83,10 +83,46 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     public boolean oreInitialize() {
         switch (barID) {
+            case 2363: //runite
+            {
+                oreID = 451;
+                coalRatio = 8;
+                break;
+            }
+            case 2361: //adamantite
+            {
+                oreID = 449;
+                coalRatio = 6;
+                break;
+            }
+            case 2359: //mithril
+            {
+                oreID = 447;
+                coalRatio = 4;
+                break;
+            }
+            case 2357: //gold
+            {
+                oreID = 444;
+                coalRatio = 0;
+                break;
+            }
+            case 2355: //silver
+            {
+                oreID = 442;
+                coalRatio = 0;
+                break;
+            }
             case 2353: //steel
             {
                 oreID = 440;
                 coalRatio = 2;
+                break;
+            }
+            case 2351: //iron
+            {
+                oreID = 440;
+                coalRatio = 0;
                 break;
             }
             default: {
@@ -182,17 +218,18 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         int withdrawlFactor = counter / (coalRatio + 1); //how many ores can we withdraw
         if (bank.getCount(oreID) < withdrawlFactor) {
             log("Error: out of ores");
+            stopScript();
             return false;
         }
-        if (bank.getCount(coalID) < coalRatio * withdrawlFactor) {
+        if (bank.getCount(coalID) < coalRatio * withdrawlFactor + 1) {
             log("Error: out of coal");
+            stopScript();
             return false;
-        }
-        for (int i = 0; i < coalRatio; i++) { //withdraw coal (multiple times based on ores)
-            bank.withdraw(coalID, withdrawlFactor);
-            wait(random(150, 500));
         }
         bank.withdraw(oreID, withdrawlFactor);
+        if (coalRatio > 0) {
+            bank.withdraw(coalID, 0);//withdraw coal
+        }
         wait(1000);
         if (getInventoryCount(coalID) < withdrawlFactor * coalRatio) {
             log("Ores counted: " + getInventoryCount(oreID));
@@ -305,7 +342,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     public String status() {
         String s = "";
         s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_MAGIC) - startExp);
-        s += "Lvls Gained: " + (skills.getRealSkillLevel(Constants.STAT_MAGIC) - startLvl);
+        s += " , Lvls Gained: " + (skills.getRealSkillLevel(Constants.STAT_MAGIC) - startLvl);
         return s;
     }
 
