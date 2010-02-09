@@ -24,41 +24,18 @@ import org.rsbot.script.wrappers.RSTile;
  *
  * @author Sunny
  */
-@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedSuperHeat", version = 1.0, description = "<html><head></head><body>Have bar ID ready. \n This script will superheat ores. \n Paint will be added later."
-+ "<table><tr><td bgcolor=\"000000\"><center>"
-+ "<h1><font color=\"ff00ff\">VivaFletcher</font></h1>"
-+ "<font size=\"4\"><font color=\"ff00ff\">By Mistersnappy, base by Vivalaraza.</font></font><br>"
-+ "</td></tr><tr><td bgcolor=\"ff00ff\"><b>Bow Stringing/Fletching:</b></td></tr><tr><td>"
-+ "<select name=\"log\">"
-+ "<option>Wood<option>Oak<option>Willow<option>Maple<option>Yew<option>Magic</select>"
-+ "<select name=\"type\">"
-+ "<option>Bow<option>Shortbow<option>Longbow</select>"
-+ "<select name=\"stringing5\">"
-+ "<option>String?<option>Yes<option>No</select>"
-+ "<input type=\"checkbox\" name=\"sacredclay\" value=\"true\">Sacred Clay Knife?<br>"
-+ "<center>BankID: <input type=\"text\" name=\"bank\" value=\"42192\">"
-+ "<select name=\"banktype\">"
-+ "<center><img src=\"http://chandrakantha.com/articles/indian_music/filmi_sangeet/media/1998_google.jpg\">"
-+ "<option>Chest<option>Booth</select><br>"
-+ "<center>Fletch how many?: <input type=\"text\" name=\"left\" value=\"0\"><br>"
-+ "<center>String how many?: <input type=\"text\" name=\"right\" value=\"0\"><br>"
-+ "<font size=\"3\">^^ Input 0 to just string</font>"
-+ "<center>Lag Addon: <input type=\"text\" name=\"lag\" value=\"0\"><br>"
-+ "<font size=\"3\">^^ Add time if your a lagger (1000 = 1 second).</font>"
-+ "</td></tr><tr><td bgcolor=\"ff00ff\"><b>Bolt Making(BETA):</b></td></tr><tr><td>"
-+ "Would you like to make bolts?"
-+ "<select name=\"bolts\">"
-+ "<option>No<option>Yes</select><br>"
-+ "<font size=\"3\">If you have ANY lag, the script WILL mess up.</font>"
-+ "</td></tr><tr><td bgcolor=\"ff00ff\"><b>Instructions:</b></td></tr><tr><td>"
-+ "<b>Fletching:</b> Have the logs in the first slot and your knife in inventory.<br>"
-+ "<b>Fletching/Stringing:</b> Have the logs in the first slot, unfinished bows in the second, bowstrings in the third and your knife in inventory.<br>"
-+ "<b>Stringing:</b> Have the unfinished bows in the second bank slot and bowstrings in the third.<br>"
-+ "<b>Making Bolts:</b> Start anywhere with bolts in your first slot, feathers in your second and some made bolts in your third."
-+ "<font size=\"4\">I apologize for having to use the clickMouse for banking, but RSBot's withdrawing methods are fucked."
-+ "</td></tr></table>"
-+ "</body>\n"
-+ "</html>\n")
+@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", 
+        name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
+        "<style type=\"text/css\">" +
+        "body {" +
+        "   color: #FFF;" +
+        "   background-color: #000;" +
+        "}" +
+        "</style>" +
+        "</head><body>" +
+        "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\" alt=\"SpeedSuperHeat\">" +
+        "</body></html>")
+
 public class SpeedSuperHeat extends Script implements ServerMessageListener, PaintListener {
 
     private int oreID;
