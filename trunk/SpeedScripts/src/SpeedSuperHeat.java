@@ -341,6 +341,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     public void onRepaint(Graphics render) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 }
