@@ -191,7 +191,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     } else {
                         atMenu("Cast"); //otherwise open menu and cast
                     }
-                    wait(random(50, 150));
+                    wait(random(550, 750));
                     waitCheck++;
                 } while (getCurrentTab() != Constants.TAB_MAGIC);
             }
@@ -216,7 +216,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         int withdrawlFactor = counter / (coalRatio + 1); //how many ores can we withdraw
-        if (bank.getCount(oreID) < withdrawlFactor) {
+        if (bank.getCount(oreID) < withdrawlFactor + 1) {
             log("Error: out of ores");
             stopScript();
             return false;
