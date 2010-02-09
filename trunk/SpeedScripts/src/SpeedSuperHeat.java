@@ -182,11 +182,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     moveMouse(itemPos.x + 10, itemPos.y + 10, 5, 5); //mouse mouse to ore
                     if (getMenuActions().get(0).contains("Cast")) { //if first option cast then cast
                         wait(random(500, 750));
-                        if(getCurrentTab() == Constants.TAB_MAGIC)
-                        {
+                        if (getCurrentTab() == Constants.TAB_MAGIC) {
                             break;
-                        }
-                        else if (getInventoryCount(oreID) <= 1) {
+                        } else if (getInventoryCount(oreID) <= 1) {
                             clickMouse(true);
                             return true;
                         } else {
@@ -231,9 +229,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             return false;
         }
         bank.withdraw(oreID, withdrawlFactor);
-        wait(random(750,1250));
-        if (coalRatio > 0) {
-            bank.withdraw(coalID, 0);//withdraw coal
+        wait(random(750, 1250));
+        if (coalRatio > 0 && oreID == 440) {
+            bank.withdraw(coalID, withdrawlFactor);//withdraw coal
+            bank.withdraw(coalID, withdrawlFactor);
+        } else if (coalRatio > 0) {
+            bank.withdraw(coalID, withdrawlFactor * coalRatio);
         }
         wait(1500);
         if (getInventoryCount(coalID) < withdrawlFactor * coalRatio) {
@@ -391,12 +392,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
-
     @Override
     protected int getMouseSpeed() {
         return random(8, 12);
     }
-
 
     public void serverMessageRecieved(ServerMessageEvent e) {
         String messageEvent = e.getMessage();
@@ -415,10 +414,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public int input(Map<String, String> map)
-    {
+    public int input(Map<String, String> map) {
         int id = Integer.parseInt(JOptionPane.showInputDialog("Enter the bar id for super heat", 2353));
         return id; //return the barID from the user. Check oreInitialize() for ids to make menu.
     }
-
 }
