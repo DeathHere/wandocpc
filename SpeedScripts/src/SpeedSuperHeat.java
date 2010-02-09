@@ -38,6 +38,7 @@ import org.rsbot.script.wrappers.RSTile;
 + "<input type=\"checkbox\" name=\"sacredclay\" value=\"true\">Sacred Clay Knife?<br>"
 + "<center>BankID: <input type=\"text\" name=\"bank\" value=\"42192\">"
 + "<select name=\"banktype\">"
++ "<center><img src=\"http://chandrakantha.com/articles/indian_music/filmi_sangeet/media/1998_google.jpg\">"
 + "<option>Chest<option>Booth</select><br>"
 + "<center>Fletch how many?: <input type=\"text\" name=\"left\" value=\"0\"><br>"
 + "<center>String how many?: <input type=\"text\" name=\"right\" value=\"0\"><br>"
