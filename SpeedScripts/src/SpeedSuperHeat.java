@@ -32,9 +32,12 @@ import org.rsbot.script.wrappers.RSTile;
         "   background-color: #000;" +
         "}" +
         "</style>" +
-        "</head><body>" +
-        "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\" alt=\"SpeedSuperHeat\">" +
-        "</body></html>")
+        "</head>" +
+        "<body>" +
+        "<img align=center src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
+        "alt=\"SpeedSuperHeat\">" +
+        "</body>" +
+        "</html>")
 
 public class SpeedSuperHeat extends Script implements ServerMessageListener, PaintListener {
 
