@@ -175,7 +175,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return true;
             } else {
                 do {
-                    if (waitCheck > 100) {
+                    if (waitCheck > 10) {
                         return false;
                     }
                     wait(random(500, 750));
@@ -195,7 +195,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     } else {
                         atMenu("Cast"); //otherwise open menu and cast
                     }
-                    wait(random(1000, 1250));
+                    wait(random(1250, 1500));
                     waitCheck++;
                 } while (getCurrentTab() != Constants.TAB_MAGIC);
             }
@@ -234,7 +234,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0) {
             bank.withdraw(coalID, 0);//withdraw coal
         }
-        wait(1000);
+        wait(1500);
         if (getInventoryCount(coalID) < withdrawlFactor * coalRatio) {
             log("Ores counted: " + getInventoryCount(oreID));
             log("Coal counted: " + getInventoryCount(coalID));
@@ -324,7 +324,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     public boolean onStart(Map<String, String> map) {
-        barID = Integer.parseInt(JOptionPane.showInputDialog("Enter the bar id for super heat", 2353));
+        barID = input(map);
         log("Item ID: " + barID);
         if (barID <= 0) {
             return false;
@@ -390,6 +390,13 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+
+    @Override
+    protected int getMouseSpeed() {
+        return random(8, 12);
+    }
+
+
     public void serverMessageRecieved(ServerMessageEvent e) {
         String messageEvent = e.getMessage();
         if (messageEvent.contains("You do not have enough Fire Runes")) {
@@ -406,4 +413,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     public void onRepaint(Graphics render) {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public int input(Map<String, String> map)
+    {
+        int id = Integer.parseInt(JOptionPane.showInputDialog("Enter the bar id for super heat", 2353));
+        return id; //return the barID from the user. Check oreInitialize() for ids to make menu.
+    }
+
 }
