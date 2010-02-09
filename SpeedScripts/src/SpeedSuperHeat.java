@@ -231,6 +231,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             return false;
         }
         bank.withdraw(oreID, withdrawlFactor);
+        delay(random(500,750));
         if (coalRatio > 0) {
             bank.withdraw(coalID, 0);//withdraw coal
         }
