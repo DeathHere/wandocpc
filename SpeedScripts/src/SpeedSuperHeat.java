@@ -146,7 +146,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     moveMouse(itemPos.x + 10, itemPos.y + 10, 5, 5); //mouse mouse to ore
                     if (getMenuActions().get(0).contains("Cast")) { //if first option cast then cast
                         wait(random(500, 750));
-                        clickMouse(true);
+                        if (getInventoryCount(oreID) <= 1) {
+                            clickMouse(true);
+                            return true;
+                        } else {
+                            clickMouse(true);
+                        }
                     } else {
                         atMenu("Cast"); //otherwise open menu and cast
                     }
