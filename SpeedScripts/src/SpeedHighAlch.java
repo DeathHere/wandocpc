@@ -207,7 +207,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
 
     @Override
     protected int getMouseSpeed() {
-        return random(8, 12);
+        return random(11, 13);
     }
 
     public boolean isDoingSomething() {
