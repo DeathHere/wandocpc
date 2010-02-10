@@ -332,13 +332,43 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     public boolean onStart(Map<String, String> map) {
-        barID = input(map);
+
+        /** Reading html inputs */
+        lagFactor = Double.parseDouble(map.get("lag"));
+        log("Lag Factor: " + lagFactor);
+
+        logOutDone = (map.get("logout") != null) ? true : false ;
+        log("Logout Debug: " + logOutDone);
+
+        String ore = map.get("ore");
+        if (ore.equalsIgnoreCase("runite")) {
+            barID = 2363;
+        }
+        else if (ore.equalsIgnoreCase("adamantite")) {
+            barID = 2361;
+        }
+        else if (ore.equalsIgnoreCase("mithril")) {
+            barID = 2359;
+        }
+        else if (ore.equalsIgnoreCase("gold")) {
+            barID = 2357;
+        }
+        else if (ore.equalsIgnoreCase("silver")) {
+            barID = 2355;
+        }
+        else if (ore.equalsIgnoreCase("steel")) {
+            barID = 2353;
+        }
+        else if (ore.equalsIgnoreCase("iron")) {
+            barID = 2351;
+        }
         log("Item ID: " + barID);
         if (barID <= 0) {
             return false;
         }
         recordInitial = true;
         Bot.disableRandoms = false;
+
         return true;
     }
 
