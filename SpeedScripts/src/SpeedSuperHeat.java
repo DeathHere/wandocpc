@@ -158,7 +158,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             int waitCheck = 0;
             while (getCurrentTab() != Constants.TAB_INVENTORY) { //wait for the inventory to open
                 wait(random(50, 150));
-                if (waitCheck > 100) {
+                if (waitCheck > 20) {
                     wait(750);
                     moveMouse(578, 405);
                     wait(150);
@@ -184,7 +184,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return true;
             } else {
                 do {
-                    if (waitCheck > 10) {
+                    if (waitCheck > 3) {
                         return false;
                     }
                     wait(random(500, 750));
