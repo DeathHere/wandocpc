@@ -12,6 +12,7 @@ import org.rsbot.script.Constants;
 import org.rsbot.script.Random;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.Skills;
 import org.rsbot.script.randoms.BankPins;
 import org.rsbot.script.randoms.antiban.BreakHandler;
 import org.rsbot.script.wrappers.RSInterface;
@@ -346,7 +347,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     public boolean onStart(Map<String, String> map) {
-
         /** Reading html inputs */
         lagFactor = Double.parseDouble(map.get("lag"));
         log("Lag Factor: " + lagFactor);
@@ -482,10 +482,20 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     public void onRepaint(Graphics g) {
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
-
         int x = 0;
         int y = 0;
+        
+        long millis = System.currentTimeMillis() - startTime;
+        final long hours = millis / (1000 * 60 * 60);
+            millis -= hours * 1000 * 60 * 60;
+            final long minutes = millis / (1000 * 60);
+            millis -= minutes * 1000 * 60;
+            final long seconds = millis / 1000;
+        paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + ":"
+                    + minutes + ":" + seconds);
+
         g.drawString("Version " + version, 436, y + 13);
+
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(Color.GREEN);
@@ -500,5 +510,46 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         g.fillRoundRect(380, y, 136, 15, 10, 10);
         g.setColor(Color.WHITE);
         g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385, y + 13);
+    }
+
+    public void paintSkillBar(Graphics g, int x, int y, int skill, int start) {
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+        int gained = (skills.getCurrentSkillExp(skill) - start);
+        String s = SkillToString(skill) + " Exp Gained: " + gained;
+        String firstLetter = s.substring(0, 1);
+        String remainder = s.substring(1);
+        String capitalized = firstLetter.toUpperCase() + remainder;
+        String exp = Integer.toString(skills.getXPToNextLevel(skill));
+        g.setColor(new Color(255, 0, 0, 90));
+        g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(new Color(0, 255, 0, 255));
+        g.fillRoundRect(416, y + 3, skills.getPercentToNextLevel(skill), 9,
+                10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, skills.getPercentToNextLevel(skill), 9,
+                10, 10);
+        g.setColor(new Color(0, 200, 255));
+        paintBar(g, x, y, capitalized);
+        g.drawString("Exp To Level: " + exp, 240, y + 13);
+    }
+
+    public void paintBar(Graphics g, int x, int y, String s) {
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+        int width = 516;
+        int height = (int) g.getFontMetrics().getStringBounds(s, g).getHeight();
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(0, y, width, height, 10, 10);
+
+        g.setColor(new Color(0, 0, 0, 90));
+        g.fillRoundRect(0, y, width, height, 10, 10);
+
+        g.setColor(new Color(255, 255, 255));
+        g.drawString(s, x + 7, y + height - 2);
+    }
+
+    private String SkillToString(int skill) {
+        return Skills.statsArray[skill];
     }
 }
