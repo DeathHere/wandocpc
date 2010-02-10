@@ -24,7 +24,7 @@ import org.rsbot.script.wrappers.RSTile;
  *
  * @author Sunny
  */
-@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", 
+@ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
         name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
         "<style type=\"text/css\">" +
         "body {" +
@@ -37,6 +37,11 @@ import org.rsbot.script.wrappers.RSTile;
         "<center>" +
         "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
         "alt=\"SpeedSuperHeat\"> </center>" +
+        "<br><br>Authors: LightSpeed, Pirateblanc<br>" +
+        "<select name=\"ore\">" +
+        "   <option>Runite<option>Adamantite<option>Mithril<option>Gold<option>Silver" +
+        "   <option>Steel<option>Iron" +
+        "</select>" +
         "</body>" +
         "</html>")
 
