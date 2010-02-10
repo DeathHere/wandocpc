@@ -34,8 +34,9 @@ import org.rsbot.script.wrappers.RSTile;
         "</style>" +
         "</head>" +
         "<body>" +
-        "<img align=center src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
-        "alt=\"SpeedSuperHeat\">" +
+        "<center>" +
+        "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
+        "alt=\"SpeedSuperHeat\"> </center>" +
         "</body>" +
         "</html>")
 
