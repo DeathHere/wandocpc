@@ -337,7 +337,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         lagFactor = Double.parseDouble(map.get("lag"));
         log("Lag Factor: " + lagFactor);
 
-        logOutDone = (map.get("logout") != null) ? true : false ;
+        logOutDone = (map.get("logout") != null) ? true : false;
         log("Logout Debug: " + logOutDone);
 
         String ore = map.get("ore");
