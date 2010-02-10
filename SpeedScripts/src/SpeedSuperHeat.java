@@ -1,4 +1,6 @@
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Map;
@@ -74,6 +76,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private int errorCounter = 0;
     private boolean logOutDone = false;
     private double lagFactor = 1.0;
+    private final double version = 1.0;
 
     public boolean initialized() {
         startExp = skills.getCurrentSkillExp(Constants.STAT_MAGIC); //save the initial exp and lvl
@@ -477,7 +480,25 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
-    public void onRepaint(Graphics render) {
-        //throw new UnsupportedOperationException("Not supported yet.");
+    public void onRepaint(Graphics g) {
+        g.setFont(new Font("Century Gothic", Font.BOLD, 13));
+
+        int x = 0;
+        int y = 0;
+        g.drawString("Version " + version, 436, y + 13);
+        g.setColor(new Color(255, 0, 0, 90));
+        g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(Color.GREEN);
+        g.fillRoundRect(416, y + 3, getSetting(300) / 10, 9, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(380, y, 136, 15, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, getSetting(300) / 10, 9, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(new Color(0, 0, 0, 90));
+        g.fillRoundRect(380, y, 136, 15, 10, 10);
+        g.setColor(Color.WHITE);
+        g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385, y + 13);
     }
 }

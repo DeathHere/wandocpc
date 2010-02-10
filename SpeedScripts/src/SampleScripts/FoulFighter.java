@@ -911,8 +911,7 @@ public class FoulFighter extends Script implements PaintListener,
             g.setColor(new Color(0, 0, 0, 90));
             g.fillRoundRect(380, y, 136, 15, 10, 10);
             g.setColor(Color.WHITE);
-            g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385,
-                    y + 13);
+            g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385, y + 13);
         }
     }
 
