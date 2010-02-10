@@ -30,12 +30,6 @@ import org.rsbot.script.wrappers.RSTile;
         "   color: #FFFFFF;" +
         "   background-color: #000000;" +
         "}" +
-        "select {" +
-        "   margin-left: 10px;" +
-        "   padding: 100px;" +
-        "   background: #000000;" +
-        "   color: #FFFFFF;" +
-        "}" +
         "</style>" +
         "</head>" +
         "<body>" +
@@ -56,9 +50,13 @@ import org.rsbot.script.wrappers.RSTile;
         "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">" +
         "<br>" +
         "Lag Time For Banking (sec): <select name=\"lag\">" +
-        "   <option>0.5<option>1.0<option>1.5<option>2.0" +
+        "   <option>1.0<option>2.0" +
         "</input>" +
-        "</form>" +
+        "</form><br>" +
+        "<p>For the script to work, you must have your ore, coal, coins, and bars" +
+        "on the first tab of your bank. They must also be on the first row!</p>" +
+        "<p>You must also make sure natural runes are in your inventory, and" +
+        "that you are near a bank :)</p>" +
         "</body>" +
         "</html>")
 
