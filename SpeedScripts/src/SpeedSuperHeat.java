@@ -2,7 +2,6 @@
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Map;
-import javax.swing.JOptionPane;
 import org.rsbot.bot.Bot;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
@@ -148,6 +147,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         Bot.disableRandoms = true;
         while (true) { //ends when you can't find the item
+            if(isPaused)
+            {
+                return true;
+            }
             if (!castSpell(Constants.SPELL_SUPERHEAT_ITEM)) //cast the spell
             {
                 return false;
@@ -468,10 +471,5 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     public void onRepaint(Graphics render) {
         //throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public int input(Map<String, String> map) {
-        int id = Integer.parseInt(JOptionPane.showInputDialog("Enter the bar id for super heat", 2353));
-        return id; //return the barID from the user. Check oreInitialize() for ids to make menu.
     }
 }
