@@ -483,7 +483,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     public void onRepaint(Graphics g) {
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
         int x = 0;
-        int y = 0;
+        int y = 28;
         
         long millis = System.currentTimeMillis() - startTime;
         final long hours = millis / (1000 * 60 * 60);
