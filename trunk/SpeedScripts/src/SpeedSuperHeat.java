@@ -57,6 +57,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private final int coalID = 453;
     private int barID = 0;
     private int errorCounter = 0;
+    private boolean logOutDone = false;
+    private double lagFactor = 1.0;
 
     public boolean initialized() {
         startExp = skills.getCurrentSkillExp(Constants.STAT_MAGIC); //save the initial exp and lvl
@@ -329,6 +331,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         int min = (int) ((timeDiff) / 60) - hours * 60;
         log("Script Ran for: " + hours + " hours " + min + " min.");
         log(status());
+        if(logOutDone)
+        {
+            logout();
+        }
     }
 
     public String status() {
@@ -380,8 +386,14 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     protected int getMouseSpeed() {
-        return random(8, 12);
+        return (int) (random(10, 12) * lagFactor);
     }
+
+    @Override
+    public void wait(int toSleep) {
+        super.wait((int)(toSleep * lagFactor));
+    }
+
 
     public void serverMessageRecieved(ServerMessageEvent e) {
         String messageEvent = e.getMessage();
@@ -391,6 +403,16 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             stopScript();
         } else if (messageEvent.contains("You do not have enough Nature Runes")) {
             log("No Nature Runes - Shutting Down in 5-10 Seconds");
+            wait(random(4500, 10500));
+            stopScript();
+        } else if(messageEvent.contains("You need a smithing"))
+        {
+            log("Your Smithing level is too low for this bar - Shutting Down in 5-10 Seconds");
+            wait(random(4500, 10500));
+            stopScript();
+        } else if(messageEvent.contains("Your Magic level") && skills.getCurrentSkillLevel(Constants.STAT_MAGIC) < 43)
+        {
+            log("Your Magic level is too low for this spell - Shutting Down in 5-10 Seconds");
             wait(random(4500, 10500));
             stopScript();
         }
