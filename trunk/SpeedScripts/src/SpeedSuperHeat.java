@@ -28,7 +28,7 @@ import org.rsbot.script.wrappers.RSTile;
         name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
         "<style type=\"text/css\">" +
         "body {" +
-        "   color: #FFF;" +
+        "   color: #FFFFFF;" +
         "   background-color: #000;" +
         "}" +
         "</style>" +
@@ -36,12 +36,20 @@ import org.rsbot.script.wrappers.RSTile;
         "<body>" +
         "<center>" +
         "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
-        "alt=\"SpeedSuperHeat\"> </center>" +
-        "<br><br><p align=\"right\">>Authors: LightSpeed, Pirateblanc</p><br>" +
+        "alt=\"SpeedSuperHeat\">" +
+        "</center>" +
+        "<hr>" +
+        "<p align=\"center\">Created by LightSpeed & Pirateblanc</p><br>" +
+        "<hr>" +
+        "<form>" +
+        "Select Your Ore: " +
         "<select name=\"ore\">" +
-        "   <option>Runite<option>Adamantite<option>Mithril<option>Gold<option>Silver" +
-        "   <option>Steel<option>Iron" +
+        "   <option>Runite<option>Adamantite<option>Mithril<option>Gold" +
+        "   <option>Silver<option>Steel<option>Iron" +
         "</select>" +
+        "<br><br>" +
+        "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">" +
+        "</form>" +
         "</body>" +
         "</html>")
 
