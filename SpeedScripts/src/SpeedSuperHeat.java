@@ -37,7 +37,7 @@ import org.rsbot.script.wrappers.RSTile;
         "<center>" +
         "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
         "alt=\"SpeedSuperHeat\"> </center>" +
-        "<br><br>Authors: LightSpeed, Pirateblanc<br>" +
+        "<br><br><p align=\"right\">>Authors: LightSpeed, Pirateblanc</p><br>" +
         "<select name=\"ore\">" +
         "   <option>Runite<option>Adamantite<option>Mithril<option>Gold<option>Silver" +
         "   <option>Steel<option>Iron" +
