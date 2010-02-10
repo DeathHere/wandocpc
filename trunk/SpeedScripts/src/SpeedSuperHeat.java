@@ -44,9 +44,9 @@ import org.rsbot.script.wrappers.RSTile;
         "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
         "alt=\"SpeedSuperHeat\">" +
         "</center>" +
-        "<hr><br>" +
-        "<center>Created by LightSpeed & Pirateblanc</center>" +
         "<hr>" +
+        "<center>Created by LightSpeed & Pirateblanc</center>" +
+        "<hr><br>" +
         "<form>" +
         "Select Your Ore: " +
         "<select name=\"ore\">" +
