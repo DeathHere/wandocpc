@@ -210,9 +210,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     public boolean withdraw() {
         if (!bank.isOpen()) {
-            wait(1000);
+            wait(1500);
             if (!bank.open()) {
-                wait(1000);
+                wait(1500);
                 log("Error: can't open bank");
                 return false;
             }
@@ -265,9 +265,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     public boolean deposit() {
         if (!bank.isOpen()) {
-            wait(1000);
+            wait(1500);
             if (!bank.open()) {
-                wait(1000);
+                wait(1500);
                 log("Error: can't open bank");
                 return false;
             }
