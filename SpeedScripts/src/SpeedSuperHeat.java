@@ -29,7 +29,13 @@ import org.rsbot.script.wrappers.RSTile;
         "<style type=\"text/css\">" +
         "body {" +
         "   color: #FFFFFF;" +
-        "   background-color: #000;" +
+        "   background-color: #000000;" +
+        "}" +
+        "select {" +
+        "   margin-left: 10px;" +
+        "   padding: 100px;" +
+        "   background: #000000;" +
+        "   color: #FFFFFF;" +
         "}" +
         "</style>" +
         "</head>" +
@@ -38,8 +44,8 @@ import org.rsbot.script.wrappers.RSTile;
         "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
         "alt=\"SpeedSuperHeat\">" +
         "</center>" +
-        "<hr>" +
-        "<p align=\"center\">Created by LightSpeed & Pirateblanc</p><br>" +
+        "<hr><br>" +
+        "<center>Created by LightSpeed & Pirateblanc</center>" +
         "<hr>" +
         "<form>" +
         "Select Your Ore: " +
@@ -47,8 +53,12 @@ import org.rsbot.script.wrappers.RSTile;
         "   <option>Runite<option>Adamantite<option>Mithril<option>Gold" +
         "   <option>Silver<option>Steel<option>Iron" +
         "</select>" +
-        "<br><br>" +
+        "<br>" +
         "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">" +
+        "<br>" +
+        "Lag Time For Banking (sec): <select name=\"lag\">" +
+        "   <option>0.5<option>1.0<option>1.5<option>2.0" +
+        "</input>" +
         "</form>" +
         "</body>" +
         "</html>")
