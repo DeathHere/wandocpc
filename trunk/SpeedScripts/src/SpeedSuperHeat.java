@@ -53,9 +53,9 @@ import org.rsbot.script.wrappers.RSTile;
         "   <option>1.0<option>2.0" +
         "</input>" +
         "</form><br>" +
-        "<p>For the script to work, you must have your ore, coal, coins, and bars" +
-        "on the first tab of your bank. They must also be on the first row!</p>" +
-        "<p>You must also make sure natural runes are in your inventory, and" +
+        "<p>For the script to work, you must have your ore, coal, coins, and bars " +
+        "in the first tab of your bank. They must also be on the first row!</p>" +
+        "<p>You must make sure nature runes are in your inventory, and " +
         "that you are near a bank :)</p>" +
         "</body>" +
         "</html>")
