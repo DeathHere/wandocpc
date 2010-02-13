@@ -3,8 +3,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.util.Map;
 import org.rsbot.bot.Bot;
+import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
@@ -545,12 +547,14 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
-    // paint code from FoulFighter, thx
+    // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
+        // Font setting
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
         int x = 0;
         int y = 28;
 
+        // Run time
         long millis = System.currentTimeMillis() - startTime;
         final long hours = millis / (1000 * 60 * 60);
         millis -= hours * 1000 * 60 * 60;
@@ -562,6 +566,24 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
         g.drawString("Version " + version, 436, y + 13);
 
+        // Get mouse
+        final Mouse mouse = Bot.getClient().getMouse();
+        final int mouse_x = mouse.getMouseX();
+        final int mouse_y = mouse.getMouseY();
+        final int mouse_press_x = mouse.getMousePressX();
+        final int mouse_press_y = mouse.getMousePressY();
+        final long mouse_press_time = mouse.getMousePressTime();
+
+        // Draw mouse
+        Polygon po = new Polygon();
+        po.addPoint(mouse_x, mouse_y);
+        po.addPoint(mouse_x, mouse_y + 15);
+        po.addPoint(mouse_x + 10, mouse_y + 10);
+        g.setColor(new Color(70, 130, 180, 125));
+        g.fillPolygon(po);
+        g.drawPolygon(po);
+
+        //Skill xp increase check
         for (int i = 0; i < 20; i++) {
             if ((startExpArry != null)
                     && ((skills.getCurrentSkillExp(i) - startExpArry[i]) > 0)) {
@@ -570,6 +592,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
 
+        /*
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(Color.GREEN);
@@ -583,7 +606,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         g.setColor(new Color(0, 0, 0, 90));
         g.fillRoundRect(380, y, 136, 15, 10, 10);
         g.setColor(Color.WHITE);
-        g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385, y + 13);
+        g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385, y + 13);*/
     }
 
     public void paintSkillBar(Graphics g, int x, int y, int skill, int start) {
