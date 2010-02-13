@@ -27,42 +27,41 @@ import org.rsbot.script.wrappers.RSTile;
  * @author Sunny
  */
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
-        name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
-        "<style type=\"text/css\">" +
-        "body {" +
-        "   color: #FFFFFF;" +
-        "   background-color: #000000;" +
-        "}" +
-        "</style>" +
-        "</head>" +
-        "<body>" +
-        "<center>" +
-        "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\"" +
-        "alt=\"SpeedSuperHeat\">" +
-        "</center>" +
-        "<hr>" +
-        "<center>Created by LightSpeed & Pirateblanc</center>" +
-        "<hr><br>" +
-        "<form>" +
-        "Select Your Ore: " +
-        "<select name=\"ore\">" +
-        "   <option>Runite<option>Adamantite<option>Mithril<option>Gold" +
-        "   <option>Silver<option>Steel<option>Iron" +
-        "</select>" +
-        "<br>" +
-        "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">" +
-        "<br>" +
-        "Lag Time For Banking (sec): <select name=\"lag\">" +
-        "   <option>1.0<option>2.0" +
-        "</input>" +
-        "</form><br>" +
-        "<p>For the script to work, you must have your ore, coal, coins, and bars " +
-        "in the first tab of your bank. They must also be on the first row!</p>" +
-        "<p>You must make sure nature runes are in your inventory, and " +
-        "that you are near a bank :)</p>" +
-        "</body>" +
-        "</html>")
-
+name = "SpeedSuperHeat", version = 1.0, description = "<html><head>"
++ "<style type=\"text/css\">"
++ "body {"
++ "   color: #FFFFFF;"
++ "   background-color: #000000;"
++ "}"
++ "</style>"
++ "</head>"
++ "<body>"
++ "<center>"
++ "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\""
++ "alt=\"SpeedSuperHeat\">"
++ "</center>"
++ "<hr>"
++ "<center>Created by LightSpeed & Pirateblanc</center>"
++ "<hr><br>"
++ "<form>"
++ "Select Your Ore: "
++ "<select name=\"ore\">"
++ "   <option>Runite<option>Adamantite<option>Mithril<option>Gold"
++ "   <option>Silver<option>Steel<option>Iron"
++ "</select>"
++ "<br>"
++ "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">"
++ "<br>"
++ "Lag Time For Banking (sec): <select name=\"lag\">"
++ "   <option>1.0<option>2.0"
++ "</input>"
++ "</form><br>"
++ "<p>For the script to work, you must have your ore, coal, coins, and bars "
++ "in the first tab of your bank. They must also be on the first row!</p>"
++ "<p>You must make sure nature runes are in your inventory, and "
++ "that you are near a bank :)</p>"
++ "</body>"
++ "</html>")
 public class SpeedSuperHeat extends Script implements ServerMessageListener, PaintListener {
 
     private int oreID;
@@ -150,8 +149,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         Bot.disableRandoms = true;
         while (true) { //ends when you can't find the item
-            if(isPaused)
-            {
+            if (isPaused) {
                 return true;
             }
             if (!castSpell(Constants.SPELL_SUPERHEAT_ITEM)) //cast the spell
@@ -230,6 +228,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         int withdrawlFactor = counter / (coalRatio + 1); //how many ores can we withdraw
+        log("Withdrawl Factor: " + withdrawlFactor);
         if (bank.getCount(oreID) < withdrawlFactor + 1) {
             log("Error: out of ores");
             stopScript();
@@ -240,8 +239,13 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             stopScript();
             return false;
         }
+        wait(250);
         bank.withdraw(oreID, withdrawlFactor);
         wait(random(750, 1250));
+        int ore = getInventoryCount(oreID);
+        if (ore > withdrawlFactor) {
+            bank.deposit(oreID, ore - withdrawlFactor);
+        }
         if (coalRatio > 0 && oreID == 440) {
             bank.withdraw(coalID, withdrawlFactor);//withdraw coal
             bank.withdraw(coalID, withdrawlFactor);
@@ -250,18 +254,17 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         wait(1500);
         int coal = getInventoryCount(coalID);
-        int iron = getInventoryCount(oreID);
+        ore = getInventoryCount(oreID);
         if (coal < withdrawlFactor * coalRatio) {
             log("Coal counted: " + coal);
             log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
             bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
             bank.close();
             return false;
-        } else if (iron < withdrawlFactor)
-        {
-            log("Ores counted: " + iron);
+        } else if (ore < withdrawlFactor) {
+            log("Ores counted: " + ore);
             log("Withdrawl neccessary: " + withdrawlFactor);
-            bank.withdraw(oreID, withdrawlFactor - iron);
+            bank.withdraw(oreID, withdrawlFactor - ore);
             bank.close();
             return false;
         }
@@ -358,23 +361,17 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         String ore = map.get("ore");
         if (ore.equalsIgnoreCase("runite")) {
             barID = 2363;
-        }
-        else if (ore.equalsIgnoreCase("adamantite")) {
+        } else if (ore.equalsIgnoreCase("adamantite")) {
             barID = 2361;
-        }
-        else if (ore.equalsIgnoreCase("mithril")) {
+        } else if (ore.equalsIgnoreCase("mithril")) {
             barID = 2359;
-        }
-        else if (ore.equalsIgnoreCase("gold")) {
+        } else if (ore.equalsIgnoreCase("gold")) {
             barID = 2357;
-        }
-        else if (ore.equalsIgnoreCase("silver")) {
+        } else if (ore.equalsIgnoreCase("silver")) {
             barID = 2355;
-        }
-        else if (ore.equalsIgnoreCase("steel")) {
+        } else if (ore.equalsIgnoreCase("steel")) {
             barID = 2353;
-        }
-        else if (ore.equalsIgnoreCase("iron")) {
+        } else if (ore.equalsIgnoreCase("iron")) {
             barID = 2351;
         }
         log("Item ID: " + barID);
@@ -394,8 +391,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         int min = (int) ((timeDiff) / 60) - hours * 60;
         log("Script Ran for: " + hours + " hours " + min + " min.");
         log(status());
-        if(logOutDone)
-        {
+        if (logOutDone) {
             logout();
         }
     }
@@ -454,9 +450,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     public void wait(int toSleep) {
-        super.wait((int)(toSleep * lagFactor));
+        super.wait((int) (toSleep * lagFactor));
     }
-
 
     public void serverMessageRecieved(ServerMessageEvent e) {
         String messageEvent = e.getMessage();
@@ -468,13 +463,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             log("No Nature Runes - Shutting Down in 5-10 Seconds");
             wait(random(4500, 10500));
             stopScript();
-        } else if(messageEvent.contains("You need a smithing"))
-        {
+        } else if (messageEvent.contains("You need a smithing")) {
             log("Your Smithing level is too low for this bar - Shutting Down in 5-10 Seconds");
             wait(random(4500, 10500));
             stopScript();
-        } else if(messageEvent.contains("Your Magic level") && skills.getCurrentSkillLevel(Constants.STAT_MAGIC) < 43)
-        {
+        } else if (messageEvent.contains("Your Magic level") && skills.getCurrentSkillLevel(Constants.STAT_MAGIC) < 43) {
             log("Your Magic level is too low for this spell - Shutting Down in 5-10 Seconds");
             wait(random(4500, 10500));
             stopScript();
@@ -486,15 +479,15 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
         int x = 0;
         int y = 28;
-        
+
         long millis = System.currentTimeMillis() - startTime;
         final long hours = millis / (1000 * 60 * 60);
-            millis -= hours * 1000 * 60 * 60;
-            final long minutes = millis / (1000 * 60);
-            millis -= minutes * 1000 * 60;
-            final long seconds = millis / 1000;
+        millis -= hours * 1000 * 60 * 60;
+        final long minutes = millis / (1000 * 60);
+        millis -= minutes * 1000 * 60;
+        final long seconds = millis / 1000;
         paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + ":"
-                    + minutes + ":" + seconds);
+                + minutes + ":" + seconds);
 
         g.drawString("Version " + version, 436, y + 13);
         for (int i = 0; i < 24; i++) {
