@@ -369,51 +369,57 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     public int loop() {
-        if (!isLoggedIn()) {
-            Bot.disableRandoms = false;
-            wait(1000);
-        }
-        if (recordInitial) {
-            if (!initialized()) {
-                log("Error: bar identification failure");
-                return -1;
-            } else {
-                recordInitial = false;
-            }
-        }
-        if (distanceBetween(loc, getLocation()) > 10) {
-            if (checkForRandoms()) {
-                loc = getLocation();
-            }
-        } else {
-            Bot.disableRandoms = true;
-        }
-        antiBan();
-        setCameraAltitude(true);
-        if (!checkOres()) {
-            bank.open();
-            wait(2000);
-            if ((new BankPins()).runRandom()) {
+        try {
+            if (!isLoggedIn()) {
+                Bot.disableRandoms = false;
                 wait(1000);
             }
-            if (errorCounter > 10) {
-                return -1;
+            if (recordInitial) {
+                if (!initialized()) {
+                    log("Error: bar identification failure");
+                    return -1;
+                } else {
+                    recordInitial = false;
+                }
             }
-            if (!deposit()) {
+            if (distanceBetween(loc, getLocation()) > 10) {
+                if (checkForRandoms()) {
+                    loc = getLocation();
+                }
+            } else {
+                Bot.disableRandoms = true;
+            }
+            antiBan();
+            setCameraAltitude(true);
+            if (!checkOres()) {
+                bank.open();
+                wait(2000);
+                if ((new BankPins()).runRandom()) {
+                    wait(1000);
+                }
+                if (errorCounter > 10) {
+                    return -1;
+                }
+                if (!deposit()) {
+                    Bot.disableRandoms = false;
+                    return 1;
+                }
+                if (!withdrawBKIron()) {
+                    Bot.disableRandoms = false;
+                    return 1;
+                }
+            }
+            bank.close();
+            if (!superHeat()) {
                 Bot.disableRandoms = false;
-                return 1;
             }
-            if (!withdrawBKIron()) {
-                Bot.disableRandoms = false;
-                return 1;
-            }
-        }
-        bank.close();
-        if (!superHeat()) {
+            errorCounter = 0;
+            return 500;
+        } catch (NullPointerException e) {
             Bot.disableRandoms = false;
+            log("Something really fucked up:" + e.getMessage());
+            return 2000;
         }
-        errorCounter = 0;
-        return 500;
     }
 
     @Override
@@ -492,7 +498,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         switch (random(0, 50)) {
             case 1:
             case 2: {
-                setCameraRotation(random(1, 270));
+                //setCameraRotation(random(1, 270));
                 break;
             }
             case 3:
