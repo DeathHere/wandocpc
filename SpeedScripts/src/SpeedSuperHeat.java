@@ -190,8 +190,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     }
                     wait(random(500, 750));
                     moveMouse(itemPos.x + 10, itemPos.y + 10, 5, 5); //mouse mouse to ore
+                    wait(random(500, 750));
                     if (getMenuActions().get(0).contains("Cast")) { //if first option cast then cast
-                        wait(random(500, 750));
+                        log("Amount of ore left: " + getInventoryCount(oreID));
                         if (getCurrentTab() == Constants.TAB_MAGIC) {
                             break;
                         } else if (getInventoryCount(oreID) <= 1) {
@@ -203,7 +204,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     } else {
                         atMenu("Cast"); //otherwise open menu and cast
                     }
-                    wait(random(1250, 1500));
+                    wait(random(750, 1250));
                     waitCheck++;
                 } while (getCurrentTab() != Constants.TAB_MAGIC);
             }
@@ -220,6 +221,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return false;
             }
         }
+        double speedfactor = lagFactor;
+        lagFactor = 2.0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
         for (int item : inventoryArray) {
@@ -255,6 +258,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         wait(1500);
         int coal = getInventoryCount(coalID);
         ore = getInventoryCount(oreID);
+        lagFactor = speedfactor;
         if (coal < withdrawlFactor * coalRatio) {
             log("Coal counted: " + coal);
             log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
