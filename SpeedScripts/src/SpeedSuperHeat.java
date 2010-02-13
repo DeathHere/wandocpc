@@ -231,7 +231,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         int withdrawlFactor = counter / (coalRatio + 1); //how many ores can we withdraw
-        log("Withdrawl Factor: " + withdrawlFactor);
+        //log("Withdrawl Factor: " + withdrawlFactor);
         if (bank.getCount(oreID) < withdrawlFactor + 1) {
             log("Error: out of ores");
             stopScript();
