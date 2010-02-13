@@ -497,18 +497,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     + minutes + ":" + seconds);
 
         g.drawString("Version " + version, 436, y + 13);
-
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 24; i++) {
             if ((startExpArry != null)
                     && ((skills.getCurrentSkillExp(i) - startExpArry[i]) > 0)) {
                 paintSkillBar(g, x, y, i, startExpArry[i]);
                 y += 15;
             }
-        }
-        if ((startExpArry != null)
-                && (skills.getCurrentSkillExp(18) - startExpArry[18] > 0)) {
-            paintSkillBar(g, x, y, 18, startExpArry[18]);
-            y += 15;
         }
 
         g.setColor(new Color(255, 0, 0, 90));
