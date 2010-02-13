@@ -447,8 +447,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         Bot.disableRandoms = false;
 
         /** Sets the initial values for all the skill exp counters */
-        startExpArry = new int[20];
-        for (int i = 0; i < 20; i++) {
+        startExpArry = new int[24];
+        for (int i = 0; i < 24; i++) {
             startExpArry[i] = skills.getCurrentSkillExp(i);
         }
 
