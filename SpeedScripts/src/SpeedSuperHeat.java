@@ -446,6 +446,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         recordInitial = true;
         Bot.disableRandoms = false;
 
+        /** Sets the initial values for all the skill exp counters */
+        startExpArry = new int[20];
+        for (int i = 0; i < 20; i++) {
+            startExpArry[i] = skills.getCurrentSkillExp(i);
+        }
+
         return true;
     }
 
@@ -555,6 +561,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 + minutes + ":" + seconds);
 
         g.drawString("Version " + version, 436, y + 13);
+
         for (int i = 0; i < 24; i++) {
             if ((startExpArry != null)
                     && ((skills.getCurrentSkillExp(i) - startExpArry[i]) > 0)) {
