@@ -534,7 +534,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     protected int getMouseSpeed() {
-        return (int) (random(10, 12) * lagFactor);
+        return (int) Math.pow((random(10, 12) * lagFactor),.25);
     }
 
     @Override
