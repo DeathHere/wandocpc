@@ -194,7 +194,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     wait(random(500, 750));
                     moveMouse(itemPos.x + 10, itemPos.y + 10, 5, 5); //mouse mouse to ore
                     wait(random(500, 750));
-                    atMenu("Cast");
+                    atMenu("Cast Superheat");
                     //log("Amount of ore left: " + getInventoryCount(oreID));
                     if (getCurrentTab() == Constants.TAB_MAGIC) {
                         break;
@@ -285,7 +285,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         double speedfactor = lagFactor;
-        lagFactor = 2.0;
+        lagFactor = 2.5;
 
         int withdrawlFactor = 9;
         //log("Withdrawl Factor: " + withdrawlFactor);
@@ -299,7 +299,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             stopScript();
             return false;
         }
-        wait(250);
+        wait(random(250, 500));
         bank.withdraw(oreID, 10);
         wait(random(750, 1250));
         bank.deposit(oreID, 1);
@@ -307,6 +307,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         int ore = getInventoryCount(oreID);
         if (ore > withdrawlFactor) {
             bank.deposit(oreID, ore - withdrawlFactor);
+        } else if (ore < withdrawlFactor) {
+            bank.withdraw(oreID, withdrawlFactor - ore);
         }
         if (coalRatio > 0 && oreID == 440) {
             bank.withdraw(coalID, 0);//withdraw coal
@@ -317,20 +319,23 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         wait(1500);
         int coal = getInventoryCount(coalID);
         ore = getInventoryCount(oreID);
-        lagFactor = speedfactor;
+
         if (coal < withdrawlFactor * coalRatio) {
             log("Coal counted: " + coal);
             log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
             bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
             bank.close();
+            lagFactor = speedfactor;
             return false;
         } else if (ore < withdrawlFactor) {
             log("Ores counted: " + ore);
             log("Withdrawl neccessary: " + withdrawlFactor);
             bank.withdraw(oreID, withdrawlFactor - ore);
             bank.close();
+            lagFactor = speedfactor;
             return false;
         }
+        lagFactor = speedfactor;
         return true;
     }
 
