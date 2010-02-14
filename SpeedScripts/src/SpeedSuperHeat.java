@@ -268,8 +268,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         } else if (ore < withdrawlFactor) {
             log("Ores counted: " + ore);
             log("Withdrawl neccessary: " + withdrawlFactor);
-            if(coal == 27)
-            {
+            if (coal == 27) {
                 bank.deposit(coalID, withdrawlFactor);
             }
             bank.withdraw(oreID, withdrawlFactor - ore);
@@ -534,7 +533,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
     @Override
     protected int getMouseSpeed() {
-        return (int) Math.pow((random(10, 12) * lagFactor),.25);
+        return (int) (random(10, 12) * Math.pow(lagFactor, .25));
     }
 
     @Override
