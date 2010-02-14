@@ -80,6 +80,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private double lagFactor = 1.0;
     private final double version = 1.0;
     private int[] startExpArry = null;
+    private int errors = 0;
 
     public boolean initialized() {
         startExp = skills.getCurrentSkillExp(Constants.STAT_MAGIC); //save the initial exp and lvl
@@ -277,8 +278,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return true;
     }
 
-    public boolean withdrawBKIron()
-    {
+    public boolean withdrawBKIron() {
         if (!bank.isOpen()) {
             wait(1500);
             if (!bank.open()) {
@@ -336,7 +336,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         return true;
     }
-
 
     public boolean deposit() {
         if (!bank.isOpen()) {
@@ -418,6 +417,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         } catch (NullPointerException e) {
             Bot.disableRandoms = false;
             log("Something really fucked up:" + e.getMessage());
+            errors++;
+            if (errors > 3) {
+                log("Sry not my fault blame the chinese guy.");
+                return -1;
+            }
             return 2000;
         }
     }
