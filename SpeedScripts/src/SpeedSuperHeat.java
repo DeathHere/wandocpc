@@ -54,7 +54,7 @@ name = "SpeedSuperHeat", version = 1.0, description = "<html><head>"
 + "<br>"
 + "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">"
 + "<br>"
-+ "Lag Time For Banking (sec): <select name=\"lag\">"
++ "Lag Time For Banking & Mouse (sec): <select name=\"lag\">"
 + "   <option>1.0<option>2.0"
 + "</input>"
 + "</form><br>"
@@ -62,7 +62,8 @@ name = "SpeedSuperHeat", version = 1.0, description = "<html><head>"
 + "in the first tab of your bank. They must also be on the first row!</p>"
 + "<p>You must make sure nature runes are in your inventory, and "
 + "that you are near a bank :)</p>"
-+ "<p>Warning: If you minimize the script while it is running, you may crash"
++ "<p>Warning: If you maximize/minimize the bot while the script is running, "
++ "you may crash"
 + "the bot."
 + "</p>"
 + "</body>"
@@ -569,10 +570,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     public void onRepaint(Graphics g) {
         // Font setting
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
+
+        // Position reference var set
         int x = 0;
         int y = 28;
 
-        // Run time
+        // Run time calculation
         long millis = System.currentTimeMillis() - startTime;
         final long hours = millis / (1000 * 60 * 60);
         millis -= hours * 1000 * 60 * 60;
@@ -597,7 +600,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         po.addPoint(mouse_x, mouse_y);
         po.addPoint(mouse_x, mouse_y + 15);
         po.addPoint(mouse_x + 10, mouse_y + 10);
-        g.setColor(new Color(70, 130, 180, 125));
+        g.setColor(new Color(180, 70, 70, 125));
         g.fillPolygon(po);
         g.drawPolygon(po);
 
@@ -609,22 +612,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 y += 15;
             }
         }
-
-        /*
-        g.setColor(new Color(255, 0, 0, 90));
-        g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
-        g.setColor(Color.GREEN);
-        g.fillRoundRect(416, y + 3, getSetting(300) / 10, 9, 10, 10);
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(380, y, 136, 15, 10, 10);
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(416, y + 3, getSetting(300) / 10, 9, 10, 10);
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
-        g.setColor(new Color(0, 0, 0, 90));
-        g.fillRoundRect(380, y, 136, 15, 10, 10);
-        g.setColor(Color.WHITE);
-        g.drawString(Integer.toString(getSetting(300) / 10) + "%", 385, y + 13);*/
     }
 
     public void paintSkillBar(Graphics g, int x, int y, int skill, int start) {
