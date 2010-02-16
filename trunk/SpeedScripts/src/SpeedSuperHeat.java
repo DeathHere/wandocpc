@@ -1,3 +1,20 @@
+/**
+ * Educational code to simulate a human performing the superheat spell
+ * Copyright (C) 2010 LightSpeed, Pirateblanc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 import java.awt.Color;
 import java.awt.Font;
@@ -20,14 +37,6 @@ import org.rsbot.script.randoms.antiban.BreakHandler;
 import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSTile;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/**
- *
- * @author Sunny
- */
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
 name = "SpeedSuperHeat", version = 1.0, description = "<html><head>"
 + "<style type=\"text/css\">"
@@ -70,6 +79,7 @@ name = "SpeedSuperHeat", version = 1.0, description = "<html><head>"
 + "</html>")
 public class SpeedSuperHeat extends Script implements ServerMessageListener, PaintListener {
 
+    /** Global vars */
     private int oreID;
     private boolean recordInitial = false;
     private long startTime;
@@ -565,6 +575,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             stopScript();
         }
     }
+
+    // ------------------------------PAINT--------------------------------------
 
     // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
