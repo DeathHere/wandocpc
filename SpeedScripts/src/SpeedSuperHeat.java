@@ -96,6 +96,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private int[] startExpArry = null;
     private int errors = 0;
 
+    /**
+     * 
+     */
     public boolean initialized() {
         startExp = skills.getCurrentSkillExp(Constants.STAT_MAGIC); //save the initial exp and lvl
         startLvl = skills.getRealSkillLevel(Constants.STAT_MAGIC);
@@ -105,6 +108,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return oreInitialize(); //get coal ratio
     }
 
+    /**
+     * 
+     * @return
+     */
     public boolean oreInitialize() {
         switch (barID) {
             case 2363: //runite
@@ -158,6 +165,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return true;
     }
 
+    /**
+     * 
+     * @return
+     */
     public boolean superHeat() {
         if (getCurrentTab() != Constants.TAB_MAGIC
                 && !RSInterface.getInterface(Constants.INTERFACE_BANK).isValid()
@@ -169,12 +180,13 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             if (isPaused) {
                 return true;
             }
-            if (!castSpell(Constants.SPELL_SUPERHEAT_ITEM)) //cast the spell
-            {
+            // Cast the spell
+            if (!castSpell(Constants.SPELL_SUPERHEAT_ITEM)) {
                 return false;
             }
             int waitCheck = 0;
-            while (getCurrentTab() != Constants.TAB_INVENTORY) { //wait for the inventory to open
+            // Wait for the inventory to open
+            while (getCurrentTab() != Constants.TAB_INVENTORY) {
                 wait(random(50, 150));
                 if (waitCheck > 20) {
                     wait(750);
@@ -185,7 +197,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
                 waitCheck++;
             }
-            int[] inventoryArray = getInventoryArray(); //get the last position of the ore
+            // Get the last position of the ore
+            int[] inventoryArray = getInventoryArray();
             int startItem = -1;
             for (int i = 27; i > 0; i--) {
                 if (inventoryArray[i] == oreID) {
@@ -194,13 +207,15 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
             }
             Point itemPos = getInventoryItemPoint(startItem);
-            if (itemPos.equals(new Point(-1, -1))) { //end method no more items
+            // End method no more items
+            if (itemPos.equals(new Point(-1, -1))) {
                 wait(750);
                 moveMouse(578, 405, 10, 10);
                 wait(150);
                 clickMouse(true); //cast spell at empty space
                 return true;
-            } else {
+            }
+            else {
                 do {
                     if (waitCheck > 3) {
                         return false;
@@ -220,12 +235,17 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     }
                     wait(random(750, 1250));
                     waitCheck++;
-                } while (getCurrentTab() != Constants.TAB_MAGIC);
+                }
+                while (getCurrentTab() != Constants.TAB_MAGIC);
             }
         }
 
     }
 
+    /**
+     * 
+     * @return
+     */
     public boolean withdraw() {
         if (!bank.isOpen()) {
             wait(1500);
@@ -266,7 +286,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0 && oreID == 440) {
             bank.withdraw(coalID, withdrawlFactor);//withdraw coal
             bank.withdraw(coalID, withdrawlFactor);
-        } else if (coalRatio > 0) {
+        }
+        else if (coalRatio > 0) {
             bank.withdraw(coalID, withdrawlFactor * coalRatio);
         }
         wait(1500);
@@ -279,7 +300,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
             bank.close();
             return false;
-        } else if (ore < withdrawlFactor) {
+        }
+        else if (ore < withdrawlFactor) {
             log("Ores counted: " + ore);
             log("Withdrawl neccessary: " + withdrawlFactor);
             if (coal == 27) {
@@ -292,6 +314,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return true;
     }
 
+    /**
+     * 
+     * @return
+     */
     public boolean withdrawBKIron() {
         if (!bank.isOpen()) {
             wait(1500);
@@ -344,7 +370,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             bank.close();
             lagFactor = speedfactor;
             return false;
-        } else if (ore < withdrawlFactor) {
+        }
+        else if (ore < withdrawlFactor) {
             log("Ores counted: " + ore);
             log("Withdrawl neccessary: " + withdrawlFactor);
             bank.withdraw(oreID, withdrawlFactor - ore);
@@ -356,6 +383,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return true;
     }
 
+    /**
+     * Desposits material into the bank. But not runes
+     * @return if player can deposit
+     */
     public boolean deposit() {
         if (!bank.isOpen()) {
             wait(1500);
@@ -365,7 +396,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return false;
             }
         }
-        if (bank.depositAllExcept(561, 554)) { //deposit all but runes
+        // Deposit all but runes
+        if (bank.depositAllExcept(561, 554)) { 
             return true;
         } else {
             log("Error: depositing items problem");
@@ -373,18 +405,28 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     public boolean checkOres() {
         int coal = getInventoryCount(coalID);
         int ore = getInventoryCount(oreID);
         if (ore == 0) {
             return false;
-        } else if (coal / ore >= coalRatio) {
+        }
+        else if (coal / ore >= coalRatio) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     @Override
     public int loop() {
         try {
@@ -445,6 +487,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+    /**
+     * 
+     * @param map
+     * @return
+     */
     @Override
     public boolean onStart(Map<String, String> map) {
         /** Reading html inputs */
@@ -454,20 +501,27 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         logOutDone = (map.get("logout") != null) ? true : false;
         log("Logout Debug: " + logOutDone);
 
+        // Give barID via human html input
         String ore = map.get("ore");
         if (ore.equalsIgnoreCase("runite")) {
             barID = 2363;
-        } else if (ore.equalsIgnoreCase("adamantite")) {
+        }
+        else if (ore.equalsIgnoreCase("adamantite")) {
             barID = 2361;
-        } else if (ore.equalsIgnoreCase("mithril")) {
+        }
+        else if (ore.equalsIgnoreCase("mithril")) {
             barID = 2359;
-        } else if (ore.equalsIgnoreCase("gold")) {
+        }
+        else if (ore.equalsIgnoreCase("gold")) {
             barID = 2357;
-        } else if (ore.equalsIgnoreCase("silver")) {
+        }
+        else if (ore.equalsIgnoreCase("silver")) {
             barID = 2355;
-        } else if (ore.equalsIgnoreCase("steel")) {
+        }
+        else if (ore.equalsIgnoreCase("steel")) {
             barID = 2353;
-        } else if (ore.equalsIgnoreCase("iron")) {
+        }
+        else if (ore.equalsIgnoreCase("iron")) {
             barID = 2351;
         }
         log("Item ID: " + barID);
@@ -486,6 +540,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return true;
     }
 
+    /**
+     * What to do when the script finishes running
+     */
     @Override
     public void onFinish() {
         long timeDiff = (System.currentTimeMillis() - startTime) / 1000;
@@ -498,6 +555,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+    /**
+     * Gives output of details for the player's actions,
+     * eg. exp and levels gained
+     * @return
+     */
     public String status() {
         String s = "";
         s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_MAGIC) - startExp);
@@ -505,6 +567,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return s;
     }
 
+    /**
+     * Checks and handles random events
+     * @return if there is a random event
+     */
     private boolean checkForRandoms() {
         for (final Random random : Bot.getScriptHandler().getRandoms()) {
             if (Bot.disableBreakHandler && (random instanceof BreakHandler)) {
@@ -517,6 +583,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         return false;
     }
 
+    /**
+     * How to not get screwed over by Jagax
+     */
     public void antiBan() {
         switch (random(0, 50)) {
             case 1:
@@ -545,11 +614,19 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+    /**
+     * 
+     * @return
+     */
     @Override
     protected int getMouseSpeed() {
         return (int) (random(10, 12) * Math.pow(lagFactor, .25));
     }
 
+    /**
+     * 
+     * @param toSleep
+     */
     @Override
     public void wait(int toSleep) {
         super.wait((int) (toSleep * lagFactor));
