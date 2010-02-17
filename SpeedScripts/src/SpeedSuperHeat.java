@@ -689,7 +689,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         po.addPoint(mouse_x, mouse_y);
         po.addPoint(mouse_x, mouse_y + 15);
         po.addPoint(mouse_x + 10, mouse_y + 10);
-        g.setColor(new Color(180, 70, 70, 125));
+        g.setColor(new Color(180, 70, 70, 180));
         g.fillPolygon(po);
         g.drawPolygon(po);
 
