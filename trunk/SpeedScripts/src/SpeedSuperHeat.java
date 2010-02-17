@@ -343,15 +343,15 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             return false;
         }
         wait(random(250, 500));
-        bank.withdraw(oreID, 10);
-        wait(random(750, 1250));
-        bank.deposit(oreID, 1);
+        bank.withdraw(oreID, 9);
         wait(random(750, 1250));
         int ore = getInventoryCount(oreID);
-        if (ore > withdrawlFactor) {
-            bank.deposit(oreID, ore - withdrawlFactor);
-        } else if (ore < withdrawlFactor) {
-            bank.withdraw(oreID, withdrawlFactor - ore);
+        while (ore != 9 && bank.isOpen()) {
+            if (ore > withdrawlFactor) {
+                bank.deposit(oreID, ore - withdrawlFactor);
+            } else if (ore < withdrawlFactor) {
+                bank.withdraw(oreID, withdrawlFactor - ore);
+            }
         }
         if (coalRatio > 0 && oreID == 440) {
             bank.withdraw(coalID, 0);//withdraw coal
@@ -362,24 +362,23 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         wait(1500);
         int coal = getInventoryCount(coalID);
         ore = getInventoryCount(oreID);
-
-        if (coal < withdrawlFactor * coalRatio) {
-            log("Coal counted: " + coal);
-            log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
-            bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
-            bank.close();
-            lagFactor = speedfactor;
-            return false;
+        while (!checkOres() && bank.isOpen()) {
+            if (coal < withdrawlFactor * coalRatio) {
+                log("Coal counted: " + coal);
+                log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
+                bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
+                lagFactor = speedfactor;
+            } else if (ore < withdrawlFactor) {
+                log("Ores counted: " + ore);
+                log("Withdrawl neccessary: " + withdrawlFactor);
+                bank.withdraw(oreID, withdrawlFactor - ore);
+            }
         }
-        else if (ore < withdrawlFactor) {
-            log("Ores counted: " + ore);
-            log("Withdrawl neccessary: " + withdrawlFactor);
-            bank.withdraw(oreID, withdrawlFactor - ore);
-            bank.close();
-            lagFactor = speedfactor;
+        if (!bank.isOpen()) {
             return false;
         }
         lagFactor = speedfactor;
+        bank.close();
         return true;
     }
 
@@ -600,7 +599,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 openTab(TAB_STATS);
                 //log("Opening stats page.");
                 moveMouse(578, 405);
-                wait(3500);
+                wait(random(1000, 1500));
                 break;
             }
             case 20: {
@@ -620,7 +619,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return (int) (random(10, 12) * Math.pow(lagFactor, .25));
+        return (int) (random(8, 11) * Math.pow(lagFactor, .25));
     }
 
     /**
