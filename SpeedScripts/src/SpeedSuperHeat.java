@@ -340,7 +340,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         wait(random(250, 500));
         bank.withdraw(oreID, 9);
-        wait(random(750, 1000));
+        wait(random(500, 750));
         int ore = getInventoryCount(oreID);
         while (ore != 9 && bank.isOpen()) {
             if (ore > withdrawlFactor) {
@@ -352,11 +352,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0 && oreID == 440) {
             while (!checkOres() && bank.isOpen()) {
                 bank.withdraw(coalID, 0);//withdraw coal
+                wait(random(500,750));
             }
         } else if (coalRatio > 0) {
             bank.withdraw(coalID, withdrawlFactor * coalRatio);
         }
-        wait(1500);
+        wait(random(500,750));
         int coal = getInventoryCount(coalID);
         ore = getInventoryCount(oreID);
         while (!checkOres() && bank.isOpen()) {
@@ -392,8 +393,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return false;
             }
         }
-        // Deposit all but runes
-        if (bank.depositAllExcept(561, 554)) {
+        // Deposit all but runes and extra coal
+        if (bank.depositAllExcept(561, 554, coalID)) {
             return true;
         } else {
             log("Error: depositing items problem");
