@@ -1,4 +1,3 @@
-
 /**
  * Educational code to simulate a human performing the superheat spell
  * Copyright (C) 2010 LightSpeed, Pirateblanc
@@ -16,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
