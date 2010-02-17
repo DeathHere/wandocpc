@@ -282,7 +282,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             } else if (ore < withdrawlFactor) {
                 bank.withdraw(oreID, withdrawlFactor - ore);
             }
-            wait(random(500, 1000));
+            wait(random(700, 1000));
             ore = getInventoryCount(oreID);
             errCount++;
             if (errCount > 2) {
@@ -294,7 +294,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0) {
             while (!checkOres() && bank.isOpen()) {
                 bank.withdraw(coalID, 0);
-                wait(random(500, 750));
+                wait(random(650, 750));
                 errCount++;
                 if (errCount > 2) {
                     lagFactor = speedfactor;
