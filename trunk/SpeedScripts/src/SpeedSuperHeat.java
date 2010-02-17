@@ -1,3 +1,4 @@
+
 /**
  * Educational code to simulate a human performing the superheat spell
  * Copyright (C) 2010 LightSpeed, Pirateblanc
@@ -15,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -214,8 +214,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 wait(150);
                 clickMouse(true); //cast spell at empty space
                 return true;
-            }
-            else {
+            } else {
                 do {
                     if (waitCheck > 3) {
                         return false;
@@ -235,8 +234,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     }
                     wait(random(750, 1250));
                     waitCheck++;
-                }
-                while (getCurrentTab() != Constants.TAB_MAGIC);
+                } while (getCurrentTab() != Constants.TAB_MAGIC);
             }
         }
 
@@ -286,8 +284,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0 && oreID == 440) {
             bank.withdraw(coalID, withdrawlFactor);//withdraw coal
             bank.withdraw(coalID, withdrawlFactor);
-        }
-        else if (coalRatio > 0) {
+        } else if (coalRatio > 0) {
             bank.withdraw(coalID, withdrawlFactor * coalRatio);
         }
         wait(1500);
@@ -300,8 +297,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
             bank.close();
             return false;
-        }
-        else if (ore < withdrawlFactor) {
+        } else if (ore < withdrawlFactor) {
             log("Ores counted: " + ore);
             log("Withdrawl neccessary: " + withdrawlFactor);
             if (coal == 27) {
@@ -344,7 +340,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         wait(random(250, 500));
         bank.withdraw(oreID, 9);
-        wait(random(750, 1250));
+        wait(random(750, 1000));
         int ore = getInventoryCount(oreID);
         while (ore != 9 && bank.isOpen()) {
             if (ore > withdrawlFactor) {
@@ -354,8 +350,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         if (coalRatio > 0 && oreID == 440) {
-            bank.withdraw(coalID, 0);//withdraw coal
-            //bank.withdraw(coalID, withdrawlFactor);
+            while (!checkOres() && bank.isOpen()) {
+                bank.withdraw(coalID, 0);//withdraw coal
+            }
         } else if (coalRatio > 0) {
             bank.withdraw(coalID, withdrawlFactor * coalRatio);
         }
@@ -396,7 +393,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         // Deposit all but runes
-        if (bank.depositAllExcept(561, 554)) { 
+        if (bank.depositAllExcept(561, 554)) {
             return true;
         } else {
             log("Error: depositing items problem");
@@ -413,11 +410,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         int ore = getInventoryCount(oreID);
         if (ore == 0) {
             return false;
-        }
-        else if (coal / ore >= coalRatio) {
+        } else if (coal / ore >= coalRatio) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -504,23 +499,17 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         String ore = map.get("ore");
         if (ore.equalsIgnoreCase("runite")) {
             barID = 2363;
-        }
-        else if (ore.equalsIgnoreCase("adamantite")) {
+        } else if (ore.equalsIgnoreCase("adamantite")) {
             barID = 2361;
-        }
-        else if (ore.equalsIgnoreCase("mithril")) {
+        } else if (ore.equalsIgnoreCase("mithril")) {
             barID = 2359;
-        }
-        else if (ore.equalsIgnoreCase("gold")) {
+        } else if (ore.equalsIgnoreCase("gold")) {
             barID = 2357;
-        }
-        else if (ore.equalsIgnoreCase("silver")) {
+        } else if (ore.equalsIgnoreCase("silver")) {
             barID = 2355;
-        }
-        else if (ore.equalsIgnoreCase("steel")) {
+        } else if (ore.equalsIgnoreCase("steel")) {
             barID = 2353;
-        }
-        else if (ore.equalsIgnoreCase("iron")) {
+        } else if (ore.equalsIgnoreCase("iron")) {
             barID = 2351;
         }
         log("Item ID: " + barID);
@@ -653,7 +642,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     // ------------------------------PAINT--------------------------------------
-
     // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
         // Font setting
