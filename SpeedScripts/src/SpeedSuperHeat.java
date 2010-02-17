@@ -254,16 +254,16 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         double speedfactor = lagFactor;
-        lagFactor = 2.0;
+        lagFactor = 1.5;
+        int errCount = 0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
         for (int item : inventoryArray) {
-            if (item == -1) {
+            if (item == -1 || item == coalID) {
                 counter++;
             }
         }
         int withdrawlFactor = counter / (coalRatio + 1); //how many ores can we withdraw
-        //log("Withdrawl Factor: " + withdrawlFactor);
         if (bank.getCount(oreID) < withdrawlFactor + 1) {
             log("Error: out of ores");
             stopScript();
@@ -274,39 +274,35 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             stopScript();
             return false;
         }
-        wait(250);
-        bank.withdraw(oreID, withdrawlFactor);
-        wait(random(750, 1250));
+        wait(random(125, 375));
         int ore = getInventoryCount(oreID);
-        if (ore > withdrawlFactor) {
-            bank.deposit(oreID, ore - withdrawlFactor);
-        }
-        if (coalRatio > 0 && oreID == 440) {
-            bank.withdraw(coalID, withdrawlFactor);//withdraw coal
-            bank.withdraw(coalID, withdrawlFactor);
-        } else if (coalRatio > 0) {
-            bank.withdraw(coalID, withdrawlFactor * coalRatio);
-        }
-        wait(1500);
-        int coal = getInventoryCount(coalID);
-        ore = getInventoryCount(oreID);
-        lagFactor = speedfactor;
-        if (coal < withdrawlFactor * coalRatio) {
-            log("Coal counted: " + coal);
-            log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
-            bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
-            bank.close();
-            return false;
-        } else if (ore < withdrawlFactor) {
-            log("Ores counted: " + ore);
-            log("Withdrawl neccessary: " + withdrawlFactor);
-            if (coal == 27) {
-                bank.deposit(coalID, withdrawlFactor);
+        while (ore != withdrawlFactor && bank.isOpen()) {
+            if (ore > withdrawlFactor) {
+                bank.deposit(oreID, ore - withdrawlFactor);
+            } else if (ore < withdrawlFactor) {
+                bank.withdraw(oreID, withdrawlFactor - ore);
             }
-            bank.withdraw(oreID, withdrawlFactor - ore);
-            bank.close();
-            return false;
+            wait(random(500, 1000));
+            ore = getInventoryCount(oreID);
+            errCount++;
+            if (errCount > 2) {
+                lagFactor = speedfactor;
+                return false;
+            }
         }
+        errCount = 0;
+        if (coalRatio > 0) {
+            while (!checkOres() && bank.isOpen()) {
+                bank.withdraw(coalID, 0);
+                wait(random(500, 750));
+                errCount++;
+                if (errCount > 2) {
+                    lagFactor = speedfactor;
+                    return false;
+                }
+            }
+        }
+        lagFactor = speedfactor;
         return true;
     }
 
@@ -352,12 +348,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0 && oreID == 440) {
             while (!checkOres() && bank.isOpen()) {
                 bank.withdraw(coalID, 0);//withdraw coal
-                wait(random(500,750));
+                wait(random(500, 750));
             }
         } else if (coalRatio > 0) {
             bank.withdraw(coalID, withdrawlFactor * coalRatio);
         }
-        wait(random(500,750));
+        wait(random(500, 750));
         int coal = getInventoryCount(coalID);
         ore = getInventoryCount(oreID);
         while (!checkOres() && bank.isOpen()) {
@@ -390,6 +386,14 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             if (!bank.open()) {
                 wait(1500);
                 log("Error: can't open bank");
+                return false;
+            }
+        }
+        if (getInventoryCount(coalID) > 24 || errorCounter != 0) {
+            if (bank.depositAllExcept(561, 554)) {
+                return true;
+            } else {
+                log("Error: depositing items problem");
                 return false;
             }
         }
@@ -427,7 +431,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         try {
             if (!isLoggedIn()) {
                 Bot.disableRandoms = false;
-                wait(1000);
+                return 1000;
             }
             if (recordInitial) {
                 if (!initialized()) {
@@ -448,25 +452,28 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             setCameraAltitude(true);
             if (!checkOres()) {
                 bank.open();
-                wait(2000);
+                wait(random(1000,2000));
                 if ((new BankPins()).runRandom()) {
                     wait(1000);
                 }
-                if (errorCounter > 10) {
+                if (errorCounter > 5) {
                     return -1;
                 }
                 if (!deposit()) {
                     Bot.disableRandoms = false;
+                    errorCounter++;
                     return 1;
                 }
-                if (!withdrawBKIron()) {
+                if (!withdraw()) {
                     Bot.disableRandoms = false;
+                    errorCounter++;
                     return 1;
                 }
             }
             bank.close();
             if (!superHeat()) {
                 Bot.disableRandoms = false;
+                errorCounter++;
             }
             errorCounter = 0;
             return 500;
