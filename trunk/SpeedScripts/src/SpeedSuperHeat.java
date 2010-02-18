@@ -96,8 +96,13 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private int[] startExpArry = null;
     private int errors = 0;
 
+    /** Paint vars */
+    //private final int xpHourRefreshRate = 500;
+    //private int refreshCounter = 0;
+    private int xpHour = 0;
+
     /**
-     * 
+     * Start stuff
      */
     public boolean initialized() {
         startExp = skills.getCurrentSkillExp(Constants.STAT_MAGIC); //save the initial exp and lvl
@@ -109,8 +114,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     /**
-     * 
-     * @return
+     * Grab the ore ids and the right coal to ore ratio
+     * @return idk
      */
     public boolean oreInitialize() {
         switch (barID) {
@@ -166,7 +171,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     /**
-     * 
+     * Perform the magic
      * @return
      */
     public boolean superHeat() {
@@ -241,7 +246,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     /**
-     * 
+     * Get stuff out of the bank
      * @return
      */
     public boolean withdraw() {
@@ -423,7 +428,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     /**
-     * 
+     * Do more stuff here, like everything
      * @return
      */
     @Override
@@ -628,6 +633,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         super.wait((int) (toSleep * lagFactor));
     }
 
+    /**
+     * 
+     * @param e
+     */
     public void serverMessageRecieved(ServerMessageEvent e) {
         String messageEvent = e.getMessage();
         if (messageEvent.contains("You do not have enough Fire Runes")) {
@@ -652,6 +661,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     // ------------------------------PAINT--------------------------------------
     // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
+        //refreshCounter++;
         // Font setting
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
 
@@ -666,8 +676,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         final long minutes = millis / (1000 * 60);
         millis -= minutes * 1000 * 60;
         final long seconds = millis / 1000;
-        paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + ":"
-                + minutes + ":" + seconds);
+        paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + " - "
+                + minutes + " : " + seconds);
 
         g.drawString("Version " + version, 436, y + 13);
 
@@ -698,14 +708,25 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
     }
 
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param skill
+     * @param start
+     */
     public void paintSkillBar(Graphics g, int x, int y, int skill, int start) {
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+        
         int gained = (skills.getCurrentSkillExp(skill) - start);
-        String s = SkillToString(skill) + " Exp Gained: " + gained;
+        String s = SkillToString(skill) + " gained: " + gained;
+        
         String firstLetter = s.substring(0, 1);
         String remainder = s.substring(1);
         String capitalized = firstLetter.toUpperCase() + remainder;
         String exp = Integer.toString(skills.getXPToNextLevel(skill));
+
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(Color.BLACK);
@@ -718,9 +739,26 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 10, 10);
         g.setColor(new Color(0, 200, 255));
         paintBar(g, x, y, capitalized);
-        g.drawString("Exp To Level: " + exp, 240, y + 13);
+
+        g.drawString(Integer.toString(skills.getPercentToNextLevel(skill)) + "%",
+                456, y + 13);
+        g.drawString("To lvl: " + exp, 200, y + 13);
+        
+        //if (refreshCounter > xpHourRefreshRate) {
+            xpHour = (int) (gained * 3600000.0 /
+                    ((double) System.currentTimeMillis() - (double) startTime));
+            //refreshCounter = 0;
+        //}
+        g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
     }
 
+    /**
+     * 
+     * @param g
+     * @param x
+     * @param y
+     * @param s
+     */
     public void paintBar(Graphics g, int x, int y, String s) {
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
         int width = 516;
@@ -735,6 +773,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         g.drawString(s, x + 7, y + height - 2);
     }
 
+    /**
+     * 
+     * @param skill
+     * @return
+     */
     private String SkillToString(int skill) {
         return Skills.statsArray[skill];
     }
