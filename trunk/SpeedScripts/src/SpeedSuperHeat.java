@@ -741,7 +741,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         paintBar(g, x, y, capitalized);
 
         g.drawString(Integer.toString(skills.getPercentToNextLevel(skill)) + "%",
-                456, y + 13);
+                458, y + 13);
         g.drawString("To lvl: " + exp, 200, y + 13);
         
         //if (refreshCounter > xpHourRefreshRate) {
