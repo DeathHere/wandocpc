@@ -1,3 +1,4 @@
+
 /**
  * Educational code to simulate a human performing the superheat spell
  * Copyright (C) 2010 LightSpeed, Pirateblanc
@@ -15,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -95,7 +95,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private final double version = 1.0;
     private int[] startExpArry = null;
     private int errors = 0;
-
     /** Paint vars */
     //private final int xpHourRefreshRate = 500;
     //private int refreshCounter = 0;
@@ -274,7 +273,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             stopScript();
             return false;
         }
-        if (bank.getCount(coalID) < coalRatio * withdrawlFactor + 1) {
+        if (coalRatio != 0 && bank.getCount(coalID) < coalRatio * withdrawlFactor + 1) {
             log("Error: out of coal");
             stopScript();
             return false;
@@ -457,7 +456,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             setCameraAltitude(true);
             if (!checkOres()) {
                 bank.open();
-                wait(random(1000,2000));
+                wait(random(1000, 2000));
                 if ((new BankPins()).runRandom()) {
                     wait(1000);
                 }
@@ -718,10 +717,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     public void paintSkillBar(Graphics g, int x, int y, int skill, int start) {
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
-        
+
         int gained = (skills.getCurrentSkillExp(skill) - start);
         String s = SkillToString(skill) + " gained: " + gained;
-        
+
         String firstLetter = s.substring(0, 1);
         String remainder = s.substring(1);
         String capitalized = firstLetter.toUpperCase() + remainder;
@@ -743,11 +742,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         g.drawString(Integer.toString(skills.getPercentToNextLevel(skill)) + "%",
                 458, y + 13);
         g.drawString("To lvl: " + exp, 200, y + 13);
-        
+
         //if (refreshCounter > xpHourRefreshRate) {
-            xpHour = (int) (gained * 3600000.0 /
-                    ((double) System.currentTimeMillis() - (double) startTime));
-            //refreshCounter = 0;
+        xpHour = (int) (gained * 3600000.0
+                / ((double) System.currentTimeMillis() - (double) startTime));
+        //refreshCounter = 0;
         //}
         g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
     }
