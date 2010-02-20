@@ -6,6 +6,8 @@ import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSInterfaceChild;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Combat", name = "SpeedSoulWars", version = 1.0, description = "")
@@ -40,11 +42,14 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     //Bot Conditions
     protected int status = 0;
     protected boolean pickupFragments = false;
+    protected int depositCount = 20;
     protected boolean specialAttack = false;
     protected int specialAttackPer = 101;
     protected boolean pickBones = false;
     protected boolean usePrayer = false;
     protected boolean useCC = false;
+    protected boolean attackPlayers = false;
+    protected boolean attackSlayer = false;
     //Locations
     protected final Area blueLobby = new Area(1870, 3158, 9, 8);
     protected final Area blueGameLobby = new Area(0, 0, 0, 0);
@@ -56,6 +61,7 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     protected final Area westGrave = new Area(0, 0, 0, 0);
     protected final Area lobby = new Area(0, 0, 0, 0);
     protected final Area obelisk = new Area(0, 0, 0, 0);
+    protected final Area obeliskArea = new Area(0, 0, 0, 0);
     protected final RSTile blueCenter = new RSTile(0, 0);
     protected final RSTile redCenter = new RSTile(0, 0);
     protected final RSTile blueLobbyExit = new RSTile(1880, 3162);
@@ -63,10 +69,109 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
 
     public int locate() {
         loc = getLocation();
+        status = checkNearTask(loc);
+        if (status != -1) {
+            return status;
+        }
+        if (blueLobby.contains(loc)) {
+            status = 1;
+            inGame = false;
+            obeliskTeam = 0;
+            westTeam = 0;
+            eastTeam = 0;
+        } else if (redLobby.contains(loc)) {
+            status = 2;
+            inGame = false;
+            obeliskTeam = 0;
+            westTeam = 0;
+            eastTeam = 0;
+        } else if (lobby.contains(loc)) {
+            status = 0;
+            inGame = false;
+            obeliskTeam = 0;
+            westTeam = 0;
+            eastTeam = 0;
+            joinTeam();
+        } else if (blueGameLobby.contains(loc)) {
+            status = 3;
+            inGame = true;
+            team = BLUE;
+            dead = false;
+            pickBones = false;
+        } else if (redGameLobby.contains(loc)) {
+            status = 4;
+            inGame = true;
+            team = RED;
+            pickBones = false;
+            dead = false;
+        } else if (westGrave.contains(loc)) {
+            status = 5;
+            inGame = true;
+            if (westTeam != 0) {
+                team = westTeam;
+            }
+            pickBones = false;
+            dead = false;
+            if (leaveGrave()) {
+                moveToBlueCenter();
+            }
+        } else if (eastGrave.contains(loc)) {
+            status = 6;
+            inGame = true;
+            if (eastTeam != 0) {
+                team = eastTeam;
+            }
+            pickBones = false;
+            dead = false;
+            if (leaveGrave()) {
+                moveToRedCenter();
+            }
+        } else if (distanceBetween(loc, blueCenter) < 3) {
+            status = doTaskBlueSide();
+        } else if (distanceBetween(loc, redCenter) < 3) {
+            status = doTaskRedSide();
+        } else if (arenaBlueHalf.contains(loc)) {
+            if (moveToBlueCenter()) {
+                status = locate();
+            }
+        } else if (arenaRedHalf.contains(loc)) {
+            if (moveToRedCenter()) {
+                status = locate();
+            }
+        }
+        return status;
+    }
+
+    public boolean joinTeam() {
+        return false;
+    }
+
+    public int checkNearTask(RSTile loc) {
         return -1;
     }
 
+    public int doTaskRedSide() {
+        return -1;
+    }
+
+    public int doTaskBlueSide() {
+        return -1;
+    }
+
+    public boolean leaveGrave() {
+        return false;
+    }
+
+    public boolean moveToRedCenter() {
+        return false;
+    }
+
+    public boolean moveToBlueCenter() {
+        return false;
+    }
+
     public boolean initialize() {
+        //use GUI here
         return true;
     }
 
@@ -81,7 +186,11 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
         if (!isLoggedIn()) {
             return 1000;
         }
-        throw new UnsupportedOperationException("Not supported yet.");
+        locate();
+        if (status == 1 || status == 2) {
+            return 2000;
+        }
+        return 500;
     }
 
     @Override
@@ -158,6 +267,9 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
         if (message.contains("team has lost control of the west")) {
             westTeam = 0;
         }
+        if (message.contains("power left.")) {
+            specialAttackPer += 5;
+        }
     }
 
     public void onRepaint(Graphics render) {
@@ -187,6 +299,10 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
         public boolean contains(RSTile r) {
             return contains(r.getX(), r.getY());
         }
+
+        public RSTile randomPoint() {
+            return new RSTile(x + random(0, w), y + random(0, h));
+        }
     }
 
     protected class ChatListener implements Runnable {
@@ -195,5 +311,46 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
             while (useCC) {
             }
         }
+    }
+
+    public String status(int c) {
+        switch (c) {
+            case 0:
+                return "In Soul Lobby";
+            case 1:
+                return "In Blue Waiting";
+            case 2:
+                return "In Red Waiting";
+            case 3:
+                return "In Blue Start";
+            case 4:
+                return "In Red Start";
+            case 5:
+                return "In Western Grave";
+            case 6:
+                return "In Eastern Grave";
+            case 7:
+                return "At Blue Center";
+            case 8:
+                return "At Red Center";
+            case 9:
+                return "At Obelisk";
+            case 10:
+                return "Near Obelisk";
+            case 11:
+                return "Moving to Blue Center";
+            case 12:
+                return "Moving to Red Center";
+            default:
+                return "Unknown";
+        }
+    }
+
+    public int getActivityBarPercent() {
+      RSInterfaceChild c = RSInterface.getInterface(836).getChild(56);
+      if (c != null && c.isValid() && c.getAbsoluteX() > -1) {
+            return ((c.getArea().height * 100) / 141) - 2;
+        }
+        return -1;
     }
 }
