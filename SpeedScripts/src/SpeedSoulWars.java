@@ -347,8 +347,8 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     }
 
     public int getActivityBarPercent() {
-      RSInterfaceChild c = RSInterface.getInterface(836).getChild(56);
-      if (c != null && c.isValid() && c.getAbsoluteX() > -1) {
+        RSInterfaceChild c = RSInterface.getInterface(836).getChild(56);
+        if (c != null && c.isValid() && c.getAbsoluteX() > -1) {
             return ((c.getArea().height * 100) / 141) - 2;
         }
         return -1;
