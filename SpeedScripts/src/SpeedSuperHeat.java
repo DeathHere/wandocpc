@@ -621,7 +621,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return (int) (random(8, 11) * Math.pow(lagFactor, .25));
+        return (int) (random(8, 11) * Math.pow(lagFactor, .30));
     }
 
     /**
@@ -630,7 +630,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     public void wait(int toSleep) {
-        super.wait((int) (toSleep * lagFactor));
+        super.wait((int) (toSleep * Math.pow(lagFactor,.5)));
     }
 
     /**
