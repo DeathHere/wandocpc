@@ -258,8 +258,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         double speedfactor = lagFactor;
-        moveMouse(100, 85, 5, 5);
-        lagFactor *= 3.0;
+        moveMouse(92, 35, 5, 5);
+        lagFactor *= 9.0;
         int errCount = 0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
