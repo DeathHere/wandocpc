@@ -260,7 +260,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         double speedfactor = lagFactor;
         //moveMouse(92, 35, 5, 5);
-        lagFactor *= 5.0;
+        lagFactor *= 2.0;
         int errCount = 0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
@@ -351,8 +351,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 					for (int i = 0; i < mactions.size(); i++) {
 						if (mactions.get(i).equalsIgnoreCase("Withdraw-" + count)) {
 							found = true;
-                                                        //log("Item found i: " + i);
-							atMenuItem(3);
+							atMenu("Withdraw-" + count);
 							break;
 						}
 					}
@@ -370,75 +369,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 
 
 
-    /**
-     * 
-     * @return
-     */
-    public boolean withdrawBKIron() {
-        if (!bank.isOpen()) {
-            wait(1500);
-            if (!bank.open()) {
-                wait(1500);
-                log("Error: can't open bank");
-                return false;
-            }
-        }
-        double speedfactor = lagFactor;
-        lagFactor = 2.5;
-
-        int withdrawlFactor = 9;
-        //log("Withdrawl Factor: " + withdrawlFactor);
-        if (bank.getCount(oreID) < withdrawlFactor + 1) {
-            log("Error: out of ores");
-            stopScript();
-            return false;
-        }
-        if (bank.getCount(coalID) < coalRatio * withdrawlFactor + 1) {
-            log("Error: out of coal");
-            stopScript();
-            return false;
-        }
-        wait(random(250, 500));
-        bank.withdraw(oreID, 9);
-        wait(random(500, 750));
-        int ore = getInventoryCount(oreID);
-        while (ore != 9 && bank.isOpen()) {
-            if (ore > withdrawlFactor) {
-                bank.deposit(oreID, ore - withdrawlFactor);
-            } else if (ore < withdrawlFactor) {
-                bank.withdraw(oreID, withdrawlFactor - ore);
-            }
-        }
-        if (coalRatio > 0 && oreID == 440) {
-            while (!checkOres() && bank.isOpen()) {
-                bank.withdraw(coalID, 0);//withdraw coal
-                wait(random(500, 750));
-            }
-        } else if (coalRatio > 0) {
-            bank.withdraw(coalID, withdrawlFactor * coalRatio);
-        }
-        wait(random(500, 750));
-        int coal = getInventoryCount(coalID);
-        ore = getInventoryCount(oreID);
-        while (!checkOres() && bank.isOpen()) {
-            if (coal < withdrawlFactor * coalRatio) {
-                log("Coal counted: " + coal);
-                log("Withdrawl neccessary: " + withdrawlFactor * coalRatio);
-                bank.withdraw(coalID, withdrawlFactor * coalRatio - coal);
-                lagFactor = speedfactor;
-            } else if (ore < withdrawlFactor) {
-                log("Ores counted: " + ore);
-                log("Withdrawl neccessary: " + withdrawlFactor);
-                bank.withdraw(oreID, withdrawlFactor - ore);
-            }
-        }
-        if (!bank.isOpen()) {
-            return false;
-        }
-        lagFactor = speedfactor;
-        bank.close();
-        return true;
-    }
 
     /**
      * Desposits material into the bank. But not runes
