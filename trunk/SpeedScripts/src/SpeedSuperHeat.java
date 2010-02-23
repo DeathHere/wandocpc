@@ -93,12 +93,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private boolean logOutDone = false;
     private double lagFactor = 1.0;
     private final double version = 1.0;
-    private int[] startExpArry = null;
     private int errors = 0;
     /** Paint vars */
     //private final int xpHourRefreshRate = 500;
     //private int refreshCounter = 0;
     private int xpHour = 0;
+    private int[] startExpArry = null;
 
     /**
      * Start stuff
