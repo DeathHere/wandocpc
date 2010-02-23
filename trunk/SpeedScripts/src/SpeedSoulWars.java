@@ -19,15 +19,14 @@ import org.rsbot.script.wrappers.RSTile;
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Combat", name = "SpeedSoulWars", version = 1.0, description = "All systems start in GUI")
 public class SpeedSoulWars extends Script implements ServerMessageListener, PaintListener {
 
-    //initialization variables
+    // Initialization variables
     protected boolean recordInitial = false;
     protected long startTime;
     protected RSTile loc;
     protected int errorCounter = 0;
     protected final String version = "1.0";
     protected final String title = "SpeedSoulWars";
-
-    //game status variables
+    // Game status variables
     protected boolean inGame = false;
     protected int team = 0;
     protected final int BLUE = 1;
@@ -42,14 +41,12 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     protected int eastTeam = 0;
     protected int westTeam = 0;
     protected int activity = 100;
-
-    //Monster and Item IDs
+    // Monster and Item IDs
     protected int pyrefiendID = 8598;
     protected int jellyID = 8599;
     protected int fragmentID = 14639;
     protected int bonesID = 14638;
-
-    //Bot Conditions
+    // Bot Conditions
     protected int status = 0;
     protected boolean pickupFragments = false;
     protected int depositCount = 20;
@@ -60,8 +57,7 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     protected boolean useCC = false;
     protected boolean attackPlayers = false;
     protected boolean attackSlayer = false;
-
-    //Locations
+    // Locations
     protected final Area blueLobby = new Area(1870, 3158, 9, 8);
     protected final Area blueGameLobby = new Area(1816, 3220, 1823, 3230, true);
     protected final Area redLobby = new Area(1900, 3157, 1909, 3165, true);
@@ -70,7 +66,7 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     protected final Area arenaRedHalf = new Area(0, 0, 0, 0);
     protected final Area eastGrave = new Area(1932, 3244, 1935, 3246, true);
     protected final Area westGrave = new Area(1841, 3217, 1843, 3219, true);
-    protected final Area lobby = new Area(1850, 3130, 1920, 3190,true);
+    protected final Area lobby = new Area(1850, 3130, 1920, 3190, true);
     protected final Area obelisk = new Area(1884, 3229, 5, 5);
     protected final Area obeliskArea = new Area(0, 0, 0, 0);
     protected final RSTile blueCenter = new RSTile(0, 0);
@@ -78,7 +74,6 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     protected final RSTile blueLobbyExit = new RSTile(1880, 3162);
     protected final RSTile redLobbyExit = new RSTile(1960, 3239);
     public RSTile[] RedStartToRedFiends = {new RSTile(1960, 3239), new RSTile(1962, 3239), new RSTile(1965, 3238), new RSTile(1966, 3235), new RSTile(1966, 3232), new RSTile(1966, 3230), new RSTile(1966, 3227), new RSTile(1966, 3224), new RSTile(1966, 3223), new RSTile(1966, 3221), new RSTile(1966, 3219), new RSTile(1966, 3218), new RSTile(1964, 3216), new RSTile(1963, 3215), new RSTile(1962, 3214), new RSTile(1960, 3214), new RSTile(1958, 3214), new RSTile(1957, 3214), new RSTile(1956, 3214), new RSTile(1955, 3214), new RSTile(1954, 3214), new RSTile(1952, 3214), new RSTile(1951, 3214), new RSTile(1950, 3215), new RSTile(1948, 3217), new RSTile(1947, 3218), new RSTile(1945, 3218), new RSTile(1944, 3218), new RSTile(1942, 3217), new RSTile(1941, 3217), new RSTile(1939, 3217), new RSTile(1938, 3217), new RSTile(1935, 3219), new RSTile(1935, 3218), new RSTile(1934, 3217), new RSTile(1932, 3216), new RSTile(1931, 3216), new RSTile(1930, 3215), new RSTile(1928, 3213), new RSTile(1927, 3212)};
-
     /** Paint vars */
     protected int xpHour = 0;
     protected int[] startExpArry = null;
