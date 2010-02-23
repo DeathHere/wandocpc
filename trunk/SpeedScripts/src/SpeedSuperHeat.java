@@ -35,6 +35,7 @@ import org.rsbot.script.Skills;
 import org.rsbot.script.randoms.BankPins;
 import org.rsbot.script.randoms.antiban.BreakHandler;
 import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSInterfaceComponent;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
@@ -281,6 +282,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         wait(random(125, 375));
         int ore = getInventoryCount(oreID);
+        withdraw(oreID, withdrawlFactor);
+        wait(random(700, 1000));
         while (ore != withdrawlFactor && bank.isOpen()) {
             if (ore > withdrawlFactor) {
                 bank.deposit(oreID, ore - withdrawlFactor);
@@ -310,6 +313,70 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         lagFactor = speedfactor;
         return true;
     }
+
+    @Override
+    public boolean atMenuItem(int i) {
+        log("i: "+i);
+        return super.atMenuItem(i);
+    }
+
+
+
+    /**
+	 * Tries to withdraw an item.
+	 *
+	 * 0 is All. 1,5,10 use Withdraw 1,5,10 while other numbers Withdraw X.
+	 *
+	 * @param itemID
+	 *            The ID of the item.
+	 * @param count
+	 *            The number to withdraw.
+	 * @return <tt>true</tt> on success.
+	 */
+	public boolean withdraw(final int itemID, final int count) {
+		if (count < 0)
+			throw new IllegalArgumentException("count < 0 (" + count + ")");
+		if (!bank.isOpen())
+			return false;
+		final RSInterfaceComponent item = bank.getItemByID(itemID);
+		if ((item == null) || !item.isValid())
+			return false;
+		final int inventoryCount = getInventoryCount(true);
+		switch (count) {
+			case 0: // Withdraw All
+				atInterface(item, "Withdraw-All");
+				break;
+			case 1: // Withdraw 1
+			case 5: // Withdraw 5
+			case 10: // Withdraw 10
+				atInterface(item, "Withdraw-" + count);
+				break;
+			default: // Withdraw x
+				if (atInterface(item, false)) {
+					wait(random(600, 900));
+					java.util.ArrayList<String> mactions = getMenuActions();
+					boolean found = false;
+					for (int i = 0; i < mactions.size(); i++) {
+						if (mactions.get(i).equalsIgnoreCase("Withdraw-" + count)) {
+							found = true;
+                                                        log("Item found i: " + i);
+							atMenuItem(i);
+							break;
+						}
+					}
+					if (!found && atInterface(item, "Withdraw-X")) {
+						wait(random(1000, 1300));
+						Bot.getInputManager().sendKeys("" + count, true);
+					}
+				}
+				break;
+		}
+		if ((getInventoryCount(true) > inventoryCount) || (getInventoryCount(true) == 28))
+			return true;
+		return false;
+	}
+
+
 
     /**
      * 
