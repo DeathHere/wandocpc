@@ -281,9 +281,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             return false;
         }
         wait(random(125, 375));
-        int ore = getInventoryCount(oreID);
         withdraw(oreID, withdrawlFactor);
         wait(random(700, 1000));
+        int ore = getInventoryCount(oreID);
         while (ore != withdrawlFactor && bank.isOpen()) {
             if (ore > withdrawlFactor) {
                 bank.deposit(oreID, ore - withdrawlFactor);
@@ -313,14 +313,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         lagFactor = speedfactor;
         return true;
     }
-
-    @Override
-    public boolean atMenuItem(int i) {
-        log("i: "+i);
-        return super.atMenuItem(i);
-    }
-
-
 
     /**
 	 * Tries to withdraw an item.
@@ -359,8 +351,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
 					for (int i = 0; i < mactions.size(); i++) {
 						if (mactions.get(i).equalsIgnoreCase("Withdraw-" + count)) {
 							found = true;
-                                                        log("Item found i: " + i);
-							atMenuItem(i);
+                                                        //log("Item found i: " + i);
+							atMenuItem(3);
 							break;
 						}
 					}
