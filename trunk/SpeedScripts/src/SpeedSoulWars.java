@@ -52,20 +52,21 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
     protected boolean attackSlayer = false;
     //Locations
     protected final Area blueLobby = new Area(1870, 3158, 9, 8);
-    protected final Area blueGameLobby = new Area(0, 0, 0, 0);
-    protected final Area redLobby = new Area(0, 0, 0, 0);
-    protected final Area redGameLobby = new Area(0, 0, 0, 0);
+    protected final Area blueGameLobby = new Area(1816, 3220, 1823, 3230, true);
+    protected final Area redLobby = new Area(1900, 3157, 1909, 3165, true);
+    protected final Area redGameLobby = new Area(1951, 3234, 1958, 3244, true);
     protected final Area arenaBlueHalf = new Area(0, 0, 0, 0);
     protected final Area arenaRedHalf = new Area(0, 0, 0, 0);
-    protected final Area eastGrave = new Area(0, 0, 0, 0);
-    protected final Area westGrave = new Area(0, 0, 0, 0);
-    protected final Area lobby = new Area(0, 0, 0, 0);
-    protected final Area obelisk = new Area(0, 0, 0, 0);
+    protected final Area eastGrave = new Area(1932, 3244, 1935, 3246, true);
+    protected final Area westGrave = new Area(1841, 3217, 1843, 3219, true);
+    protected final Area lobby = new Area(1850, 3130, 1920, 3190,true);
+    protected final Area obelisk = new Area(1884, 3229, 5, 5);
     protected final Area obeliskArea = new Area(0, 0, 0, 0);
     protected final RSTile blueCenter = new RSTile(0, 0);
-    protected final RSTile redCenter = new RSTile(0, 0);
+    protected final RSTile redCenter = new RSTile(1931, 3230);
     protected final RSTile blueLobbyExit = new RSTile(1880, 3162);
-    protected final RSTile redLobbyExit = new RSTile(0, 0);
+    protected final RSTile redLobbyExit = new RSTile(1960, 3239);
+    public RSTile[] RedStartToRedFiends = {new RSTile(1960, 3239), new RSTile(1962, 3239), new RSTile(1965, 3238), new RSTile(1966, 3235), new RSTile(1966, 3232), new RSTile(1966, 3230), new RSTile(1966, 3227), new RSTile(1966, 3224), new RSTile(1966, 3223), new RSTile(1966, 3221), new RSTile(1966, 3219), new RSTile(1966, 3218), new RSTile(1964, 3216), new RSTile(1963, 3215), new RSTile(1962, 3214), new RSTile(1960, 3214), new RSTile(1958, 3214), new RSTile(1957, 3214), new RSTile(1956, 3214), new RSTile(1955, 3214), new RSTile(1954, 3214), new RSTile(1952, 3214), new RSTile(1951, 3214), new RSTile(1950, 3215), new RSTile(1948, 3217), new RSTile(1947, 3218), new RSTile(1945, 3218), new RSTile(1944, 3218), new RSTile(1942, 3217), new RSTile(1941, 3217), new RSTile(1939, 3217), new RSTile(1938, 3217), new RSTile(1935, 3219), new RSTile(1935, 3218), new RSTile(1934, 3217), new RSTile(1932, 3216), new RSTile(1931, 3216), new RSTile(1930, 3215), new RSTile(1928, 3213), new RSTile(1927, 3212)};
 
     public int locate() {
         loc = getLocation();
@@ -287,6 +288,13 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
             this.h = h;
         }
 
+        public Area(int x, int y, int a, int b, boolean c) {
+            this.x = x;
+            this.y = y;
+            this.w = a - x;
+            this.h = b - y;
+        }
+
         public boolean contains(int X, int Y) {
             if (X >= x && X <= x + w) {
                 if (Y >= y && Y <= y + h) {
@@ -302,6 +310,10 @@ public class SpeedSoulWars extends Script implements ServerMessageListener, Pain
 
         public RSTile randomPoint() {
             return new RSTile(x + random(0, w), y + random(0, h));
+        }
+
+        public RSTile center() {
+            return new RSTile(x + w / 2, y + h / 2);
         }
     }
 
