@@ -19,6 +19,7 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Map;
 import org.rsbot.bot.Bot;
@@ -28,8 +29,18 @@ import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.script.Constants;
 import org.rsbot.script.Script;
+import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.Skills;
 
+@ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
+    name = "SpeedSuperHeat", version = 1.0, 
+    description = "<html>" +
+    "<head>" +
+    "</head>" +
+    "<body>" +
+    "Bird Hunting by LightSpeed and Pirateblanc" +
+    "</body>" +
+    "</html>")
 public class SpeedBirdHunting extends Script implements ServerMessageListener, PaintListener {
 
     /** Script vars */
@@ -39,16 +50,109 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     private int startExp;
     private int startLvl;
 
+    private boolean trapsSet = false;
+    private boolean waiting = false;
+
     /** Final description vars */
     private final String VERSION = "1.0";
     private final String TITLE = "SpeedBirdHunting";
 
     /** Final action vars */
-    private final int WALK_AWAY = 0;
-    private final int SET_TRAP = 1;
-    private final int PICKUP_TRAP = 2;
-    private final int SEARCH_TRAP = 3;
-    private final int OTHER = 4;
+    private final int A_WALK_AWAY = 0;
+    private final int A_SET_TRAP = 1;
+    private final int A_PICKUP_TRAP = 2;
+    private final int A_SEARCH_TRAP = 3;
+    private final int A_OTHER = 4;
+
+    /** Final item vars */
+    private final int I_BD_SNARE_ID = 10006;
+    private final int I_BD_SNARE_GROUND_ID = 19175;
+    private final int I_TRAP_ID = 10006;
+
+    // -----------------------------Actions-------------------------------------
+
+    /**
+     * Finds the abs mouse position of an item in your inventory
+     * @param itemID the item id to look for
+     * @return mouse position of the item, if there are multiply returns the last
+     * one in your inventory
+     */
+    public Point findPositionOfItem(int itemID) {
+        int[] inventoryArray = getInventoryArray();
+        int startItem = -1;
+        // Scans inventory
+        for (int i = 27; i > 0; i--) {
+            if (inventoryArray[i] == itemID) {
+                startItem = i;
+                break;
+            }
+        }
+        Point itemPos = getInventoryItemPoint(startItem);
+        if (itemPos.equals(new Point(-1, -1))) {
+            // What to do if not found
+        }
+        return itemPos;
+    }
+
+    /**
+     * Checks to see if you have traps in your inven
+     * @return whether you carry traps
+     */
+    public boolean checkInventoryForTraps() {
+        return !(getInventoryCount(I_BD_SNARE_ID) == 0);
+    }
+
+    /**
+     * 
+     * @param actionID
+     * @return
+     */
+    public int performAction(int actionID) {
+        if (actionID == A_SET_TRAP) {
+            if (checkInventoryForTraps()) {
+                Point trapPos = findPositionOfItem(I_BD_SNARE_ID);
+                moveMouse(trapPos.x + 10, trapPos.y + 10, 5, 5);
+            }
+            else {
+                log("You do not have any bird snares!");
+                return -1;
+            }
+        }
+
+        return 1000;
+    }
+
+    /**
+     * When script loops, this is what it does
+     * @return pause before next loop cycle
+     */
+    public int loopAction() {
+        if (!isLoggedIn()) {
+            Bot.disableRandoms = false;
+            return 1000;
+        }
+        if (!trapsSet) {
+            performAction(A_SET_TRAP);
+        }
+        return 1000;
+    }
+
+    // -----------------------------Runtime-------------------------------------
+
+    /**
+     * Method that repeats over and over and...
+     * @return time to wait before next loop
+     */
+    @Override
+    public int loop() {
+        try {
+            return loopAction();
+        }
+        catch (Exception e) {
+            log("Loop error: " + e.toString());
+            return 1000;
+        }
+    }
 
     /**
      * What the script should take care of when it begins
@@ -63,7 +167,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
             for (int i = 0; i < 20; i++) {
                 startExpArry[i] = skills.getCurrentSkillExp(i);
             }
-            
+
             /** Gets the initial xp and level for hunting */
             startExp = skills.getCurrentSkillExp(Constants.STAT_HUNTER);
             startLvl = skills.getRealSkillLevel(Constants.STAT_HUNTER);
@@ -84,7 +188,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         int min = (int) ((timeDiff) / 60) - hours * 60;
         log("Script ran for: " + hours + " hours " + min + " min.");
         log(status());
-        logout();
+        //logout();
     }
 
     /**
@@ -98,26 +202,6 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         s += " , Lvls Gained: " + (skills.getRealSkillLevel(Constants.STAT_MAGIC) - startLvl);
         return s;
     }
-    
-    public int performAction() {
-
-        return 1000;
-    }
-
-    /**
-     * Method that repeats over and over and...
-     * @return time to wait before next loop
-     */
-    @Override
-    public int loop() {
-        try {
-            return performAction();
-        }
-        catch (Exception e) {
-            log("Loop error: " + e.toString());
-            return 1000;
-        }
-    }
 
     /**
      * Deals with messages sent by RS
@@ -128,6 +212,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     }
 
     // ------------------------------PAINT--------------------------------------
+
     // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
         // Font setting
