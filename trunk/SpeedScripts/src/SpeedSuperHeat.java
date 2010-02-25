@@ -62,7 +62,7 @@ name = "SpeedSuperHeat", version = 1.0, description = "<html><head>"
 + "   <option>Silver<option>Iron"
 + "</select>"
 + "<br>"
-+ "Logout On Crash? <input type=\"checkbox\" name=\"logout\" value=\"true\">"
++ "Logout On Crash/Finished ores? <input type=\"checkbox\" name=\"logout\" value=\"true\">"
 + "<br>"
 + "Lag Time For Banking & Mouse (sec): <select name=\"lag\">"
 + "   <option>1.0<option>2.0"
@@ -254,13 +254,16 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             wait(1500);
             if (!bank.open()) {
                 wait(1500);
-                log("Error: can't open bank");
+                //log("Error: can't open bank");
                 return false;
             }
         }
+        if (isPaused) {
+            return false;
+        }
         double speedfactor = lagFactor;
         //moveMouse(92, 35, 5, 5);
-        lagFactor *= 2.0;
+        lagFactor *= 1.8;
         int errCount = 0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
@@ -281,19 +284,17 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             return false;
         }
         wait(random(125, 375));
-        withdraw(oreID, withdrawlFactor);
-        wait(random(700, 1000));
         int ore = getInventoryCount(oreID);
         while (ore != withdrawlFactor && bank.isOpen()) {
             if (ore > withdrawlFactor) {
                 bank.deposit(oreID, ore - withdrawlFactor);
             } else if (ore < withdrawlFactor) {
-                bank.withdraw(oreID, withdrawlFactor - ore);
+                withdraw(oreID, withdrawlFactor - ore);
             }
             wait(random(700, 1000));
             ore = getInventoryCount(oreID);
             errCount++;
-            if (errCount > 2) {
+            if (errCount > 3 || isPaused) {
                 lagFactor = speedfactor;
                 return false;
             }
@@ -302,9 +303,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0) {
             while (!checkOres() && bank.isOpen()) {
                 bank.withdraw(coalID, 0);
-                wait(random(650, 750));
+                wait(random(750, 950));
                 errCount++;
-                if (errCount > 2) {
+                if (errCount > 3 || isPaused) {
                     lagFactor = speedfactor;
                     return false;
                 }
@@ -315,60 +316,61 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     }
 
     /**
-	 * Tries to withdraw an item.
-	 *
-	 * 0 is All. 1,5,10 use Withdraw 1,5,10 while other numbers Withdraw X.
-	 *
-	 * @param itemID
-	 *            The ID of the item.
-	 * @param count
-	 *            The number to withdraw.
-	 * @return <tt>true</tt> on success.
-	 */
-	public boolean withdraw(final int itemID, final int count) {
-		if (count < 0)
-			throw new IllegalArgumentException("count < 0 (" + count + ")");
-		if (!bank.isOpen())
-			return false;
-		final RSInterfaceComponent item = bank.getItemByID(itemID);
-		if ((item == null) || !item.isValid())
-			return false;
-		final int inventoryCount = getInventoryCount(true);
-		switch (count) {
-			case 0: // Withdraw All
-				atInterface(item, "Withdraw-All");
-				break;
-			case 1: // Withdraw 1
-			case 5: // Withdraw 5
-			case 10: // Withdraw 10
-				atInterface(item, "Withdraw-" + count);
-				break;
-			default: // Withdraw x
-				if (atInterface(item, false)) {
-					wait(random(600, 900));
-					java.util.ArrayList<String> mactions = getMenuActions();
-					boolean found = false;
-					for (int i = 0; i < mactions.size(); i++) {
-						if (mactions.get(i).equalsIgnoreCase("Withdraw-" + count)) {
-							found = true;
-							atMenu("Withdraw-" + count);
-							break;
-						}
-					}
-					if (!found && atInterface(item, "Withdraw-X")) {
-						wait(random(1000, 1300));
-						Bot.getInputManager().sendKeys("" + count, true);
-					}
-				}
-				break;
-		}
-		if ((getInventoryCount(true) > inventoryCount) || (getInventoryCount(true) == 28))
-			return true;
-		return false;
-	}
-
-
-
+     * Tries to withdraw an item.
+     *
+     * 0 is All. 1,5,10 use Withdraw 1,5,10 while other numbers Withdraw X.
+     *
+     * @param itemID
+     *            The ID of the item.
+     * @param count
+     *            The number to withdraw.
+     * @return <tt>true</tt> on success.
+     */
+    public boolean withdraw(final int itemID, final int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("count < 0 (" + count + ")");
+        }
+        if (!bank.isOpen()) {
+            return false;
+        }
+        final RSInterfaceComponent item = bank.getItemByID(itemID);
+        if ((item == null) || !item.isValid()) {
+            return false;
+        }
+        final int inventoryCount = getInventoryCount(true);
+        switch (count) {
+            case 0: // Withdraw All
+                atInterface(item, "Withdraw-All");
+                break;
+            case 1: // Withdraw 1
+            case 5: // Withdraw 5
+            case 10: // Withdraw 10
+                atInterface(item, "Withdraw-" + count);
+                break;
+            default: // Withdraw x
+                if (atInterface(item, false)) {
+                    wait(random(600, 900));
+                    java.util.ArrayList<String> mactions = getMenuActions();
+                    boolean found = false;
+                    for (int i = 0; i < mactions.size(); i++) {
+                        if (mactions.get(i).equalsIgnoreCase("Withdraw-" + count)) {
+                            found = true;
+                            atMenu("Withdraw-" + count);
+                            break;
+                        }
+                    }
+                    if (!found && atInterface(item, "Withdraw-X")) {
+                        wait(random(1000, 1300));
+                        Bot.getInputManager().sendKeys("" + count, true);
+                    }
+                }
+                break;
+        }
+        if ((getInventoryCount(true) > inventoryCount) || (getInventoryCount(true) == 28)) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Desposits material into the bank. But not runes
@@ -379,7 +381,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             wait(1500);
             if (!bank.open()) {
                 wait(1500);
-                log("Error: can't open bank");
+                //log("Error: can't open bank");
                 return false;
             }
         }
@@ -387,7 +389,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             if (bank.depositAllExcept(561, 554)) {
                 return true;
             } else {
-                log("Error: depositing items problem");
+                //log("Error: depositing items problem");
                 return false;
             }
         }
@@ -395,7 +397,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (bank.depositAllExcept(561, 554, coalID)) {
             return true;
         } else {
-            log("Error: depositing items problem");
+            //log("Error: depositing items problem");
             return false;
         }
     }
@@ -450,7 +452,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 if ((new BankPins()).runRandom()) {
                     wait(1000);
                 }
-                if (errorCounter > 5) {
+                if (errorCounter > 6) {
                     return -1;
                 }
                 if (!deposit()) {
@@ -495,7 +497,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         log("Lag Factor: " + lagFactor);
 
         logOutDone = (map.get("logout") != null) ? true : false;
-        log("Logout Debug: " + logOutDone);
+        log("Logout When done: " + logOutDone);
 
         // Give barID via human html input
         String ore = map.get("ore");
@@ -578,24 +580,11 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     public void antiBan() {
         switch (random(0, 50)) {
-            case 1:
-            case 2: {
-                //setCameraRotation(random(1, 270));
-                break;
-            }
-            case 3:
             case 4:
             case 5:
             case 6: {
                 openTab(TAB_STATS);
-                //log("Opening stats page.");
-                moveMouse(578, 405);
-                wait(random(1000, 1500));
-                break;
-            }
-            case 20: {
-                //itemPos = getItemPos();
-                //log("Item found at: " + itemPos.x + " , " + itemPos.y);
+                wait(random(750, 1000));
                 break;
             }
             default: {
@@ -619,7 +608,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     public void wait(int toSleep) {
-        super.wait((int) (toSleep * Math.pow(lagFactor,.5)));
+        super.wait((int) (toSleep * Math.pow(lagFactor, .5)));
     }
 
     /**
