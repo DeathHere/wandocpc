@@ -49,6 +49,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     private int[] startExpArry = null;
     private int startExp;
     private int startLvl;
+    private final double LAG_FACTOR = 1.5;
 
     private boolean trapsSet = false;
     private boolean waiting = false;
@@ -108,18 +109,25 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
      * @return
      */
     public int performAction(int actionID) {
-        if (actionID == A_SET_TRAP) {
-            if (checkInventoryForTraps()) {
-                Point trapPos = findPositionOfItem(I_BD_SNARE_ID);
-                moveMouse(trapPos.x + 10, trapPos.y + 10, 5, 5);
-            }
-            else {
-                log("You do not have any bird snares!");
-                return -1;
-            }
-        }
+        switch (actionID) {
+            case A_SET_TRAP:
+                if (checkInventoryForTraps()) {
+                    Point trapPos = findPositionOfItem(I_BD_SNARE_ID);
+                    moveMouse(trapPos.x + 10, trapPos.y + 10, 5, 5);
+                    wait(random(500, 750));
+                    clickMouse(true);
+                    wait(random(500, 750));
+                    return 1000;
+                } else {
+                    log("You do not have any bird snares!");
+                    return -1;
+                }
+            case A_SEARCH_TRAP:
+                return 1000;
+            default:
+                return 1000;
 
-        return 1000;
+        }
     }
 
     /**
@@ -201,6 +209,15 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_MAGIC) - startExp);
         s += " , Lvls Gained: " + (skills.getRealSkillLevel(Constants.STAT_MAGIC) - startLvl);
         return s;
+    }
+
+    /**
+     * To pause the script while stuff is being done
+     * @param toSleep how long to pause
+     */
+    @Override
+    public void wait(int toSleep) {
+        super.wait((int) (toSleep * Math.pow(LAG_FACTOR, .5)));
     }
 
     /**
