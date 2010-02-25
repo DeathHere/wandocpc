@@ -452,6 +452,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     while (!bank.isOpen()) {
                         wait(random(500, 750));
                         errors++;
+                        (new BankPins()).runRandom();
                         if (errors > 6) {
                             return 1;
                         }
