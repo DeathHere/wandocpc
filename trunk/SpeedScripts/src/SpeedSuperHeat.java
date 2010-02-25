@@ -517,7 +517,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         } else if (ore.equalsIgnoreCase("iron")) {
             barID = 2351;
         }
-        log("Item ID: " + barID);
+        //log("Item ID: " + barID);
         if (barID <= 0) {
             return false;
         }
@@ -543,6 +543,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         int min = (int) ((timeDiff) / 60) - hours * 60;
         log("Script Ran for: " + hours + " hours " + min + " min.");
         log(status());
+        Bot.disableRandoms = false;
         if (logOutDone) {
             logout();
         }
