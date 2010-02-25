@@ -440,6 +440,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             if (distanceBetween(loc, getLocation()) > 10) {
                 if (checkForRandoms()) {
                     loc = getLocation();
+                    return 1;
                 }
             } else {
                 Bot.disableRandoms = true;
@@ -584,6 +585,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             case 5:
             case 6: {
                 openTab(TAB_STATS);
+                moveMouse(578, 405, 5, 5);
                 wait(random(750, 1000));
                 break;
             }
