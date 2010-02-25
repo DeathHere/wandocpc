@@ -20,33 +20,109 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Polygon;
+import java.util.Map;
 import org.rsbot.bot.Bot;
 import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
+import org.rsbot.script.Constants;
 import org.rsbot.script.Script;
 import org.rsbot.script.Skills;
 
 public class SpeedBirdHunting extends Script implements ServerMessageListener, PaintListener {
 
+    /** Script vars */
     private int xpHour = 0;
     private long startTime;
     private int[] startExpArry = null;
-    private String version = "1.0";
-    private String title = "SpeedBirdHunting";
+    private int startExp;
+    private int startLvl;
 
+    /** Final description vars */
+    private final String VERSION = "1.0";
+    private final String TITLE = "SpeedBirdHunting";
+
+    /** Final action vars */
+    private final int WALK_AWAY = 0;
+    private final int SET_TRAP = 1;
+    private final int PICKUP_TRAP = 2;
+    private final int SEARCH_TRAP = 3;
+    private final int OTHER = 4;
+
+    /**
+     * What the script should take care of when it begins
+     * @param args
+     * @return idk what it returns
+     */
+    @Override
+    public boolean onStart(final Map<String, String> args) {
+        try {
+            /** Sets the initial values for all the skill exp counters */
+            startExpArry = new int[30];
+            for (int i = 0; i < 20; i++) {
+                startExpArry[i] = skills.getCurrentSkillExp(i);
+            }
+            
+            /** Gets the initial xp and level for hunting */
+            startExp = skills.getCurrentSkillExp(Constants.STAT_HUNTER);
+            startLvl = skills.getRealSkillLevel(Constants.STAT_HUNTER);
+        }
+        catch (Exception e) {
+            log("Onstart error: " + e.toString());
+        }
+        return true;
+    }
+
+    /**
+     * What to do when the script finishes running
+     */
+    @Override
+    public void onFinish() {
+        long timeDiff = (System.currentTimeMillis() - startTime) / 1000;
+        int hours = (int) ((timeDiff) / 3600);
+        int min = (int) ((timeDiff) / 60) - hours * 60;
+        log("Script ran for: " + hours + " hours " + min + " min.");
+        log(status());
+        logout();
+    }
+
+    /**
+     * Gives output of details for the player's actions,
+     * eg. exp and levels gained
+     * @return
+     */
+    public String status() {
+        String s = "";
+        s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_MAGIC) - startExp);
+        s += " , Lvls Gained: " + (skills.getRealSkillLevel(Constants.STAT_MAGIC) - startLvl);
+        return s;
+    }
+    
+    public int performAction() {
+
+        return 1000;
+    }
+
+    /**
+     * Method that repeats over and over and...
+     * @return time to wait before next loop
+     */
     @Override
     public int loop() {
         try {
-            return 10;
+            return performAction();
         }
         catch (Exception e) {
-            log("Crash: " + e.toString());
+            log("Loop error: " + e.toString());
             return 1000;
         }
     }
 
+    /**
+     * Deals with messages sent by RS
+     * @param e the message
+     */
     public void serverMessageRecieved(ServerMessageEvent e) {
         
     }
@@ -54,7 +130,6 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     // ------------------------------PAINT--------------------------------------
     // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
-        //refreshCounter++;
         // Font setting
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
 
@@ -69,10 +144,10 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         final long minutes = millis / (1000 * 60);
         millis -= minutes * 1000 * 60;
         final long seconds = millis / 1000;
-        paintBar(g, x, y, " Runtime: " + hours + " - "
+        paintBar(g, x, y, TITLE + " Runtime: " + hours + " - "
                 + minutes + " : " + seconds);
 
-        g.drawString("Version " + version, 436, y + 13);
+        g.drawString("Version " + VERSION, 436, y + 13);
 
         // Get mouse
         final Mouse mouse = Bot.getClient().getMouse();
@@ -91,13 +166,11 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         g.fillPolygon(po);
         g.drawPolygon(po);
 
-        //Skill xp increase check
-        for (int i = 0; i < 20; i++) {
-            if ((startExpArry != null)
-                    && ((skills.getCurrentSkillExp(i) - startExpArry[i]) > 0)) {
-                paintSkillBar(g, x, y + 15, i, startExpArry[i]);
-                y += 15;
-            }
+        // Skill xp increase check
+        if ((startExpArry != null) && 
+                ((skills.getCurrentSkillExp(Constants.STAT_HUNTER) - startExpArry[Constants.STAT_HUNTER]) > 0)) {
+            paintSkillBar(g, x, y + 15, Constants.STAT_HUNTER, startExpArry[Constants.STAT_HUNTER]);
+            y += 15;
         }
     }
 
@@ -137,11 +210,8 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                 458, y + 13);
         g.drawString("To lvl: " + exp, 200, y + 13);
 
-        //if (refreshCounter > xpHourRefreshRate) {
         xpHour = (int) (gained * 3600000.0
                 / ((double) System.currentTimeMillis() - (double) startTime));
-        //refreshCounter = 0;
-        //}
         g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
     }
 
