@@ -44,6 +44,8 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private final int sacredKnifeID = 14111;
     private final int knifeID = 946;
     private final int bowstringID = 1777;
+    private int x = 0;
+    private int y = 0;
 
     @Override
     public int loop() {
@@ -75,6 +77,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
                         wait(random(500, 750));
+                        (new BankPins()).runRandom();
                         errors++;
                         if (errors > 6) {
                             return 1;
@@ -82,9 +85,6 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     }
                 }
                 errors = 0;
-                if ((new BankPins()).runRandom()) {
-                    wait(1000);
-                }
                 if (errorCounter > 6) {
                     return -1;
                 }
@@ -206,26 +206,54 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private boolean fletch() {
-        if(!checkFletch())
+        if (!checkFletch()) {
             return false;
+        }
         if (fletch && logsLeft > 0) {
-            int[] inventoryArray = getInventoryArray();
-            int startItem = -1;
-            for (int i = 0; i < 28; i++) {
-                if (inventoryArray[i] == bowID) {
-                    startItem = i;
-                    break;
+
+            Point itemPos = getInventoryLocation(logID);
+            Point knifePos = getInventoryLocation(knifeID);
+            if (knifePos.equals(new Point(-1, -1))) {
+                knifePos = getInventoryLocation(sacredKnifeID);
+            }
+            if (itemPos.equals(new Point(-1, -1)) || knifePos.equals(new Point(-1, -1))) {
+                return false;
+            }
+            moveMouse(knifePos, 5, 5);
+            wait(random(500,750));
+            atMenu("Use");
+            moveMouse(itemPos, 5, 5);
+            wait(random(500,750));
+            atMenu("Logs");
+            moveMouse(x, y, 5, 5);
+            wait(random(1500,2000));
+            atMenu("X");
+            wait(random(1300, 1800));
+            sendText("" + (random(3, 9) * 11), true);
+            while (getInventoryCount(logID) > 0) {
+                wait(random(1000, 1500));
+                errors++;
+                if (errors > 20) { return false;
                 }
             }
-            Point itemPos = getInventoryItemPoint(startItem);
-            if(itemPos.equals(new Point(-1, -1)))
-                return false;
-            
         } else if (string && unstrungLeft > 0) {
+            
         } else {
             return false;
         }
         return true;
+    }
+
+    private Point getInventoryLocation(int ID) {
+        int[] inventoryArray = getInventoryArray();
+        int startItem = -1;
+        for (int i = 0; i < 28; i++) {
+            if (inventoryArray[i] == ID) {
+                startItem = i;
+                break;
+            }
+        }
+        return getInventoryItemPoint(startItem);
     }
 
     private boolean deposit() {
@@ -382,8 +410,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             return false;
         }
         if (bowType.equals("Shortbow")) {
+            x = 107;
+            y = 410;
             bowID = shortbowID;
         } else if (bowType.equals("Longbow")) {
+            x = 248;
+            y = 406;
             bowID = longbowID;
         } else {
             return false;
