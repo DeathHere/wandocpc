@@ -29,7 +29,7 @@ name = "SpeedFletcher", version = 1.0, description = "<html><head>"
 + "}"
 + "</style>"
 + "</head>" //woodType needs the log name "Wood","Oak","Willow","Maple","Yew","Magic"
-        //bowType needs "Shortbow" or "Longbow"
+//bowType needs "Shortbow" or "Longbow"
 + "<body>"
 + "<center>"
 + "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\""
@@ -298,10 +298,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             if (bow.equals(new Point(-1, -1)) || string.equals(new Point(-1, -1))) {
                 return false;
             }
-            moveMouse(bow.x+15,bow.y+15, 5, 5);
+            moveMouse(bow.x + 15, bow.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Use");
-            moveMouse(string.x+15,string.y+15, 5, 5);
+            moveMouse(string.x + 15, string.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("string");
             wait(random(1300, 1800));
@@ -667,7 +667,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (bowsMade + logsLeft == 0) {
             logsLeft = 1;
         }
-        int percent = Math.round(((float)bowsMade) / (bowsMade + logsLeft));
+        int percent = Math.round(((float) bowsMade * 100) / (bowsMade + logsLeft));
 
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
@@ -694,7 +694,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (strung + unstrungLeft == 0) {
             unstrungLeft = 1;
         }
-        percent = Math.round(((float)strung) / (strung + unstrungLeft));
+        percent = Math.round(((float) strung * 100) / (strung + unstrungLeft));
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
         g.setColor(new Color(255, 0, 0, 90));
