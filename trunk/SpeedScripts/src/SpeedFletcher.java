@@ -245,9 +245,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             sendText("" + (random(3, 9) * 11), true);
             errors = 0;
             while (getInventoryCount(logID) > 0 && !isPaused) {
-                wait(random(1000, 1500));
+                wait(random(1500, 3500));
                 errors++;
-                if (errors > 20) {
+                if (errors > 35) {
                     return false;
                 }
             }
@@ -265,7 +265,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             atMenu("string");
             errors = 0;
             while (getInventoryCount(logID) > 0) {
-                wait(random(1000, 1500));
+                wait(random(1500, 2500));
                 errors++;
                 if (errors > 20) {
                     return false;
