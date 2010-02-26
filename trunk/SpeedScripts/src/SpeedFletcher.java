@@ -283,7 +283,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             moveMouse(itemPos.x + 15, itemPos.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Logs");
-            moveMouse(x, y, 20, 20);
+            moveMouse(x, y, 25, 25);
             wait(random(1500, 2000));
             atMenu("Make X");
             wait(random(1300, 1800));
@@ -298,10 +298,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             if (bow.equals(new Point(-1, -1)) || string.equals(new Point(-1, -1))) {
                 return false;
             }
-            moveMouse(bow, 5, 5);
+            moveMouse(bow.x+15,bow.y+15, 5, 5);
             wait(random(500, 750));
             atMenu("Use");
-            moveMouse(string, 5, 5);
+            moveMouse(string.x+15,string.y+15, 5, 5);
             wait(random(500, 750));
             atMenu("string");
             wait(random(1300, 1800));
@@ -359,10 +359,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (fletch && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             logsLeft = bank.getCount(logID);
             if (logsLeft > 28) {
-                int withdrawlFactor = 27;
+                int withdrawlFactor = 10;
                 int errCount = 0;
                 withdraw(logID, 0);
-                wait(random(700, 1000));
+                wait(random(1000, 1500));
                 int logs = getInventoryCount(logID);
                 while (logs < withdrawlFactor && bank.isOpen()) {
                     if (logs < withdrawlFactor) {
@@ -377,7 +377,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 }
                 return true;
             } else if (logsLeft <= 28) {
-                return withdraw(logID, logsLeft - 1);
+                withdraw(logID, logsLeft - 1);
+                wait(random(1000, 1500));
+                return true;
             } else {
                 log("Out of logs.");
                 fletch = false;
