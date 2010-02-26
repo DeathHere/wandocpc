@@ -210,12 +210,16 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         String word = e.getMessage().toLowerCase();
         if (word.contains("cut")) {
             bowsMade++;
-            logsLeft--;
+            if (logsLeft > 1) {
+                logsLeft--;
+            }
             unstrungLeft++;
         }
         if (word.contains("string")) {
             strung++;
-            unstrungLeft--;
+            if (unstrungLeft > 1) {
+                unstrungLeft--;
+            }
         }
         if (word.contains("You've just advanced".toLowerCase())) {
             clickContinue();
