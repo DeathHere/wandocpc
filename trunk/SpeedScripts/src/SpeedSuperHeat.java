@@ -205,7 +205,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             // Get the last position of the ore
             int[] inventoryArray = getInventoryArray();
             int startItem = -1;
-            for (int i = 27; i > 0; i--) {
+            for (int i = 27; i >= 0; i--) {
                 if (inventoryArray[i] == oreID) {
                     startItem = i;
                     break;
@@ -448,7 +448,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             antiBan();
             setCameraAltitude(true);
             if (!checkOres()) {
-                                errors = 0;
+                errors = 0;
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
                         wait(random(750, 1000));
