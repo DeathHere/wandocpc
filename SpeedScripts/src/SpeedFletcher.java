@@ -288,7 +288,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             wait(random(500, 750));
             atMenu("Logs");
             errors = 0;
-            while (INTERFACE_FLETCH.isValid() || (animationIs(-1) && errors < 4)) {
+            while ((animationIs(-1) && errors < 4)) {
                 if (errors > 0) {
                     moveMouse(258, 354, 25, 25);
                 }
