@@ -39,7 +39,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private int startLvl;
     private boolean fletch = true;
     private boolean string = false;
-    private String woodType = "Yew";
+    private String woodType = "Maple";
     private String bowType = "Longbow";
     private int longbowID = 0;
     private int shortbowID = 0;
@@ -172,8 +172,8 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private boolean initialized() {
-        startExp = skills.getCurrentSkillExp(Constants.STAT_MAGIC); //save the initial exp and lvl
-        startLvl = skills.getRealSkillLevel(Constants.STAT_MAGIC);
+        startExp = skills.getCurrentSkillExp(Constants.STAT_FLETCHING); //save the initial exp and lvl
+        startLvl = skills.getRealSkillLevel(Constants.STAT_FLETCHING);
         loc = getLocation();
         startTime = System.currentTimeMillis();
         startExpArry = new int[30];
@@ -222,8 +222,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (!checkFletch()) {
             return false;
         }
-        if (fletch && logsLeft > 1) {
-
+        if (fletch && logsLeft > 1 && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             Point itemPos = getInventoryLocation(logID);
             Point knifePos = getInventoryLocation(knifeID);
             if (knifePos.equals(new Point(-1, -1))) {
@@ -438,7 +437,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         while (true) {
             if (errors > 10) {
                 return false;
-            } else if (!inventoryContainsOneOf(sacredKnifeID, knifeID)) {
+            } else if (fletch && inventoryContainsOneOf(sacredKnifeID, knifeID)) {
+                break;
+            } else if (string) {
+                fletch = false;
                 break;
             } else {
                 errors++;
