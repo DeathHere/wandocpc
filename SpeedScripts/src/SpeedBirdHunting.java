@@ -60,6 +60,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
 
     private boolean p_trapsSet = false;
     private boolean p_waiting = false;
+    private boolean trapDead = false;
 
     /** Final description vars */
     private final String VERSION = "1.0";
@@ -92,7 +93,6 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         for (int i = 27; i > 0; i--) {
             if (inventoryArray[i] != -1) {
                 gear.add(inventoryArray[i]);
-                continue;
             }
         }
         // Adds stuff from the keep list
@@ -102,16 +102,33 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     }
 
     /**
+     * Bury all bones in inventory
+     */
+    public void buryBones() {
+        int[] inventoryArray = getInventoryArray();
+        // Scans inventory
+        for (int i = 0; i < 28; i++) {
+            if (inventoryArray[i] == 526) {
+                Point clickPos = getInventoryItemPoint(i);
+                moveMouse(clickPos.x + 10, clickPos.y + 10, 5, 5);
+                wait(random(500, 750));
+                clickMouse(true);
+                wait(random(500, 750));
+            }
+        }
+    }
+
+    /**
      * Finds the abs mouse position of an item in your inventory
      * @param itemID the item id to look for
-     * @return mouse position of the item, if there are multiply returns the last
-     * one in your inventory
+     * @return mouse position of the item, if there are multiply returns the
+     * first one in your inventory
      */
     public Point findPositionOfItem(int itemID) {
         int[] inventoryArray = getInventoryArray();
         int startItem = -1;
         // Scans inventory
-        for (int i = 27; i > 0; i--) {
+        for (int i = 0; i < 28; i++) {
             if (inventoryArray[i] == itemID) {
                 startItem = i;
                 break;
@@ -150,8 +167,9 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                     wait(random(2500, 2750));
                     // Handle multi traps?
                     p_trapsSet = true;
-                    performAction(A_DROP_CRAP);
                     p_waiting = true;
+                    performAction(A_DROP_CRAP);
+                    buryBones();
                     return 1000;
                 } else {
                     log("You do not have any bird snares!");
@@ -187,6 +205,16 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                 }
                 //log("Searching 4");
                 return 1000;
+            }
+
+            case A_PICKUP_TRAP: {
+                RSTile snare = getNearestGroundItemByID(I_BD_SNARE);
+                Point clickPos = snare.getScreenLocation();
+                wait(random(500, 750));
+                clickMouse(new Point(clickPos.x + 5, clickPos.y - 5), true);
+                wait(random(1500, 1750));
+                trapDead = false;
+                return 5000;
             }
                 
             case A_WALK_AWAY: {
@@ -233,6 +261,9 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         if (p_trapsSet && !p_waiting) {
             performAction(A_WALK_AWAY);
         }*/
+        if (trapDead) {
+            return performAction(A_PICKUP_TRAP);
+        }
         if (p_waiting) {
             performAction(A_SEARCH_TRAP);
         }
@@ -326,6 +357,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         final String word = e.getMessage().toLowerCase();
         if (word.contains("fallen over")) {
             log("Retriving fallen trap");
+            trapDead = true;
         }
     }
 
