@@ -55,7 +55,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     private final double LAG_FACTOR = 1.5;
     private ArrayList<Integer> gear = new ArrayList<Integer>();
     private final int[] KEEP_ITEMS = {
-        10088, 526
+        10088, 526, 10006
     };
 
     private boolean p_trapsSet = false;
