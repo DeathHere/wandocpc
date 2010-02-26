@@ -83,7 +83,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     // -----------------------------Actions-------------------------------------
 
     /**
-     * 
+     * Adds stuff in your current inventory, so you wont drop them later
      */
     public void updateGear() {
         gear.clear();
@@ -140,9 +140,9 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     public int performAction(int actionID) {
         switch (actionID) {
             case A_SET_TRAP: {
-                log("Setting traps");
+                //log("Setting traps");
                 if (isThereInInventoryA(I_BD_SNARE)) {
-                    initLoc = getLocation();
+                    //initLoc = getLocation();
                     Point trapPos = findPositionOfItem(I_BD_SNARE);
                     moveMouse(trapPos.x + 10, trapPos.y + 10, 5, 5);
                     wait(random(500, 750));
@@ -151,7 +151,8 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                     // Handle multi traps?
                     p_trapsSet = true;
                     performAction(A_DROP_CRAP);
-                    return 20000;
+                    p_waiting = true;
+                    return 1000;
                 } else {
                     log("You do not have any bird snares!");
                     return -1;
@@ -159,21 +160,37 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
             }
 
             case A_SEARCH_TRAP: {
-                RSObject snare = getNearestObjectByName("Bird snare");
-                wait(random(500, 750));
-                if (snare != null && snare.getID() != I_BD_SNARE_NORMAL) {
-                    clickMouse(snare.getLocation().getScreenLocation(), true);
+                //log("Searching traps");
+                RSObject snare = getNearestObjectByID(I_BD_SNARE_FAIL);
+                //log("Searching 2");
+                if (snare != null) {
+                    wait(random(500, 750));
+                    Point clickPos = snare.getLocation().getScreenLocation();
+                    clickMouse(new Point(clickPos.x + 1, clickPos.y + 5), true);
+                    wait(random(500, 750));
+                    walkTo(initLoc);
+                    wait(random(500, 750));
+                    p_waiting = false;
+                    p_trapsSet = false;
                 }
-                wait(random(500, 750));
-                walkTo(initLoc);
-                wait(random(500, 750));
-                p_waiting = false;
-                p_trapsSet = false;
+                snare = getNearestObjectByID(I_BD_SNARE_CAUGHT);
+                //log("Searching 3");
+                if (snare != null) {
+                    wait(random(500, 750));
+                    Point clickPos = snare.getLocation().getScreenLocation();
+                    clickMouse(new Point(clickPos.x + 1, clickPos.y + 5), true);
+                    wait(random(500, 750));
+                    walkTo(initLoc);
+                    wait(random(500, 750));
+                    p_waiting = false;
+                    p_trapsSet = false;
+                }
+                //log("Searching 4");
                 return 1000;
             }
                 
             case A_WALK_AWAY: {
-                log("Walking away");
+                //log("Walking away");
                 wait(random(500, 750));
                 walkTo(new RSTile(initLoc.getX() - 10, initLoc.getY()));
                 wait(random(500, 750));
@@ -183,7 +200,15 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
 
             case A_DROP_CRAP: {
                 wait(random(500, 750));
-                dropAllExcept();
+                int[] dontDrops = new int[gear.size()];
+                for (int i = 0; i < gear.size(); i++) {
+                    dontDrops[i] = gear.get(i);
+                }
+                /*
+                for (int i = 0; i < dontDrops.length; i++) {
+                    log(Integer.toString(dontDrops[i]));
+                }*/
+                dropAllExcept(dontDrops);
                 wait(random(500, 750));
                 return 1000;
             }
@@ -208,11 +233,11 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         if (p_trapsSet && !p_waiting) {
             performAction(A_WALK_AWAY);
         }*/
-        if (!p_trapsSet) {
-            return performAction(A_SET_TRAP);
-        }
         if (p_waiting) {
             performAction(A_SEARCH_TRAP);
+        }
+        if (!p_trapsSet) {
+            return performAction(A_SET_TRAP);
         }
         return 1000;
     }
