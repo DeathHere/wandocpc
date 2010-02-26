@@ -288,10 +288,13 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             wait(random(500, 750));
             atMenu("Logs");
             errors = 0;
+            log("Animation: "+getMyPlayer().getAnimation());
+
             while ((animationIs(-1) && errors < 4)) {
                 if (errors > 0) {
                     moveMouse(258, 354, 25, 25);
                 }
+                log("In menu loop");
                 moveMouse(x, y, 25, 25);
                 wait(random(1500, 2000));
                 atMenu("Make X");
@@ -300,6 +303,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 wait(random(1300, 1800));
                 errors++;
             }
+            log("Leave menu loop");
             while (animationIs(1248)) {
                 wait(random(500, 750));
             }
