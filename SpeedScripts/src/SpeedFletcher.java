@@ -17,6 +17,8 @@ import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.Skills;
 import org.rsbot.script.randoms.BankPins;
 import org.rsbot.script.randoms.antiban.BreakHandler;
+import org.rsbot.script.wrappers.RSInterface;
+import org.rsbot.script.wrappers.RSInterfaceChild;
 import org.rsbot.script.wrappers.RSInterfaceComponent;
 import org.rsbot.script.wrappers.RSTile;
 
@@ -92,6 +94,8 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private String version = "1.0";
     private int[] startExpArry;
     private int stringLeft = 0;
+    RSInterface INTERFACE_FLETCH = RSInterface.getInterface(513);
+    RSInterfaceChild FLETCH_AREA = RSInterface.getChildInterface(513, 3);
 
     @Override
     public int loop() {
@@ -123,7 +127,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 errors = 0;
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
-                        wait(random(500, 750));
+                        wait(random(650, 850));
                         (new BankPins()).runRandom();
                         errors++;
                         if (errors > 6) {
@@ -283,12 +287,19 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             moveMouse(itemPos.x + 15, itemPos.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Logs");
-            moveMouse(x, y, 25, 25);
-            wait(random(1500, 2000));
-            atMenu("Make X");
-            wait(random(1300, 1800));
-            sendText("" + (random(3, 9) * 11), true);
-            wait(random(1300, 1800));
+            errors = 0;
+            while (INTERFACE_FLETCH.isValid() || (animationIs(-1) && errors < 4)) {
+                if (errors > 0) {
+                    moveMouse(258, 354, 25, 25);
+                }
+                moveMouse(x, y, 25, 25);
+                wait(random(1500, 2000));
+                atMenu("Make X");
+                wait(random(1300, 1800));
+                sendText("" + (random(3, 9) * 11), true);
+                wait(random(1300, 1800));
+                errors++;
+            }
             while (animationIs(1248)) {
                 wait(random(500, 750));
             }
@@ -304,6 +315,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             moveMouse(string.x + 15, string.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("string");
+            wait(random(1300, 1800));
+            if (FLETCH_AREA.isValid()) {
+                atInterface(FLETCH_AREA, "Make All");
+            }
             wait(random(1300, 1800));
             while (animationIs(6688)) {
                 wait(random(500, 750));
