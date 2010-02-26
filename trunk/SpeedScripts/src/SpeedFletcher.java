@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Map;
+import org.rsbot.accessors.RSItem;
 import org.rsbot.bot.Bot;
 import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
@@ -128,6 +129,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
                         wait(random(650, 850));
+                        int menu = getMenuIndex("Knife");
+                        if(menu != -1)
+                        {
+                            moveMouse(535, 250,5,50);
+                            clickMouse(true);
+                        }
                         (new BankPins()).runRandom();
                         errors++;
                         if (errors > 6) {
@@ -221,6 +228,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 unstrungLeft--;
             }
         }
+        
         if (word.contains("You've just advanced".toLowerCase())) {
             clickContinue();
         }
@@ -276,6 +284,11 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private boolean fletch() {
         if (!checkFletch()) {
             return false;
+        }
+        while(animationIs(1248,6688))
+        {
+            wait(750);
+            return true;
         }
         if (fletch && logsLeft > 1 && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             Point itemPos = getInventoryLocation(logID);
