@@ -21,7 +21,46 @@ import org.rsbot.script.wrappers.RSInterfaceComponent;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Fletching",
-name = "SpeedFletcher", version = 1.0, description = "")
+name = "SpeedFletcher", version = 1.0, description = "<html><head>"
++ "<style type=\"text/css\">"
++ "body {"
++ "   color: #FFFFFF;"
++ "   background-color: #000000;"
++ "}"
++ "</style>"
++ "</head>" //woodType needs the log name "Wood","Oak","Willow","Maple","Yew","Magic"
+        //bowType needs "Shortbow" or "Longbow"
++ "<body>"
++ "<center>"
++ "<img src=\"http://wandohigh.com/clubs/cpc/website/files/rsbot-logo.jpg\""
++ "alt=\"SpeedFletcher\">"
++ "</center>"
++ "<hr>"
++ "<center>Created by LightSpeed & Pirateblanc</center>"
++ "<hr><br>"
++ "<form>"
++ "Pick the type to fletch: "
++ "<select name=\"log\">"
++ "   <option>Yew<option>Magic<option>Maple<option>Willow<option>Oak"
++ "</select>"
++ "<br>"
++ "Pick the bow to fletch: "
++ "<select name=\"type\">"
++ "   <option>Long Bow<option>Short Bow"
++ "</select>"
++ "<br>"
++ "String bows? <input type=\"checkbox\" name=\"string\" value=\"true\">"
++ "<br>"
++ "Logout On Crash/Finished Fletching? <input type=\"checkbox\" name=\"logout\" value=\"true\">"
++ "<br>"
++ "Lag Time For Banking & Mouse (sec): <select name=\"lag\">"
++ "   <option>1.0<option>2.0"
++ "</input>"
++ "</form><br>"
++ "<p>Description: More to come later"
++ "</p>"
++ "</body>"
++ "</html>")
 public class SpeedFletcher extends Script implements PaintListener, ServerMessageListener {
 
     private boolean recordInitial = false;
@@ -127,10 +166,16 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
 
     @Override
     public boolean onStart(Map<String, String> map) {
-        //fletch,string need checkboxes
-        //logoutdone needs checkbox
-        //woodType needs the log name "Wood","Oak","Willow","Maple","Yew","Magic"
-        //bowType needs "Shortbow" or "Longbow"
+        /** Reading html inputs */
+        logOutDone = (map.get("logout") != null) ? true : false;
+        log("Logout when done: " + logOutDone);
+        string = (map.get("string") != null) ? true : false;
+        log("String bows: " + string);
+        woodType = map.get("log");
+        log("Wood type: " + woodType);
+        bowType = map.get("type");
+        log("Bow type: " + bowType);
+
         recordInitial = true;
         Bot.disableRandoms = false;
         return true;
