@@ -1,8 +1,12 @@
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.util.Map;
 import org.rsbot.bot.Bot;
+import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
@@ -10,18 +14,17 @@ import org.rsbot.script.Constants;
 import org.rsbot.script.Random;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
+import org.rsbot.script.Skills;
 import org.rsbot.script.randoms.BankPins;
 import org.rsbot.script.randoms.antiban.BreakHandler;
 import org.rsbot.script.wrappers.RSInterfaceComponent;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
-name = "SpeedSuperHeat", version = 1.0, description = "")
+@ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Fletching",
+name = "SpeedFletcher", version = 1.0, description = "")
 public class SpeedFletcher extends Script implements PaintListener, ServerMessageListener {
 
     private boolean recordInitial = false;
-
-    ;
     private int errors = 0;
     private RSTile loc;
     private int errorCounter = 0;
@@ -46,6 +49,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private final int bowstringID = 1777;
     private int x = 0;
     private int y = 0;
+    private int xpHour;
+    private String version = "1.0";
+    private int[] startExpArry;
+    private int stringLeft = 0;
 
     @Override
     public int loop() {
@@ -120,7 +127,17 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
 
     @Override
     public boolean onStart(Map<String, String> map) {
-        return super.onStart(map);
+        //fletch,string need checkboxes
+        //logoutdone needs checkbox
+        //woodType needs the log name "Wood","Oak","Willow","Maple","Yew","Magic"
+        //bowType needs "Shortbow" or "Longbow"
+        recordInitial = true;
+        Bot.disableRandoms = false;
+        startExpArry = new int[30];
+        for (int i = 0; i < 20; i++) {
+            startExpArry[i] = skills.getCurrentSkillExp(i);
+        }
+        return true;
     }
 
     @Override
@@ -141,10 +158,6 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_FLETCHING) - startExp);
         s += " , Lvls Gained: " + (skills.getRealSkillLevel(Constants.STAT_FLETCHING) - startLvl);
         return s;
-    }
-
-    public void onRepaint(Graphics render) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void serverMessageRecieved(ServerMessageEvent e) {
@@ -209,7 +222,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (!checkFletch()) {
             return false;
         }
-        if (fletch && logsLeft > 0) {
+        if (fletch && logsLeft > 1) {
 
             Point itemPos = getInventoryLocation(logID);
             Point knifePos = getInventoryLocation(knifeID);
@@ -231,14 +244,14 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             wait(random(1300, 1800));
             sendText("" + (random(3, 9) * 11), true);
             errors = 0;
-            while (getInventoryCount(logID) > 0) {
+            while (getInventoryCount(logID) > 0 && !isPaused) {
                 wait(random(1000, 1500));
                 errors++;
                 if (errors > 20) {
                     return false;
                 }
             }
-        } else if (string && unstrungLeft > 0) {
+        } else if (string && unstrungLeft > 1) {
             Point bow = getInventoryLocation(bowID);
             Point string = getInventoryLocation(bowstringID);
             if (bow.equals(new Point(-1, -1)) || string.equals(new Point(-1, -1))) {
@@ -295,10 +308,37 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
 
     private boolean withdraw() {
         if (fletch && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
-            return withdraw(bowID, 0);
+            logsLeft = bank.getCount(logID);
+            if (logsLeft > 28) {
+                return withdraw(logID, 0);
+            } else if (logsLeft <= 28) {
+                return withdraw(logID, logsLeft - 1);
+            } else {
+                log("Out of logs.");
+                fletch = false;
+                return false;
+            }
         } else if (string && inventoryEmptyExcept()) {
             int withdrawlFactor = 14;
             int errCount = 0;
+            unstrungLeft = bank.getCount(bowID);
+            stringLeft = bank.getCount(bowstringID);
+            if (unstrungLeft < withdrawlFactor) {
+                withdrawlFactor = unstrungLeft - 1;
+            }
+            if (stringLeft < withdrawlFactor) {
+                withdrawlFactor = stringLeft - 1;
+            }
+            if (unstrungLeft <= 1) {
+                log("Out of bows to string.");
+                string = false;
+                return false;
+            }
+            if (stringLeft <= 1) {
+                log("Out of string.");
+                string = false;
+                return false;
+            }
             int bow = getInventoryCount(bowID);
             while (bow != withdrawlFactor && bank.isOpen()) {
                 if (bow > withdrawlFactor) {
@@ -328,6 +368,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 }
             }
             return true;
+        } else if (!fletch && !string) {
+            log("Finished tasks.");
+            stopScript();
+            return false;
         } else {
             return false;
         }
@@ -441,5 +485,130 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             return false;
         }
         return true;
+    }
+
+    public void onRepaint(Graphics g) {
+        if (recordInitial) {
+            return;
+        }
+        //refreshCounter++;
+        // Font setting
+        g.setFont(new Font("Century Gothic", Font.BOLD, 13));
+
+        // Position reference var set
+        int x = 0;
+        int y = 28;
+
+        // Run time calculation
+        long millis = System.currentTimeMillis() - startTime;
+        final long hours = millis / (1000 * 60 * 60);
+        millis -= hours * 1000 * 60 * 60;
+        final long minutes = millis / (1000 * 60);
+        millis -= minutes * 1000 * 60;
+        final long seconds = millis / 1000;
+        paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + " - "
+                + minutes + " : " + seconds);
+
+        g.drawString("Version " + version, 436, y + 13);
+
+        // Get mouse
+        final Mouse mouse = Bot.getClient().getMouse();
+        final int mouse_x = mouse.getMouseX();
+        final int mouse_y = mouse.getMouseY();
+        final int mouse_press_x = mouse.getMousePressX();
+        final int mouse_press_y = mouse.getMousePressY();
+        final long mouse_press_time = mouse.getMousePressTime();
+
+        // Draw mouse
+        Polygon po = new Polygon();
+        po.addPoint(mouse_x, mouse_y);
+        po.addPoint(mouse_x, mouse_y + 15);
+        po.addPoint(mouse_x + 10, mouse_y + 10);
+        g.setColor(new Color(180, 70, 70, 180));
+        g.fillPolygon(po);
+        g.drawPolygon(po);
+
+        //Skill xp increase check
+        for (int i = 0; i < 20; i++) {
+            if ((startExpArry != null)
+                    && ((skills.getCurrentSkillExp(i) - startExpArry[i]) > 0)) {
+                paintSkillBar(g, x, y + 15, i, startExpArry[i]);
+                y += 15;
+            }
+        }
+    }
+
+    /**
+     *
+     * @param g
+     * @param x
+     * @param y
+     * @param skill
+     * @param start
+     */
+    public void paintSkillBar(Graphics g, int x, int y, int skill, int start) {
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+
+        int gained = (skills.getCurrentSkillExp(skill) - start);
+        String s = SkillToString(skill) + " gained: " + gained;
+
+        String firstLetter = s.substring(0, 1);
+        String remainder = s.substring(1);
+        String capitalized = firstLetter.toUpperCase() + remainder;
+        String exp = Integer.toString(skills.getXPToNextLevel(skill));
+
+        g.setColor(new Color(255, 0, 0, 90));
+        g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(new Color(0, 255, 0, 255));
+        g.fillRoundRect(416, y + 3, skills.getPercentToNextLevel(skill), 9,
+                10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, skills.getPercentToNextLevel(skill), 9,
+                10, 10);
+        g.setColor(new Color(0, 200, 255));
+        paintBar(g, x, y, capitalized);
+
+        g.drawString(Integer.toString(skills.getPercentToNextLevel(skill)) + "%",
+                458, y + 13);
+        g.drawString("To lvl: " + exp, 200, y + 13);
+
+        //if (refreshCounter > xpHourRefreshRate) {
+        xpHour = (int) (gained * 3600000.0
+                / ((double) System.currentTimeMillis() - (double) startTime));
+        //refreshCounter = 0;
+        //}
+        g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
+    }
+
+    /**
+     *
+     * @param g
+     * @param x
+     * @param y
+     * @param s
+     */
+    public void paintBar(Graphics g, int x, int y, String s) {
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+        int width = 516;
+        int height = (int) g.getFontMetrics().getStringBounds(s, g).getHeight();
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(0, y, width, height, 10, 10);
+
+        g.setColor(new Color(0, 0, 0, 90));
+        g.fillRoundRect(0, y, width, height, 10, 10);
+
+        g.setColor(new Color(255, 255, 255));
+        g.drawString(s, x + 7, y + height - 2);
+    }
+
+    /**
+     *
+     * @param skill
+     * @return
+     */
+    private String SkillToString(int skill) {
+        return Skills.statsArray[skill];
     }
 }
