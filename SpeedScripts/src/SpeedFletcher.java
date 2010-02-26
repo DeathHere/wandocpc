@@ -130,10 +130,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     while (!bank.isOpen()) {
                         wait(random(650, 850));
                         int menu = getMenuIndex("Knife");
-                        if(menu != -1)
-                        {
-                            moveMouse(535, 250,5,50);
+                        if (menu != -1) {
+                            moveMouse(535, 250, 5, 50);
                             clickMouse(true);
+                            return 500;
                         }
                         (new BankPins()).runRandom();
                         errors++;
@@ -228,7 +228,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 unstrungLeft--;
             }
         }
-        
+
         if (word.contains("You've just advanced".toLowerCase())) {
             clickContinue();
         }
@@ -285,8 +285,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (!checkFletch()) {
             return false;
         }
-        while(animationIs(1248,6688))
-        {
+        while (animationIs(1248, 6688)) {
             wait(750);
             return true;
         }
