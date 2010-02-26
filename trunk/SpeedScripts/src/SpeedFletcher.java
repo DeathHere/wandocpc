@@ -322,7 +322,24 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (fletch && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             logsLeft = bank.getCount(logID);
             if (logsLeft > 28) {
-                return withdraw(logID, 0);
+                int withdrawlFactor = 27;
+                int errCount = 0;
+                withdraw(logID, 0);
+                wait(random(700, 1000));
+                int logs = getInventoryCount(logID);
+                while (logs < withdrawlFactor && bank.isOpen()) {
+                    if (logs < withdrawlFactor) {
+                        withdraw(logID, 0);
+                    }
+                    wait(random(700, 1000));
+                    logs = getInventoryCount(bowID);
+                    errCount++;
+                    if (errCount > 3 || isPaused) {
+                        return false;
+                    }
+                }
+
+                return true;
             } else if (logsLeft <= 28) {
                 return withdraw(logID, logsLeft - 1);
             } else {
@@ -356,7 +373,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 if (bow > withdrawlFactor) {
                     bank.deposit(bowID, bow - withdrawlFactor);
                 } else if (bow < withdrawlFactor) {
-                    withdraw(bow, withdrawlFactor - bow);
+                    withdraw(bowID, withdrawlFactor - bow);
                 }
                 wait(random(700, 1000));
                 bow = getInventoryCount(bowID);
@@ -370,7 +387,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 if (bowstring > withdrawlFactor) {
                     bank.deposit(bowstringID, bowstring - withdrawlFactor);
                 } else if (bowstring < withdrawlFactor) {
-                    withdraw(bowstring, withdrawlFactor - bowstring);
+                    withdraw(bowstringID, withdrawlFactor - bowstring);
                 }
                 wait(random(700, 1000));
                 bowstring = getInventoryCount(bowstringID);
