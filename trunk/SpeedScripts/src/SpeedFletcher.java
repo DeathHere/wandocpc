@@ -121,11 +121,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             } else {
                 Bot.disableRandoms = true;
             }
-            log("Check Point 1");
             antiBan();
             setCameraAltitude(true);
             if (!checkFletch()) {
-                log("Check Point 2");
                 errors = 0;
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
@@ -152,13 +150,11 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 }
             }
             bank.close();
-            log("Check Point 3");
             if (!fletch()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
-                log("Check Point 4");
+                return 1;
             }
-            log("Check Point 5");
             errorCounter = 0;
             return 500;
         } catch (NullPointerException e) {
@@ -286,7 +282,6 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             if (itemPos.equals(new Point(-1, -1)) || knifePos.equals(new Point(-1, -1))) {
                 return false;
             }
-            log("Interface valid: " + INTERFACE_FLETCH.isValid());
             moveMouse(knifePos.x + 15, knifePos.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Use");
@@ -294,22 +289,20 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             wait(random(500, 750));
             atMenu("Logs");
             errors = 0;
-            log("Animation: "+getMyPlayer().getAnimation() + "\n Interface valid: " + INTERFACE_FLETCH.isValid());
-
-            while ((animationIs(-1) && errors < 4)) {
+            moveMouse(x, y, 25, 25);
+            wait(random(1500, 2000));
+            while (INTERFACE_FLETCH.isValid()) {
                 if (errors > 0) {
                     moveMouse(258, 354, 25, 25);
+                    moveMouse(x, y, 25, 25);
+                    wait(random(1500, 2000));
                 }
-                log("In menu loop");
-                moveMouse(x, y, 25, 25);
-                wait(random(1500, 2000));
                 atMenu("Make X");
                 wait(random(1300, 1800));
                 sendText("" + (random(3, 9) * 11), true);
                 wait(random(1300, 1800));
                 errors++;
             }
-            log("Leave menu loop");
             while (animationIs(1248)) {
                 wait(random(500, 750));
             }
