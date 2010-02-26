@@ -536,6 +536,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 y += 15;
             }
         }
+        paintFletch(g, x, y + 15);
     }
 
     /**
@@ -580,6 +581,61 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         //refreshCounter = 0;
         //}
         g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
+    }
+
+    private void paintFletch(Graphics g, int x, int y) {
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+
+        g.setColor(new Color(255, 0, 0, 90));
+        g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(new Color(0, 255, 0, 255));
+        g.fillRoundRect(416, y + 3, bowsMade / (bowsMade + logsLeft), 9,
+                10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, bowsMade / (bowsMade + logsLeft), 9,
+                10, 10);
+        g.drawString(bowsMade / (bowsMade + logsLeft) + "%", 458, y + 13);
+
+        String s = "Bows cut:" + bowsMade;
+        g.setColor(new Color(0, 200, 255));
+        paintBar(g, x, y, s);
+        g.drawString("Logs left: " + logsLeft, 200, y + 13);
+
+        xpHour = (int) (bowsMade * 3600000.0
+                / ((double) System.currentTimeMillis() - (double) startTime));
+        //refreshCounter = 0;
+        //}
+        g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
+
+        y += 15;
+
+        g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
+
+        g.setColor(new Color(255, 0, 0, 90));
+        g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
+        g.setColor(new Color(0, 255, 0, 255));
+        g.fillRoundRect(416, y + 3, strung / (strung + unstrungLeft), 9,
+                10, 10);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(416, y + 3, strung / (strung + unstrungLeft), 9,
+                10, 10);
+        g.drawString(strung / (strung + unstrungLeft) + "%", 458, y + 13);
+
+        String s2 = "Bows strung:" + strung;
+        g.setColor(new Color(0, 200, 255));
+        paintBar(g, x, y, s2);
+        g.drawString("Unstrung left: " + unstrungLeft, 200, y + 13);
+
+        xpHour = (int) (strung * 3600000.0
+                / ((double) System.currentTimeMillis() - (double) startTime));
+
+        g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
+
+
     }
 
     /**
