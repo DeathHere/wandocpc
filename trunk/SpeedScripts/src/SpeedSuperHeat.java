@@ -448,9 +448,10 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             antiBan();
             setCameraAltitude(true);
             if (!checkOres()) {
+                                errors = 0;
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
-                        wait(random(500, 750));
+                        wait(random(750, 1000));
                         errors++;
                         (new BankPins()).runRandom();
                         if (errors > 6) {
@@ -458,7 +459,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                         }
                     }
                 }
-                errors = 0;
                 if (errorCounter > 10) {
                     return -1;
                 }
