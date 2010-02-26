@@ -290,6 +290,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private boolean deposit() {
+        wait(random(500, 750));
         if (!bank.isOpen()) {
             wait(1500);
             if (!bank.open()) {
@@ -307,6 +308,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private boolean withdraw() {
+        wait(random(500, 750));
         if (!bank.isOpen()) {
             wait(1500);
             if (!bank.open()) {
