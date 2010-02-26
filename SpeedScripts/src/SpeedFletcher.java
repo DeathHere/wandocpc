@@ -121,9 +121,11 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             } else {
                 Bot.disableRandoms = true;
             }
+            log("Check Point 1");
             antiBan();
             setCameraAltitude(true);
             if (!checkFletch()) {
+                log("Check Point 2");
                 errors = 0;
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
@@ -150,10 +152,13 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 }
             }
             bank.close();
+            log("Check Point 3");
             if (!fletch()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
+                log("Check Point 4");
             }
+            log("Check Point 5");
             errorCounter = 0;
             return 500;
         } catch (NullPointerException e) {
@@ -281,6 +286,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             if (itemPos.equals(new Point(-1, -1)) || knifePos.equals(new Point(-1, -1))) {
                 return false;
             }
+            log("Interface valid: " + INTERFACE_FLETCH.isValid());
             moveMouse(knifePos.x + 15, knifePos.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Use");
@@ -288,7 +294,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             wait(random(500, 750));
             atMenu("Logs");
             errors = 0;
-            log("Animation: "+getMyPlayer().getAnimation());
+            log("Animation: "+getMyPlayer().getAnimation() + "\n Interface valid: " + INTERFACE_FLETCH.isValid());
 
             while ((animationIs(-1) && errors < 4)) {
                 if (errors > 0) {
@@ -684,7 +690,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
         if (bowsMade + logsLeft == 0) {
-            logsLeft = 1;
+            logsLeft = 2;
         }
         int percent = Math.round(((float) bowsMade * 100) / (bowsMade + logsLeft));
 
@@ -711,7 +717,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         y += 15;
 
         if (strung + unstrungLeft == 0) {
-            unstrungLeft = 1;
+            unstrungLeft = 2;
         }
         percent = Math.round(((float) strung * 100) / (strung + unstrungLeft));
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
