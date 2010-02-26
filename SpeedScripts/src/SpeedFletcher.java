@@ -161,6 +161,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (word.contains("cut")) {
             bowsMade++;
             logsLeft--;
+            unstrungLeft++;
         }
         if (word.contains("string")) {
             strung++;
@@ -306,6 +307,16 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private boolean withdraw() {
+        if (!bank.isOpen()) {
+            wait(1500);
+            if (!bank.open()) {
+                wait(500);
+                return false;
+            }
+        }
+        logsLeft = bank.getCount(logID);
+        unstrungLeft = bank.getCount(bowID);
+        stringLeft = bank.getCount(bowstringID);
         if (fletch && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             logsLeft = bank.getCount(logID);
             if (logsLeft > 28) {
@@ -588,8 +599,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private void paintFletch(Graphics g, int x, int y) {
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
-        if(bowsMade + logsLeft == 0)
+        if (bowsMade + logsLeft == 0) {
             logsLeft = 1;
+        }
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(Color.BLACK);
@@ -614,6 +626,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
 
         y += 15;
+
+        if (strung + unstrungLeft == 0) {
+            unstrungLeft = 1;
+        }
 
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
