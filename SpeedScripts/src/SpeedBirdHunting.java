@@ -147,7 +147,7 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                     moveMouse(trapPos.x + 10, trapPos.y + 10, 5, 5);
                     wait(random(500, 750));
                     clickMouse(true);
-                    wait(random(500, 750));
+                    wait(random(2500, 2750));
                     // Handle multi traps?
                     p_trapsSet = true;
                     performAction(A_DROP_CRAP);
@@ -163,11 +163,11 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                 //log("Searching traps");
                 RSObject snare = getNearestObjectByID(I_BD_SNARE_FAIL);
                 //log("Searching 2");
-                if (snare != null) {
+                if (snare != null && distanceTo(snare) == 1) {
                     wait(random(500, 750));
                     Point clickPos = snare.getLocation().getScreenLocation();
-                    clickMouse(new Point(clickPos.x + 1, clickPos.y + 5), true);
-                    wait(random(500, 750));
+                    clickMouse(new Point(clickPos.x + 5, clickPos.y - 5), true);
+                    wait(random(2500, 2750));
                     walkTo(initLoc);
                     wait(random(500, 750));
                     p_waiting = false;
@@ -175,11 +175,11 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
                 }
                 snare = getNearestObjectByID(I_BD_SNARE_CAUGHT);
                 //log("Searching 3");
-                if (snare != null) {
+                if (snare != null && distanceTo(snare) == 1) {
                     wait(random(500, 750));
                     Point clickPos = snare.getLocation().getScreenLocation();
-                    clickMouse(new Point(clickPos.x + 1, clickPos.y + 5), true);
-                    wait(random(500, 750));
+                    clickMouse(new Point(clickPos.x + 5, clickPos.y - 5), true);
+                    wait(random(2500, 2750));
                     walkTo(initLoc);
                     wait(random(500, 750));
                     p_waiting = false;
