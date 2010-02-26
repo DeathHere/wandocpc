@@ -138,6 +138,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                         (new BankPins()).runRandom();
                         errors++;
                         if (errors > 6) {
+                            Bot.disableRandoms = false;
                             return 1;
                         }
                     }
