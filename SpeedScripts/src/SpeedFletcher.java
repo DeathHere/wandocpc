@@ -220,24 +220,44 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 return false;
             }
             moveMouse(knifePos, 5, 5);
-            wait(random(500,750));
+            wait(random(500, 750));
             atMenu("Use");
             moveMouse(itemPos, 5, 5);
-            wait(random(500,750));
+            wait(random(500, 750));
             atMenu("Logs");
             moveMouse(x, y, 5, 5);
-            wait(random(1500,2000));
+            wait(random(1500, 2000));
             atMenu("X");
             wait(random(1300, 1800));
             sendText("" + (random(3, 9) * 11), true);
+            errors = 0;
             while (getInventoryCount(logID) > 0) {
                 wait(random(1000, 1500));
                 errors++;
-                if (errors > 20) { return false;
+                if (errors > 20) {
+                    return false;
                 }
             }
         } else if (string && unstrungLeft > 0) {
-            
+            Point bow = getInventoryLocation(bowID);
+            Point string = getInventoryLocation(bowstringID);
+            if (bow.equals(new Point(-1, -1)) || string.equals(new Point(-1, -1))) {
+                return false;
+            }
+            moveMouse(bow, 5, 5);
+            wait(random(500, 750));
+            atMenu("Use");
+            moveMouse(string, 5, 5);
+            wait(random(500, 750));
+            atMenu("string");
+            errors = 0;
+            while (getInventoryCount(logID) > 0) {
+                wait(random(1000, 1500));
+                errors++;
+                if (errors > 20) {
+                    return false;
+                }
+            }
         } else {
             return false;
         }

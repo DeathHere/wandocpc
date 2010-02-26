@@ -459,9 +459,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     }
                 }
                 errors = 0;
-                if ((new BankPins()).runRandom()) {
-                    wait(1000);
-                }
                 if (errorCounter > 10) {
                     return -1;
                 }
@@ -651,6 +648,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     // ------------------------------PAINT--------------------------------------
     // Paint code from FoulFighter, thx
     public void onRepaint(Graphics g) {
+        if (recordInitial) {
+            return;
+        }
         //refreshCounter++;
         // Font setting
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
