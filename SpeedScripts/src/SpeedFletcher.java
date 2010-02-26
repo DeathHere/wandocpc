@@ -37,10 +37,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private boolean logOutDone = false;
     private int startExp;
     private int startLvl;
-    private boolean fletch = false;
+    private boolean fletch = true;
     private boolean string = false;
-    private String woodType = "";
-    private String bowType = "";
+    private String woodType = "Yew";
+    private String bowType = "Longbow";
     private int longbowID = 0;
     private int shortbowID = 0;
     private int bowID = 0;
@@ -133,10 +133,6 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         //bowType needs "Shortbow" or "Longbow"
         recordInitial = true;
         Bot.disableRandoms = false;
-        startExpArry = new int[30];
-        for (int i = 0; i < 20; i++) {
-            startExpArry[i] = skills.getCurrentSkillExp(i);
-        }
         return true;
     }
 
@@ -180,6 +176,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         startLvl = skills.getRealSkillLevel(Constants.STAT_MAGIC);
         loc = getLocation();
         startTime = System.currentTimeMillis();
+        startExpArry = new int[30];
+        for (int i = 0; i < 20; i++) {
+            startExpArry[i] = skills.getCurrentSkillExp(i);
+        }
         return fletchIntialize();
     }
 
@@ -506,7 +506,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         final long minutes = millis / (1000 * 60);
         millis -= minutes * 1000 * 60;
         final long seconds = millis / 1000;
-        paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + " - "
+        paintBar(g, x, y, "SpeedFletcher Total Runtime: " + hours + " - "
                 + minutes + " : " + seconds);
 
         g.drawString("Version " + version, 436, y + 13);
