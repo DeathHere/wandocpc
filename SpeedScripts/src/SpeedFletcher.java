@@ -386,7 +386,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     if (logs < withdrawlFactor) {
                         withdraw(logID, 0);
                     }
-                    wait(random(700, 1000));
+                    wait(random(1000, 1500));
                     logs = getInventoryCount(bowID);
                     errCount++;
                     if (errCount > 3 || isPaused) {
