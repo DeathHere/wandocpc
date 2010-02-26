@@ -277,24 +277,20 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             if (itemPos.equals(new Point(-1, -1)) || knifePos.equals(new Point(-1, -1))) {
                 return false;
             }
-            moveMouse(knifePos, 5, 5);
+            moveMouse(knifePos.x + 15, knifePos.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Use");
-            moveMouse(itemPos, 5, 5);
+            moveMouse(itemPos.x + 15, itemPos.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("Logs");
-            moveMouse(x, y, 5, 5);
+            moveMouse(x, y, 20, 20);
             wait(random(1500, 2000));
-            atMenu("X");
+            atMenu("Make X");
             wait(random(1300, 1800));
             sendText("" + (random(3, 9) * 11), true);
-            errors = 0;
-            while (getInventoryCount(logID) > 0 && !isPaused) {
-                wait(random(1500, 3500));
-                errors++;
-                if (errors > 35) {
-                    return false;
-                }
+            wait(random(1300, 1800));
+            while (animationIs(1248)) {
+                wait(random(500, 750));
             }
         } else if (string && unstrungLeft > 1) {
             Point bow = getInventoryLocation(bowID);
@@ -308,13 +304,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             moveMouse(string, 5, 5);
             wait(random(500, 750));
             atMenu("string");
-            errors = 0;
-            while (getInventoryCount(logID) > 0) {
-                wait(random(1500, 2500));
-                errors++;
-                if (errors > 20) {
-                    return false;
-                }
+            wait(random(1300, 1800));
+            while (animationIs(6688)) {
+                wait(random(500, 750));
             }
         } else {
             return false;
@@ -383,7 +375,6 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                         return false;
                     }
                 }
-
                 return true;
             } else if (logsLeft <= 28) {
                 return withdraw(logID, logsLeft - 1);
@@ -553,10 +544,18 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (bowType.equals("Shortbow")) {
             x = 107;
             y = 410;
+            if (woodType.equals("Magic")) {
+                x = 135;
+                y = 420;
+            }
             bowID = shortbowID;
         } else if (bowType.equals("Longbow")) {
             x = 248;
             y = 406;
+            if (woodType.equals("Magic")) {
+                x = 385;
+                y = 430;
+            }
             bowID = longbowID;
         } else {
             return false;
@@ -666,17 +665,19 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (bowsMade + logsLeft == 0) {
             logsLeft = 1;
         }
+        int percent = Math.round(((float)bowsMade) / (bowsMade + logsLeft));
+
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(Color.BLACK);
         g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(new Color(0, 255, 0, 255));
-        g.fillRoundRect(416, y + 3, bowsMade / (bowsMade + logsLeft), 9,
+        g.fillRoundRect(416, y + 3, percent, 9,
                 10, 10);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(416, y + 3, bowsMade / (bowsMade + logsLeft), 9,
+        g.drawRoundRect(416, y + 3, percent, 9,
                 10, 10);
-        g.drawString(bowsMade / (bowsMade + logsLeft) + "%", 458, y + 13);
+        g.drawString(percent + "%", 458, y + 13);
 
         String s = "Bows cut:" + bowsMade;
         g.setColor(new Color(0, 200, 255));
@@ -685,16 +686,13 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
 
         xpHour = (int) (bowsMade * 3600000.0
                 / ((double) System.currentTimeMillis() - (double) startTime));
-        //refreshCounter = 0;
-        //}
         g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
-
         y += 15;
 
         if (strung + unstrungLeft == 0) {
             unstrungLeft = 1;
         }
-
+        percent = Math.round(((float)strung) / (strung + unstrungLeft));
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
         g.setColor(new Color(255, 0, 0, 90));
@@ -702,12 +700,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.setColor(Color.BLACK);
         g.drawRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(new Color(0, 255, 0, 255));
-        g.fillRoundRect(416, y + 3, strung / (strung + unstrungLeft), 9,
+        g.fillRoundRect(416, y + 3, percent, 9,
                 10, 10);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(416, y + 3, strung / (strung + unstrungLeft), 9,
+        g.drawRoundRect(416, y + 3, percent, 9,
                 10, 10);
-        g.drawString(strung / (strung + unstrungLeft) + "%", 458, y + 13);
+        g.drawString(percent + "%", 458, y + 13);
 
         String s2 = "Bows strung:" + strung;
         g.setColor(new Color(0, 200, 255));
