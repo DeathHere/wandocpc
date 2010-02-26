@@ -81,6 +81,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             antiBan();
             setCameraAltitude(true);
             if (!checkFletch()) {
+                errors = 0;
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
                         wait(random(500, 750));
@@ -91,7 +92,6 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                         }
                     }
                 }
-                errors = 0;
                 if (errorCounter > 6) {
                     return -1;
                 }
@@ -588,6 +588,8 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private void paintFletch(Graphics g, int x, int y) {
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
+        if(bowsMade + logsLeft == 0)
+            logsLeft = 1;
         g.setColor(new Color(255, 0, 0, 90));
         g.fillRoundRect(416, y + 3, 100, 9, 10, 10);
         g.setColor(Color.BLACK);
