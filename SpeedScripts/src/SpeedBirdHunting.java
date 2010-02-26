@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.util.ArrayList;
 import java.util.Map;
 import org.rsbot.bot.Bot;
 import org.rsbot.bot.input.Mouse;
@@ -31,9 +32,11 @@ import org.rsbot.script.Constants;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
 import org.rsbot.script.Skills;
+import org.rsbot.script.wrappers.RSObject;
+import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Magic",
-    name = "SpeedSuperHeat", version = 1.0, 
+@ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Hunter",
+    name = "SpeedBirdHunting", version = 1.0,
     description = "<html>" +
     "<head>" +
     "</head>" +
@@ -46,13 +49,17 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     /** Script vars */
     private int xpHour = 0;
     private long startTime;
-    private int[] startExpArry = null;
     private int startExp;
     private int startLvl;
+    private RSTile initLoc;
     private final double LAG_FACTOR = 1.5;
+    private ArrayList<Integer> gear = new ArrayList<Integer>();
+    private final int[] KEEP_ITEMS = {
+        10088, 526
+    };
 
-    private boolean trapsSet = false;
-    private boolean waiting = false;
+    private boolean p_trapsSet = false;
+    private boolean p_waiting = false;
 
     /** Final description vars */
     private final String VERSION = "1.0";
@@ -63,14 +70,36 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     private final int A_SET_TRAP = 1;
     private final int A_PICKUP_TRAP = 2;
     private final int A_SEARCH_TRAP = 3;
-    private final int A_OTHER = 4;
+    private final int A_DROP_CRAP = 4;
+    private final int A_COLLECT = 5;
+    private final int A_OTHER = 100;
 
     /** Final item vars */
-    private final int I_BD_SNARE_ID = 10006;
-    private final int I_BD_SNARE_GROUND_ID = 19175;
-    private final int I_TRAP_ID = 10006;
+    private final int I_BD_SNARE = 10006;
+    private final int I_BD_SNARE_NORMAL = 19175;
+    private final int I_BD_SNARE_CAUGHT = 19180;
+    private final int I_BD_SNARE_FAIL = 19174;
 
     // -----------------------------Actions-------------------------------------
+
+    /**
+     * 
+     */
+    public void updateGear() {
+        gear.clear();
+        // Scans inventory
+        int[] inventoryArray = getInventoryArray();
+        for (int i = 27; i > 0; i--) {
+            if (inventoryArray[i] != -1) {
+                gear.add(inventoryArray[i]);
+                continue;
+            }
+        }
+        // Adds stuff from the keep list
+        for (int x : KEEP_ITEMS) {
+            gear.add(x);
+        }
+    }
 
     /**
      * Finds the abs mouse position of an item in your inventory
@@ -99,34 +128,69 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
      * Checks to see if you have traps in your inven
      * @return whether you carry traps
      */
-    public boolean checkInventoryForTraps() {
-        return !(getInventoryCount(I_BD_SNARE_ID) == 0);
+    public boolean isThereInInventoryA(int id) {
+        return !(getInventoryCount(id) == 0);
     }
 
     /**
-     * 
-     * @param actionID
-     * @return
+     * Different actions performed via the switch statment
+     * @param actionID what to do, check the top for what variables to use
+     * @return pause before next loop cycle
      */
     public int performAction(int actionID) {
         switch (actionID) {
-            case A_SET_TRAP:
-                if (checkInventoryForTraps()) {
-                    Point trapPos = findPositionOfItem(I_BD_SNARE_ID);
+            case A_SET_TRAP: {
+                log("Setting traps");
+                if (isThereInInventoryA(I_BD_SNARE)) {
+                    initLoc = getLocation();
+                    Point trapPos = findPositionOfItem(I_BD_SNARE);
                     moveMouse(trapPos.x + 10, trapPos.y + 10, 5, 5);
                     wait(random(500, 750));
                     clickMouse(true);
                     wait(random(500, 750));
-                    return 1000;
+                    // Handle multi traps?
+                    p_trapsSet = true;
+                    performAction(A_DROP_CRAP);
+                    return 20000;
                 } else {
                     log("You do not have any bird snares!");
                     return -1;
                 }
-            case A_SEARCH_TRAP:
-                return 1000;
-            default:
-                return 1000;
+            }
 
+            case A_SEARCH_TRAP: {
+                RSObject snare = getNearestObjectByName("Bird snare");
+                wait(random(500, 750));
+                if (snare != null && snare.getID() != I_BD_SNARE_NORMAL) {
+                    clickMouse(snare.getLocation().getScreenLocation(), true);
+                }
+                wait(random(500, 750));
+                walkTo(initLoc);
+                wait(random(500, 750));
+                p_waiting = false;
+                p_trapsSet = false;
+                return 1000;
+            }
+                
+            case A_WALK_AWAY: {
+                log("Walking away");
+                wait(random(500, 750));
+                walkTo(new RSTile(initLoc.getX() - 10, initLoc.getY()));
+                wait(random(500, 750));
+                p_waiting = true;
+                return 1000;
+            }
+
+            case A_DROP_CRAP: {
+                wait(random(500, 750));
+                dropAllExcept();
+                wait(random(500, 750));
+                return 1000;
+            }
+
+            default: {
+                return 1000;
+            }
         }
     }
 
@@ -139,8 +203,16 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
             Bot.disableRandoms = false;
             return 1000;
         }
-        if (!trapsSet) {
-            performAction(A_SET_TRAP);
+        setCameraAltitude(true);
+        /*
+        if (p_trapsSet && !p_waiting) {
+            performAction(A_WALK_AWAY);
+        }*/
+        if (!p_trapsSet) {
+            return performAction(A_SET_TRAP);
+        }
+        if (p_waiting) {
+            performAction(A_SEARCH_TRAP);
         }
         return 1000;
     }
@@ -170,15 +242,16 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
     @Override
     public boolean onStart(final Map<String, String> args) {
         try {
-            /** Sets the initial values for all the skill exp counters */
-            startExpArry = new int[30];
-            for (int i = 0; i < 20; i++) {
-                startExpArry[i] = skills.getCurrentSkillExp(i);
-            }
-
             /** Gets the initial xp and level for hunting */
             startExp = skills.getCurrentSkillExp(Constants.STAT_HUNTER);
             startLvl = skills.getRealSkillLevel(Constants.STAT_HUNTER);
+
+            /** Gets start tile and start time */
+            initLoc = getLocation();
+            initLoc = new RSTile(initLoc.getX(), initLoc.getY());
+            startTime = System.currentTimeMillis();
+
+            updateGear();
         }
         catch (Exception e) {
             log("Onstart error: " + e.toString());
@@ -225,7 +298,10 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
      * @param e the message
      */
     public void serverMessageRecieved(ServerMessageEvent e) {
-        
+        final String word = e.getMessage().toLowerCase();
+        if (word.contains("fallen over")) {
+            log("Retriving fallen trap");
+        }
     }
 
     // ------------------------------PAINT--------------------------------------
@@ -269,9 +345,8 @@ public class SpeedBirdHunting extends Script implements ServerMessageListener, P
         g.drawPolygon(po);
 
         // Skill xp increase check
-        if ((startExpArry != null) && 
-                ((skills.getCurrentSkillExp(Constants.STAT_HUNTER) - startExpArry[Constants.STAT_HUNTER]) > 0)) {
-            paintSkillBar(g, x, y + 15, Constants.STAT_HUNTER, startExpArry[Constants.STAT_HUNTER]);
+        if ((skills.getCurrentSkillExp(Constants.STAT_HUNTER) - startExp) > 0) {
+            paintSkillBar(g, x, y + 15, Constants.STAT_HUNTER, startExp);
             y += 15;
         }
     }
