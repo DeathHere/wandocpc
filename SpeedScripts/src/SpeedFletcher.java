@@ -683,7 +683,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
         if (bowsMade + logsLeft == 0) {
-            logsLeft = 2;
+            logsLeft = (2 < getInventoryCountExcept(logID)) ? getInventoryCount(logID) : 2;
         }
         int percent = Math.round(((float) bowsMade * 100) / (bowsMade + logsLeft));
 
@@ -710,7 +710,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         y += 15;
 
         if (strung + unstrungLeft == 0) {
-            unstrungLeft = 2;
+            unstrungLeft = (2 < getInventoryCount(bowID)) ? getInventoryCount(bowID) : 2;
         }
         percent = Math.round(((float) strung * 100) / (strung + unstrungLeft));
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
