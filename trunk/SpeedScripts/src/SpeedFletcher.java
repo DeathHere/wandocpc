@@ -399,12 +399,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 withdraw(logID, 0);
                 wait(random(1000, 1500));
                 int logs = getInventoryCount(logID);
-                while (logs < withdrawlFactor && bank.isOpen()) {
+                while (logs < 1 && bank.isOpen()) {
                     if (logs < withdrawlFactor) {
                         withdraw(logID, 0);
                     }
                     wait(random(1000, 1500));
-                    logs = getInventoryCount(bowID);
+                    logs = getInventoryCount(logID);
                     errCount++;
                     if (errCount > 3 || isPaused) {
                         return false;
