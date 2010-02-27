@@ -1,5 +1,3 @@
-package SampleScripts;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -16,9 +14,9 @@ import org.rsbot.script.wrappers.RSInterfaceChild;
 import org.rsbot.script.wrappers.RSPlayer;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = { "Jacmob" }, category = "Agility", name = "Barbarian Course", version = 1.0, description = "<html>\n<body style=\"font-family: Arial; background-color: #DDFFDD;\">\n<div style=\"width: 100%; height: 35px; background-color: #BBEEBB; text-align: center;\"\n<h2 style=\"color: #118811;\">Barbarian Course</h2>\n</div>\n<div style=\"width:100%; background-color: #007700; text-align:center; color: #FFFFFF; height: 15px;\">Jacmob"
+@ScriptManifest(authors = { "Jacmob" }, category = "Agility", name = "Barbarian Course Good", version = 1.0, description = "<html>\n<body style=\"font-family: Arial; background-color: #DDFFDD;\">\n<div style=\"width: 100%; height: 35px; background-color: #BBEEBB; text-align: center;\"\n<h2 style=\"color: #118811;\">Barbarian Course</h2>\n</div>\n<div style=\"width:100%; background-color: #007700; text-align:center; color: #FFFFFF; height: 15px;\">Jacmob"
 		+ " | Version 1.0</div>\n<div style=\"width: 100%; padding: 10px; padding-bottom: 12px; background-color: #EEFFEE;\">Start in the Barbarian Agility Course.<br><br>Food and energy potions are supported.</div>\n<div style=\"width: 100%; padding: 10px;\">\n<h3>Auto Stop (Enter Runtime to Enable)</h3><input type=\"text\" name=\"hours\" id=\"hrs\" size=3 /><label for=\"hrs\" > : </label><input type=\"text\" name=\"mins\" id=\"mins\" size=3 /><label for=\"mins\"> : </label><input type=\"text\" name=\"secs\" id=\"secs\" size=3 /><label for=\"secs\"> (hrs:mins:secs)</label><br /><br /><input type=\"checkbox\" name=\"chkXP\" id=\"chkXP\" value=\"true\" /><label for=\"debug\">Check XP (Extra AntiBan)</label></div>\n</body>\n</html")
-public class BarbarianCourse extends Script {
+public class BarbarianCourseGood extends Script {
 	public static final int[] Food = new int[] { 333, 385, 379, 285, 373, 365,
 			7946, 361, 397, 391, 1963, 329, 2118, 1891, 1893, 1895};
 	public static final int[] energyPot = new int[] { 3014, 3012, 3010, 3008,
@@ -92,10 +90,10 @@ public class BarbarianCourse extends Script {
 	}
 
 	private void Drink() {
-		while (getInventoryCount(BarbarianCourse.energyPot) >= 1
+		while (getInventoryCount(BarbarianCourseGood.energyPot) >= 1
 				&& getEnergy() <= DrinkingEnergy) {
 			DrinkingEnergy = random(10, 40);
-			for (final int element : BarbarianCourse.energyPot) {
+			for (final int element : BarbarianCourseGood.energyPot) {
 				if (getInventoryCount(element) == 0) {
 					continue;
 				}
@@ -108,7 +106,7 @@ public class BarbarianCourse extends Script {
 	}
 
 	private boolean Eat() {
-		for (final int element : BarbarianCourse.Food) {
+		for (final int element : BarbarianCourseGood.Food) {
 			if (getInventoryCount(element) >= 1) {
 				atInventoryItem(element, "Eat");
 				return true;

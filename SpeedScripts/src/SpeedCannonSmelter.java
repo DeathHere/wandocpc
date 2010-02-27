@@ -64,7 +64,10 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
     private final RSTile bankBooth[] = {new RSTile(3097, 3496),
         new RSTile(3270, 3167)};
     private final RSTile midpoint[] = {new RSTile(3108, 3500),
-        new RSTile(3280, 3182)};
+        new RSTile(3277, 3182)};
+
+    private boolean isWalkingToFurnace = false;
+    private boolean isWalkingToBank = false;
 
     private void antiBan() {
         final int random = random(1, 24);
@@ -186,12 +189,14 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
 
         switch (getState()) {
             case walkTo:
+                isWalkingToFurnace = true;
                 walkTile(closestTile(midpoint));
                 return 50;
             case smelt:
                 makeCannonball();
                 return 50;
             case walkBank:
+                isWalkingToBank = true;
                 walkTile(closestTile(bankBooth));
                 return 50;
             case bank:
@@ -402,8 +407,10 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
     }
 
     private void walkTile(final RSTile tile) {
-        wait(random(500, 750));
-        walkTo(tile);
-        wait(random(500, 750));
+        if (getMyPlayer().isIdle()) {
+            wait(random(500, 750));
+            walkTo(tile);
+            wait(random(500, 750));
+        }
     }
 }
