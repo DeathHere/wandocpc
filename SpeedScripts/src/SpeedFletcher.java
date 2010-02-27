@@ -411,7 +411,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     }
                 }
                 return true;
-            } else if (logsLeft <= 28) {
+            } else if (logsLeft <= 28 && logsLeft > 1) {
                 withdraw(logID, logsLeft - 1);
                 wait(random(1000, 1500));
                 return true;
