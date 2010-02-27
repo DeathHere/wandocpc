@@ -20,7 +20,7 @@ import org.rsbot.script.wrappers.RSTile;
 		+ " | Version 1.0</div>\n<div style=\"width: 100%; padding: 10px; padding-bottom: 12px; background-color: #EEFFEE;\">Start in the Barbarian Agility Course.<br><br>Food and energy potions are supported.</div>\n<div style=\"width: 100%; padding: 10px;\">\n<h3>Auto Stop (Enter Runtime to Enable)</h3><input type=\"text\" name=\"hours\" id=\"hrs\" size=3 /><label for=\"hrs\" > : </label><input type=\"text\" name=\"mins\" id=\"mins\" size=3 /><label for=\"mins\"> : </label><input type=\"text\" name=\"secs\" id=\"secs\" size=3 /><label for=\"secs\"> (hrs:mins:secs)</label><br /><br /><input type=\"checkbox\" name=\"chkXP\" id=\"chkXP\" value=\"true\" /><label for=\"debug\">Check XP (Extra AntiBan)</label></div>\n</body>\n</html")
 public class BarbarianCourse extends Script {
 	public static final int[] Food = new int[] { 333, 385, 379, 285, 373, 365,
-			7946, 361, 397, 391, 1963, 329, 2118 };
+			7946, 361, 397, 391, 1963, 329, 2118, 1891, 1893, 1895};
 	public static final int[] energyPot = new int[] { 3014, 3012, 3010, 3008,
 			3022, 3020, 3018, 3016 };
 	public int LapsDone = 0;
