@@ -714,13 +714,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.setColor(Color.BLACK);
         g.drawRoundRect(416, y + 3, percent, 9,
                 10, 10);
-        g.drawString(percent + "%", 458, y + 13);
 
         String s = "Bows cut:" + bowsMade;
         g.setColor(new Color(0, 200, 255));
         paintBar(g, x, y, s);
         g.drawString("Logs left: " + logsLeft, 200, y + 13);
-
+        g.drawString(percent + "%", 458, y + 13);
         xpHour = (int) (bowsMade * 3600000.0
                 / ((double) System.currentTimeMillis() - (double) startTime));
         g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
@@ -742,11 +741,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.setColor(Color.BLACK);
         g.drawRoundRect(416, y + 3, percent, 9,
                 10, 10);
-        g.drawString(percent + "%", 458, y + 13);
+        
 
         String s2 = "Bows strung:" + strung;
         g.setColor(new Color(0, 200, 255));
         paintBar(g, x, y, s2);
+        g.drawString(percent + "%", 458, y + 13);
         g.drawString("Unstrung left: " + unstrungLeft, 200, y + 13);
 
         xpHour = (int) (strung * 3600000.0
