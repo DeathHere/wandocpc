@@ -63,12 +63,8 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
         new RSTile(3272, 3186)};
     private final RSTile bankBooth[] = {new RSTile(3097, 3496),
         new RSTile(3270, 3167)};
-    private final RSTile furnaceBldg[] = {new RSTile(3108, 3500),
-        new RSTile(3278, 3177)};
-
-    private final RSTile midPoint[] = {
-        new RSTile(3278, 3174)
-    };
+    private final RSTile midpoint[] = {new RSTile(3108, 3500),
+        new RSTile(3280, 3182)};
 
     private void antiBan() {
         final int random = random(1, 24);
@@ -190,7 +186,7 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
 
         switch (getState()) {
             case walkTo:
-                walkTile(closestTile(furnaceBldg));
+                walkTile(closestTile(midpoint));
                 return 50;
             case smelt:
                 makeCannonball();
@@ -316,7 +312,7 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
         profit = (cannonballPrice * 4 - steelbarPrice) * (cannonballs / 4);
 
         if (getCurrentTab() == Constants.TAB_INVENTORY) {
-            g.setColor(new Color(0, 0, 0, 175));
+            g.setColor(new Color(0, 0, 0, 100));
             g.fillRoundRect(555, 210, 175, 250, 10, 10);
             g.setColor(Color.WHITE);
             final int[] coords = new int[]{225, 240, 255, 270, 285, 300, 315,
@@ -406,24 +402,8 @@ public class SpeedCannonSmelter extends Script implements PaintListener {
     }
 
     private void walkTile(final RSTile tile) {
-        if (!(distanceTo(getDestination()) <= random(4, 7))) {
-            if (getMyPlayer().isMoving()) {
-                return;
-            }
-        }
-        final Point screen = Calculations.tileToScreen(tile);
-        if (pointOnScreen(screen)) {
-            if (getMyPlayer().isMoving()) {
-                return;
-            }
-            moveMouse(screen, random(-3, 4), random(-3, 4));
-            onTile(tile, "here", "alk");
-            wait(random(500, 750));
-            return;
-        } else {
-            walkTo(tile);
-            wait(random(500, 750));
-            return;
-        }
+        wait(random(500, 750));
+        walkTo(tile);
+        wait(random(500, 750));
     }
 }
