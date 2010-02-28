@@ -1,3 +1,5 @@
+package Paid;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -8,7 +10,6 @@
  *
  * Created on Feb 23, 2010, 11:28:30 AM
  */
-
 /**
  *
  * @author naiyuan
@@ -113,16 +114,16 @@ public class SpeedSWGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_bEndActionPerformed
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new SpeedSWGUI().setVisible(true);
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton bEnd;
     private javax.swing.JButton bStart;
@@ -130,5 +131,4 @@ public class SpeedSWGUI extends javax.swing.JFrame {
     private javax.swing.JPanel pOptions;
     private javax.swing.JTabbedPane tabMain;
     // End of variables declaration//GEN-END:variables
-
 }
