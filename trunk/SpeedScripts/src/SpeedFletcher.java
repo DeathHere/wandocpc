@@ -491,7 +491,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 } else if (bow < withdrawlFactor) {
                     withdraw(bowID, withdrawlFactor - bow);
                 }
-                wait(random(700, 1000));
+                wait(random(1000, 1500));
                 bow = getInventoryCount(bowID);
                 errCount++;
                 if (errCount > 3 || isPaused) {
@@ -505,7 +505,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 } else if (bowstring < withdrawlFactor) {
                     withdraw(bowstringID, withdrawlFactor - bowstring);
                 }
-                wait(random(700, 1000));
+                wait(random(1000, 1500));
                 bowstring = getInventoryCount(bowstringID);
                 errCount++;
                 if (errCount > 3 || isPaused) {
