@@ -62,7 +62,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
         } else {
             Bot.disableRandoms = true;
         }
-        if (antiBan()) {
+        if (!antiBan()) {
             return false;
         }
         if (checkItemAmount() <= 1) {
