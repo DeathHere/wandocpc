@@ -132,7 +132,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     wait(150);
                     clickMouse(true);
                 }
+                log("Checkpoint Pre-bank");
                 if (!bank.open()) {
+
                     while (!bank.isOpen()) {
                         wait(random(650, 850));
                         int menu = getMenuIndex("Knife");
@@ -149,21 +151,26 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                         }
                     }
                 }
+                log("Checkpoint Bank opened");
                 if (errorCounter > 6) {
+                    log("Checkpoint Too many errors");
                     return -1;
                 }
                 if (!deposit()) {
                     Bot.disableRandoms = false;
                     errorCounter++;
+                    log("Checkpoint Deposit fail");
                     return 1;
                 }
                 if (!withdraw()) {
                     Bot.disableRandoms = false;
                     errorCounter++;
+                    log("Checkpoint Withdraw fail");
                     return 1;
                 }
             }
             bank.close();
+            log("Checkpoint banking done");
             if (!fletch()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
@@ -292,7 +299,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (!checkFletch()) {
             return false;
         }
-        while (animationIs(1248, 6688)) {
+        while (animationIs(1248, 7211, 6685 , 6686, 6687, 6688, 6689)) {
             wait(750);
             return true;
         }
@@ -337,7 +344,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 wait(random(1300, 1800));
                 errors++;
             }
-            while (animationIs(1248)) {
+            while (animationIs(1248, 7211)) {
                 wait(random(500, 750));
             }
         } else if (string && unstrungLeft > 1) {
@@ -374,7 +381,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 wait(random(1300, 1800));
                 errors++;
             }
-            while (animationIs(6688)) {
+            while (animationIs(6685 , 6686, 6687, 6688, 6689)) {
                 wait(random(500, 750));
             }
         } else {
