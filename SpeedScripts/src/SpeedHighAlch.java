@@ -62,7 +62,9 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
         } else {
             Bot.disableRandoms = true;
         }
-        antiBan();
+        if (antiBan()) {
+            return false;
+        }
         if (checkItemAmount() <= 1) {
             log("Items amount is <= 10. Stopping in 5-10 seconds.");
             wait(random(4500, 10500));
@@ -131,11 +133,10 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 itemPos = getItemPos();
             }
             if (itemPos.distance(getMouseLocation()) < 30 && getMenuIndex("Cast") != -1) {
-                
             } else {
                 moveMouse(itemPos, 5, 5);
             }
-            wait(random(150,300));
+            wait(random(150, 300));
             if (!atMenu("Cast")) {
                 return false;
             }
@@ -156,17 +157,17 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
         return (new Point(-1, -1));
     }
 
-    public void antiBan() {
+    public boolean antiBan() {
         switch (random(0, 500)) {
             case 6: {
                 openTab(TAB_STATS);
                 //log("Opening stats page.");
                 moveMouse(578, 405);
-                wait(3500);
-                break;
+                wait(random(1000, 1500));
+                return false;
             }
             default: {
-                break;
+                return true;
             }
         }
     }
