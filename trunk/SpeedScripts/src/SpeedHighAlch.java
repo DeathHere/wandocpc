@@ -95,7 +95,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 wait(random(50, 150));
                 if (waitCheck > 20) {
                     wait(750);
-                    moveMouse(578, 405);
+                    moveMouse(534, 300,5,100);
                     wait(150);
                     clickMouse(true);
                     return false;
@@ -113,7 +113,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 wait(random(50, 150));
                 if (waitCheck > 20) {
                     wait(750);
-                    moveMouse(578, 405);
+                    moveMouse(534, 300,5,100);
                     wait(150);
                     clickMouse(true);
                     return false;
@@ -132,12 +132,12 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 }
                 itemPos = getItemPos();
             }
-            if (itemPos.distance(getMouseLocation()) < 30 && getMenuIndex("Cast") != -1) {
+            if (itemPos.distance(getMouseLocation()) < 30 && getMenuIndex("Cast High Level ->") != -1) {
             } else {
                 moveMouse(itemPos, 5, 5);
             }
-            wait(random(150, 300));
-            if (!atMenu("Cast")) {
+            wait(random(350, 550));
+            if (!atMenu("Cast High")) {
                 return false;
             }
         }
