@@ -126,6 +126,11 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             setCameraAltitude(true);
             if (!checkFletch()) {
                 errors = 0;
+                if(!fletch && !string)
+                {
+                    log("Fletching complete");
+                    return -1;
+                }
                 if (isItemSelected()) {
                     wait(750);
                     moveMouse(656, 186, 5, 5);
@@ -273,8 +278,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private void antiBan() {
-        switch (random(0, 50)) {
-            case 4:
+        switch (random(0, 200)) {
             case 5:
             case 6: {
                 openTab(TAB_STATS);
