@@ -299,7 +299,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         if (!checkFletch()) {
             return false;
         }
-        while (animationIs(1248, 7211, 6685 , 6686, 6687, 6688, 6689)) {
+        while (animationIs(1248, 7211, 6685, 6686, 6687, 6688, 6689)) {
             wait(750);
             return true;
         }
@@ -381,8 +381,14 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 wait(random(1300, 1800));
                 errors++;
             }
-            while (animationIs(6685 , 6686, 6687, 6688, 6689)) {
-                wait(random(500, 750));
+            int before = unstrungLeft;
+            int after = 0;
+            while (animationIs(6685, 6686, 6687, 6688, 6689) || before > after) {
+                wait(random(750, 1000));
+                after = unstrungLeft;
+                if (after != 0) {
+                    before = after;
+                }
             }
         } else {
             fletch = false;
@@ -434,7 +440,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         logsLeft = bank.getCount(logID);
         unstrungLeft = bank.getCount(bowID);
         stringLeft = bank.getCount(bowstringID);
-        wait(random(750,1250));
+        wait(random(750, 1250));
         if (fletch && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             logsLeft = bank.getCount(logID);
             if (logsLeft > 28) {
