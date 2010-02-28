@@ -126,6 +126,12 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             setCameraAltitude(true);
             if (!checkFletch()) {
                 errors = 0;
+                if (isItemSelected()) {
+                    wait(750);
+                    moveMouse(656, 186, 5, 5);
+                    wait(150);
+                    clickMouse(true);
+                }
                 if (!bank.open()) {
                     while (!bank.isOpen()) {
                         wait(random(650, 850));
