@@ -84,7 +84,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
     }
 
     private boolean alchemy() {
-        while (!isPaused && !checks()) {
+        while (!isPaused && checks()) {
             wait(random(750, 1000));
             if (getCurrentTab() != Constants.TAB_MAGIC) {
                 openTab(Constants.TAB_MAGIC);
