@@ -313,6 +313,15 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     moveMouse(258, 354, 25, 25);
                     moveMouse(x, y, 25, 25);
                     wait(random(1500, 2000));
+                    if (isItemSelected()) {
+                        wait(750);
+                        moveMouse(656, 186, 5, 5);
+                        wait(150);
+                        clickMouse(true);
+                    }
+                }
+                if (errors > 5) {
+                    return false;
                 }
                 atMenu("Make X");
                 wait(random(1300, 1800));
@@ -326,24 +335,43 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         } else if (string && unstrungLeft > 1) {
             Point bow = getInventoryLocation(bowID);
             Point string = getInventoryLocation(bowstringID);
+            fletch = false;
             if (bow.equals(new Point(-1, -1)) || string.equals(new Point(-1, -1))) {
                 return false;
             }
             moveMouse(bow.x + 15, bow.y + 15, 5, 5);
             wait(random(500, 750));
-            atMenu("Use");
+            atMenu("(u)");
             moveMouse(string.x + 15, string.y + 15, 5, 5);
             wait(random(500, 750));
             atMenu("string");
             wait(random(1300, 1800));
-            if (FLETCH_AREA.isValid()) {
+            errors = 0;
+            while (FLETCH_AREA.isValid()) {
+                if (errors > 0) {
+                    moveMouse(258, 354, 25, 25);
+                    moveMouse(x, y, 25, 25);
+                    wait(random(1500, 2000));
+                    if (isItemSelected()) {
+                        wait(750);
+                        moveMouse(656, 186, 5, 5);
+                        wait(150);
+                        clickMouse(true);
+                    }
+                }
+                if (errors > 5) {
+                    return false;
+                }
                 atInterface(FLETCH_AREA, "Make All");
+                wait(random(1300, 1800));
+                errors++;
             }
-            wait(random(1300, 1800));
             while (animationIs(6688)) {
                 wait(random(500, 750));
             }
         } else {
+            fletch = false;
+            string = false;
             return false;
         }
         return true;
