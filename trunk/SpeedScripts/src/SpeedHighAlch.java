@@ -132,7 +132,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 }
                 itemPos = getItemPos();
             }
-            if (itemPos.distance(getMouseLocation()) < 30 && getMenuIndex("Cast High Level Alchemy->") != -1) {
+            if (itemPos.distance(getMouseLocation()) < 30 && getMenuIndex("Cast High Level Alchemy ->") != -1) {
             } else {
                 moveMouse(itemPos, 5, 5);
             }
