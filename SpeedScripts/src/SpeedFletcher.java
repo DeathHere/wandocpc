@@ -305,12 +305,14 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             if (itemPos.equals(new Point(-1, -1)) || knifePos.equals(new Point(-1, -1))) {
                 return false;
             }
-            moveMouse(knifePos.x + 15, knifePos.y + 15, 5, 5);
+            knifePos.translate(15, 15);
+            itemPos.translate(15, 15);
+            moveMouse(itemPos, 5, 5);
             wait(random(500, 750));
             atMenu("Use");
-            moveMouse(itemPos.x + 15, itemPos.y + 15, 5, 5);
+            moveMouse(knifePos, 5, 5);
             wait(random(500, 750));
-            atMenu("Logs");
+            atMenu("nife");
             errors = 0;
             moveMouse(x, y, 25, 25);
             wait(random(1500, 2000));
