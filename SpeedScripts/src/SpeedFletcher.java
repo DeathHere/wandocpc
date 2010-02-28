@@ -606,9 +606,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             longbowID = 66;
             shortbowID = 68;
         } else if (woodType.equals("Magic")) {
-            logID = 1515;
-            longbowID = 66;
-            shortbowID = 68;
+            logID = 1513;
+            longbowID = 70;
+            shortbowID = 72;
         } else {
             return false;
         }
