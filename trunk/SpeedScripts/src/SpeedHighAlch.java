@@ -138,6 +138,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
             }
             wait(random(200, 350));
             if (!atMenu("Cast High")) {
+                moveMouse(itemPos, 5, 5);
                 if (!atMenu("Cast High")) {
                     return false;
                 }
