@@ -129,7 +129,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 }
                 itemPos = getItemPos();
             }
-            if (itemPos.distance(getMouseLocation()) < 10 && getMenuIndex("Cast") != -1) {
+            if (itemPos.distance(getMouseLocation()) < 30 && getMenuIndex("Cast") != -1) {
                 
             } else {
                 moveMouse(itemPos, 5, 5);
