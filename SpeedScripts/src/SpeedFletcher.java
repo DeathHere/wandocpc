@@ -22,6 +22,7 @@ import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSInterfaceChild;
 import org.rsbot.script.wrappers.RSInterfaceComponent;
 import org.rsbot.script.wrappers.RSTile;
+import org.rsbot.util.ScreenshotUtil;
 
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Fletching",
 name = "SpeedFletcher", version = 1.0, description = "<html><head>"
@@ -220,6 +221,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         log("Script Ran for: " + hours + " hours " + min + " min.");
         log(status());
         Bot.disableRandoms = false;
+        ScreenshotUtil.takeScreenshot(true);
         if (logOutDone) {
             logout();
         }
