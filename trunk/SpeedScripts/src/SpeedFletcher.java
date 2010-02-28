@@ -434,6 +434,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         logsLeft = bank.getCount(logID);
         unstrungLeft = bank.getCount(bowID);
         stringLeft = bank.getCount(bowstringID);
+        wait(random(750,1250));
         if (fletch && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             logsLeft = bank.getCount(logID);
             if (logsLeft > 28) {
