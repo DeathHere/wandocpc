@@ -139,6 +139,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
             wait(random(200, 350));
             if (isPaused) {
                 log("Menu 1: " + getMenuItems().get(0).replace(" ", "_"));
+                log("Cast High Level Alchemy -> ".replace(" ", "_"));
             }
             if (!atMenu("Cast High")) {
                 moveMouse(itemPos, 5, 5);
