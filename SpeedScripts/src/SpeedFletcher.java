@@ -715,7 +715,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.drawRoundRect(416, y + 3, percent, 9,
                 10, 10);
 
-        String s = "Bows cut:" + bowsMade;
+        String s = "Bows cut: " + bowsMade;
         g.setColor(new Color(0, 200, 255));
         paintBar(g, x, y, s);
         g.drawString("Logs left: " + logsLeft, 200, y + 13);
@@ -741,9 +741,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         g.setColor(Color.BLACK);
         g.drawRoundRect(416, y + 3, percent, 9,
                 10, 10);
-        
 
-        String s2 = "Bows strung:" + strung;
+
+        String s2 = "Bows strung: " + strung;
         g.setColor(new Color(0, 200, 255));
         paintBar(g, x, y, s2);
         g.drawString(percent + "%", 458, y + 13);
