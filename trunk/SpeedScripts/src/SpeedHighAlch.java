@@ -95,7 +95,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 wait(random(50, 150));
                 if (waitCheck > 20) {
                     wait(750);
-                    moveMouse(534, 300, 5, 100);
+                    moveMouse(656, 186, 5, 5);
                     wait(150);
                     clickMouse(true);
                     return false;
@@ -113,7 +113,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 wait(random(50, 150));
                 if (waitCheck > 20) {
                     wait(750);
-                    moveMouse(534, 300, 5, 100);
+                    moveMouse(656, 186, 5, 5);
                     wait(150);
                     clickMouse(true);
                     return false;
