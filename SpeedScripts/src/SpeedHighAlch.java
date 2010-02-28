@@ -84,16 +84,27 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
     }
 
     private boolean alchemy() {
+        if (getCurrentTab() != Constants.TAB_MAGIC) {
+            openTab(Constants.TAB_MAGIC);
+        }
         while (!isPaused && checks()) {
-            wait(random(750, 1000));
-            if (getCurrentTab() != Constants.TAB_MAGIC) {
-                openTab(Constants.TAB_MAGIC);
+            int waitCheck = 0;
+            while (getCurrentTab() != Constants.TAB_MAGIC) {
+                wait(random(50, 150));
+                if (waitCheck > 20) {
+                    wait(750);
+                    moveMouse(578, 405);
+                    wait(150);
+                    clickMouse(true);
+                    return false;
+                }
+                waitCheck++;
             }
             Bot.disableRandoms = true;
             if (!castSpell(Constants.SPELL_HIGH_LEVEL_ALCHEMY)) {
                 return false;
             }
-            int waitCheck = 0;
+            waitCheck = 0;
             // Wait for the inventory to open
             while (getCurrentTab() != Constants.TAB_INVENTORY) {
                 wait(random(50, 150));
@@ -118,7 +129,11 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 }
                 itemPos = getItemPos();
             }
-            moveMouse(itemPos, 5, 5);
+            if (itemPos.distance(getMouseLocation()) < 10 && getMenuIndex("Cast") != -1) {
+                
+            } else {
+                moveMouse(itemPos, 5, 5);
+            }
             if (!atMenu("Cast")) {
                 return false;
             }
