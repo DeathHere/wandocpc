@@ -103,7 +103,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
                 waitCheck++;
             }
             Bot.disableRandoms = true;
-            wait(random(250, 450));
+            wait(random(200, 350));
             if (!castSpell(Constants.SPELL_HIGH_LEVEL_ALCHEMY)) {
                 return false;
             }
@@ -136,7 +136,7 @@ public class SpeedHighAlch extends Script implements ServerMessageListener, Pain
             } else {
                 moveMouse(itemPos, 5, 5);
             }
-            wait(random(250, 450));
+            wait(random(200, 350));
             if (!atMenu("Cast High")) {
                 if (!atMenu("Cast High")) {
                     return false;
