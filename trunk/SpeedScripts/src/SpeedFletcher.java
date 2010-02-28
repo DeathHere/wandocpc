@@ -138,9 +138,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                     wait(150);
                     clickMouse(true);
                 }
-                log("Checkpoint Pre-bank");
                 if (!bank.open()) {
-
                     while (!bank.isOpen()) {
                         wait(random(650, 850));
                         int menu = getMenuIndex("Knife");
@@ -157,26 +155,22 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                         }
                     }
                 }
-                log("Checkpoint Bank opened");
                 if (errorCounter > 6) {
-                    log("Checkpoint Too many errors");
+                    log("Too many errors...Shutting down");
                     return -1;
                 }
                 if (!deposit()) {
                     Bot.disableRandoms = false;
                     errorCounter++;
-                    log("Checkpoint Deposit fail");
                     return 1;
                 }
                 if (!withdraw()) {
                     Bot.disableRandoms = false;
                     errorCounter++;
-                    log("Checkpoint Withdraw fail");
                     return 1;
                 }
             }
             bank.close();
-            log("Checkpoint banking done");
             if (!fletch()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
