@@ -24,7 +24,17 @@ import org.rsbot.script.wrappers.RSTile;
 @ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedHighAlch", version = 1.0, description = "<html>" +
         "<head>" +
         "</head>" +
-        "<body>Have items in inventory in noted form with item ID ready. \n This script will keep using alchemy until 10 items or less remain." +
+        "<body>" +
+        "<center>" +
+        "<img src=\"http://www.wandocpc.site90.com/images/screenshots/alch.jpg\"" +
+        "   alt=\"SpeedFletcher\">" +
+        "</center>" +
+        "<hr>" +
+        "<center>Created by LightSpeed & Pirateblanc</center>" +
+        "<hr><br>" +
+        "<p>" +
+        "Have items in inventory in noted form with item ID ready. This script will keep using alchemy until 10 items or less remain." +
+        "</p>" +
         "</body>" +
         "</html>")
 public class SpeedHighAlch extends Script implements ServerMessageListener, PaintListener {
