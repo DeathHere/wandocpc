@@ -21,7 +21,12 @@ import org.rsbot.script.wrappers.RSInterface;
 import org.rsbot.script.wrappers.RSItem;
 import org.rsbot.script.wrappers.RSTile;
 
-@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedHighAlch", version = 1.0, description = "<html><head></head><body>Have items in inventory in noted form with item ID ready. \n This script will keep using alchemy until 10 items or less remain. \n Paint will be added later.</body></html>")
+@ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedHighAlch", version = 1.0, description = "<html>" +
+        "<head>" +
+        "</head>" +
+        "<body>Have items in inventory in noted form with item ID ready. \n This script will keep using alchemy until 10 items or less remain." +
+        "</body>" +
+        "</html>")
 public class SpeedHighAlch extends Script implements ServerMessageListener, PaintListener {
 
     private int startExp = 1;
