@@ -23,6 +23,12 @@ import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed"}, category = "Magic", name = "SpeedHighAlch", version = 1.0, description = "<html>" +
         "<head>" +
+        "<style type=\"text/css\">" +
+        "body {" +
+        "   color: #FFFFFF;" +
+        "   background-color: #000000;" +
+        "}" +
+        "</style>" +
         "</head>" +
         "<body>" +
         "<center>" +
