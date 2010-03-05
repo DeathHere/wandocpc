@@ -56,7 +56,7 @@ import org.rsbot.script.wrappers.RSTile;
         "<center>Created by LightSpeed & Pirateblanc</center>" +
         "<hr><br>" +
         "<p>" +
-        "Have items in inventory in noted form with item ID ready. This script will keep using alchemy until 10 items or less remain." +
+        "Have items in inventory in noted form with item ID and nature runes ready." +
         "</p>" +
         "</body>" +
         "</html>")

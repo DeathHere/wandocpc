@@ -16,6 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Educational code to simulate a human performing the superheat spell
+ * Copyright (C) 2010 LightSpeed, Pirateblanc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -123,6 +140,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     private int stringLeft = 0;
     RSInterface INTERFACE_FLETCH = RSInterface.getInterface(513);
     RSInterfaceChild FLETCH_AREA = RSInterface.getChildInterface(513, 3);
+    private double lagFactor;
 
     @Override
     public int loop() {
@@ -152,8 +170,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             setCameraAltitude(true);
             if (!checkFletch()) {
                 errors = 0;
-                if(!fletch && !string)
-                {
+                if (!fletch && !string) {
                     log("Fletching complete");
                     return -1;
                 }
@@ -226,6 +243,8 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         log("Wood type: " + woodType);
         bowType = map.get("type");
         log("Bow type: " + bowType);
+        lagFactor = Double.parseDouble(map.get("lag"));
+        log("Lag Factor: " + lagFactor);
 
         recordInitial = true;
         Bot.disableRandoms = false;
@@ -330,9 +349,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
         }
         if (fletch && logsLeft > 1 && inventoryContainsOneOf(knifeID, sacredKnifeID)) {
             Point itemPos = getInventoryLocation(logID);
-            Point knifePos = getInventoryLocation(knifeID);
+            Point knifePos = getInventoryLocation(sacredKnifeID);
             if (knifePos.equals(new Point(-1, -1))) {
-                knifePos = getInventoryLocation(sacredKnifeID);
+                knifePos = getInventoryLocation(knifeID);
             }
             if (itemPos.equals(new Point(-1, -1)) || knifePos.equals(new Point(-1, -1))) {
                 return false;
@@ -772,6 +791,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private void paintFletch(Graphics g, int x, int y) {
+        if (recordInitial) {
+            return;
+        }
         g.setFont(new Font("Century Gothic", Font.PLAIN, 13));
 
         if (bowsMade + logsLeft == 0) {
@@ -860,5 +882,23 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
      */
     private String SkillToString(int skill) {
         return Skills.statsArray[skill];
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    protected int getMouseSpeed() {
+        return (int) (random(8, 10) * Math.pow(lagFactor, .30));
+    }
+
+    /**
+     *
+     * @param toSleep
+     */
+    @Override
+    public void wait(int toSleep) {
+        super.wait((int) (toSleep * Math.pow(lagFactor, .5)));
     }
 }
