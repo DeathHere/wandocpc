@@ -1,3 +1,5 @@
+package Other;
+
 /**
  * Educational code to simulate a human hunting for birds
  * Copyright (C) 2010 LightSpeed, Pirateblanc
