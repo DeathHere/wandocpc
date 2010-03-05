@@ -1,3 +1,20 @@
+/**
+ * Educational code to simulate a human performing the fletching animations
+ * Copyright (C) 2010 LightSpeed, Pirateblanc
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 import java.awt.Color;
 import java.awt.Font;
@@ -60,7 +77,16 @@ name = "SpeedFletcher", version = 1.0, description = "<html><head>"
 + "   <option>1.0<option>2.0"
 + "</input>"
 + "</form><br>"
-+ "<p>Description: More to come later"
++ "<p>Fletcher Instructions: Have character near a bank " +
+        "(good spot is soul wars due to no random zone) with the " +
+        "bank tab set to the tab with logs, bowstring, " +
+        "and uncut bows in the first 4 rows and visible. " +
+        "To cut bows you must have a knife in the inventory. " +
+        "If stringing is selected, it will begin when there is only 1 log left in the bank. " +
+        "Clay knives can be used. " +
+        "(Once the knife is used up it will try to find a normal " +
+        "knife in the inventory. If none avaliable it will " +
+        "switch to stringing or end).</p>"
 + "</p>"
 + "</body>"
 + "</html>")
