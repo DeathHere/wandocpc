@@ -318,8 +318,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     }
 
     private void antiBan() {
-        switch (random(0, 200)) {
-            case 5:
+        switch (random(0, 500)) {
             case 6: {
                 openTab(TAB_STATS);
                 moveMouse(633, 406, 5, 5);
@@ -389,6 +388,7 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 errors++;
             }
             while (animationIs(1248, 7211)) {
+                antiBan();
                 wait(random(500, 750));
             }
         } else if (string && unstrungLeft > 1) {
@@ -427,8 +427,9 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             }
             int before = unstrungLeft;
             int after = 0;
-            while (animationIs(6685, 6686, 6687, 6688, 6689) || before > after) {
-                wait(random(750, 1000));
+            while (animationIs(6685, 6686, 6687, 6688, 6689) || before > after || checkStringing()) {
+                antiBan();
+                wait(random(75, 100));
                 after = unstrungLeft;
                 if (after != 0) {
                     before = after;
@@ -463,10 +464,10 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
                 return false;
             }
         }
-        if (fletch && bank.depositAllExcept(knifeID, sacredKnifeID)) {
-            return true;
-        } else if (string && bank.depositAll()) {
-            return true;
+        if (fletch) {
+            return  bank.depositAllExcept(knifeID, sacredKnifeID);
+        } else if (string) {
+            return bank.depositAll();
         } else {
             return false;
         }
@@ -676,16 +677,16 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
             x = 107;
             y = 410;
             if (woodType.equals("Magic")) {
-                x = 135;
-                y = 420;
+                x = 130;
+                y = 414;
             }
             bowID = shortbowID;
         } else if (bowType.equals("Longbow")) {
             x = 248;
             y = 406;
             if (woodType.equals("Magic")) {
-                x = 385;
-                y = 430;
+                x = 400;
+                y = 414;
             }
             bowID = longbowID;
         } else {
@@ -901,4 +902,18 @@ public class SpeedFletcher extends Script implements PaintListener, ServerMessag
     public void wait(int toSleep) {
         super.wait((int) (toSleep * Math.pow(lagFactor, .5)));
     }
+
+    private boolean checkStringing()
+    {
+        int locErrors = 0;
+        while(locErrors < 8)
+        {
+            if(animationIs(6685, 6686, 6687, 6688, 6689))
+                return true;
+            locErrors++;
+            wait(random(50,150));
+        }
+        return false;
+    }
+
 }
