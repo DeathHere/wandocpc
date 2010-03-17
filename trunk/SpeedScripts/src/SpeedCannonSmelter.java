@@ -1,4 +1,3 @@
-package Other;
 
 
 import java.awt.Color;
@@ -36,7 +35,7 @@ name = "SpeedCannonSmelter", version = 1.0, description = "<html><head>"
 + " -Edgeville"
 + "</p>"
 + "</body></html>")
-        
+
 public class SpeedCannonSmelter extends Script implements PaintListener {
 
     private enum State {

@@ -1,4 +1,4 @@
-package Other;
+
 
 /**
  * Educational code to simulate a human hunting for birds
