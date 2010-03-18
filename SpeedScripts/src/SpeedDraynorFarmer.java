@@ -1,14 +1,7 @@
-package SampleScripts;
-
-
 import java.awt.*;
 import java.util.*;
-import java.util.List;
-import java.util.logging.Level;
-import javax.accessibility.*;
 import javax.swing.*;
 
-import org.rsbot.bot.Bot;
 import org.rsbot.script.*;
 import org.rsbot.script.wrappers.*;
 import org.rsbot.script.wrappers.RSNPC;
@@ -16,11 +9,9 @@ import org.rsbot.script.wrappers.RSObject;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
 import org.rsbot.event.events.ServerMessageEvent;
-import org.rsbot.util.ScreenshotUtil;
 
-@ScriptManifest(authors = {"Revision's shit script fixed by lord_qaz"}, category = "Thieving", name = "Revision MFT owned", version = 1.2, description = "<html><head></head><body>Do NOT use if you have less than 32 hp, eats at half health</body></html\n")
-public class RevMFTOwned extends Script implements PaintListener,
-        ServerMessageListener {
+@ScriptManifest(authors = {"lord_qaz, Pirateblanc"}, category = "Thieving", name = "Revision MFT owned, Fixed", version = 1.2, description = "<html><head></head><body>Do NOT use if you have less than 32 hp, eats at half health. Hp fix by Pirateblanc</body></html\n")
+public class SpeedDraynorFarmer extends Script implements PaintListener, ServerMessageListener {
 
     public String status = "--";
     public long runTime = 0, seconds = 0, minutes = 0, hours = 0;
@@ -85,7 +76,7 @@ public class RevMFTOwned extends Script implements PaintListener,
         }
 
         if (getInventoryCount(FOOD_IDS) > 0 && (!isInventoryFull() || (isInventoryFull() && eatfoodifinvfull))) {
-            if (!(skills.getCurrentSkillLevel(STAT_HITPOINTS) > (skills.getRealSkillLevel(STAT_HITPOINTS) / 2)) && getInventoryCount(FOOD_IDS) >= 1) {
+            if (isEatingRequired() && getInventoryCount(FOOD_IDS) >= 1) {
                 status = "Eating";
                 clickInventoryItem(FOOD_IDS, "Eat");
                 moveAfter();
@@ -101,7 +92,7 @@ public class RevMFTOwned extends Script implements PaintListener,
 
             RSNPC Farmer = getNearestNPCByID(FarmerID);
 
-            if (skills.getCurrentSkillLevel(STAT_HITPOINTS) > (skills.getRealSkillLevel(STAT_HITPOINTS) / 2) && getInventoryCount(FOOD_IDS) > 0) {
+            if (getInventoryCount(FOOD_IDS) > 0) {
                 if (tileOnScreen(Farmer.getLocation())) {
                     status = "stealing";
                     atNPC(Farmer, "Pickpocket");
@@ -117,6 +108,18 @@ public class RevMFTOwned extends Script implements PaintListener,
         }
 
         return 100;
+    }
+
+    /**
+     * Check the player hp against times failed (-30 dmg)
+     * See if the player is at half hp or less
+     * @return whether the player should eat a piece of food
+     */
+    public boolean isEatingRequired() {
+        if (getMyPlayer().getHPPercent() < 40) {
+            return true;
+        }
+        return false;
     }
 
     public int goBank() {
@@ -209,6 +212,7 @@ public class RevMFTOwned extends Script implements PaintListener,
         g.drawString("EXP Earned: " + gained, 5, 117);
         g.drawString("" + (secExp * 60) * 60 + " EXP/H", 5, 128);
         g.drawString("EXP until lvl: " + skills.getXPToNextLevel(STAT_THIEVING), 5, 139);
+        g.drawString("HP: " + getMyPlayer().getHPPercent() + "%", 5, 160);
     }
 
     public void serverMessageRecieved(ServerMessageEvent arg0) {
