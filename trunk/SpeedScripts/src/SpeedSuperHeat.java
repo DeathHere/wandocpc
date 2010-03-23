@@ -22,6 +22,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Map;
+import java.util.TreeMap;
 import org.rsbot.bot.Bot;
 import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
@@ -100,7 +101,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     //private int refreshCounter = 0;
     private int xpHour = 0;
     private int[] startExpArry = null;
-
+    private boolean heating = false;
     /**
      * Start stuff
      */
@@ -209,22 +210,25 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
             // Get the last position of the ore
             int[] inventoryArray = getInventoryArray();
-            int startItem = -1;
-            for (int i = 27; i >= 0; i--) {
+            Point itemPos = null;
+            TreeMap<Double,Point> map = new TreeMap<Double, Point>();
+            for (int i = 0; i <= 27; i++) {
                 if (inventoryArray[i] == oreID) {
-                    startItem = i;
-                    break;
+                    itemPos = getInventoryItemPoint(i);
+                    double dis = itemPos.distance(getMouseLocation());
+                    map.put(dis, itemPos);
                 }
             }
-            Point itemPos = getInventoryItemPoint(startItem);
+            
             // End method no more items
-            if (itemPos.equals(new Point(-1, -1))) {
+            if (map.isEmpty()) {
                 wait(750);
                 moveMouse(578, 405, 10, 10);
                 wait(150);
                 clickMouse(true); //cast spell at empty space
                 return true;
             } else {
+                itemPos = map.get(map.firstKey());
                 do {
                     if (waitCheck > 3) {
                         return false;
@@ -482,7 +486,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             if (!superHeat()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
+                return 1;
             }
+            if (isPaused) {
+                return 1;
+            }
+            bank.open();
             errorCounter = 0;
             return 500;
         } catch (NullPointerException e) {
@@ -608,7 +617,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return (int) (random(8, 11) * Math.pow(lagFactor, .30));
+        return heating ? (int) (random(8, 11) * Math.pow(lagFactor, .30)) : random(6, 8);
     }
 
     /**
