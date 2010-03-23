@@ -434,6 +434,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     @Override
     public int loop() {
         try {
+            heating = false;
             if (!isLoggedIn()) {
                 Bot.disableRandoms = false;
                 return 1000;
@@ -483,6 +484,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
             }
             bank.close();
+            heating = true;
             if (!superHeat()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
@@ -617,7 +619,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return heating ? (int) (random(8, 11) * Math.pow(lagFactor, .30)) : random(6, 8);
+        return !heating ? (int) (random(8, 11) * Math.pow(lagFactor, .30)) : random(6, 8);
     }
 
     /**
