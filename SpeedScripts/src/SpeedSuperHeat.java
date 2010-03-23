@@ -459,7 +459,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             setCameraAltitude(true);
             if (!checkOres()) {
                 errors = 0;
-                if (!bank.open()) {
+                if (!bank.isOpen() && !bank.open()) {
                     while (!bank.isOpen()) {
                         wait(random(750, 1000));
                         errors++;
