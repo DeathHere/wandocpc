@@ -102,6 +102,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
     private int xpHour = 0;
     private int[] startExpArry = null;
     private boolean heating = false;
+
     /**
      * Start stuff
      */
@@ -211,7 +212,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             // Get the last position of the ore
             int[] inventoryArray = getInventoryArray();
             Point itemPos = null;
-            TreeMap<Double,Point> map = new TreeMap<Double, Point>();
+            TreeMap<Double, Point> map = new TreeMap<Double, Point>();
             for (int i = 0; i <= 27; i++) {
                 if (inventoryArray[i] == oreID) {
                     itemPos = getInventoryItemPoint(i);
@@ -219,7 +220,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     map.put(dis, itemPos);
                 }
             }
-            
+
             // End method no more items
             if (map.isEmpty()) {
                 wait(750);
@@ -488,14 +489,16 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             if (!superHeat()) {
                 Bot.disableRandoms = false;
                 errorCounter++;
+                heating = false;
                 return 1;
             }
             if (isPaused) {
                 return 1;
             }
+            heating = false;
             bank.open();
             errorCounter = 0;
-            return 500;
+            return 1000;
         } catch (NullPointerException e) {
             Bot.disableRandoms = false;
             log("Something really fucked up:" + e.getMessage());
