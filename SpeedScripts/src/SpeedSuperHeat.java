@@ -220,7 +220,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     map.put(dis, itemPos);
                 }
             }
-
             // End method no more items
             if (map.isEmpty()) {
                 wait(750);
@@ -485,6 +484,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
             }
             bank.close();
+            openTab(Constants.TAB_MAGIC);
             heating = true;
             if (!superHeat()) {
                 Bot.disableRandoms = false;
@@ -499,7 +499,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             bank.open();
             errorCounter = 0;
             return 1000;
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             Bot.disableRandoms = false;
             log("Something really fucked up:" + e.getMessage());
             errors++;
@@ -622,7 +622,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return !heating ? (int) (random(8, 11) * Math.pow(lagFactor, .30)) : random(6, 8);
+        return !heating ? (int) (random(8, 11) * Math.pow(lagFactor, .30)) : random(7, 9);
     }
 
     /**
