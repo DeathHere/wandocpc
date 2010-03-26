@@ -115,6 +115,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             }
         }
         setCameraAltitude(true);
+        rob();
         return 1;
     }
 
@@ -154,6 +155,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                     atNPC(npc, "Pick");
                 }
             }
+            wait(random(750,1500));
         }
         return true;
     }
