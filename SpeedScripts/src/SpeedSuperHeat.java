@@ -208,6 +208,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             for (String s : getMenuActions()) {
                 if (s.contains("Cast Superheat ") && s.contains("ore")) {
                     clickMouse(true);
+                    waitForTab(Constants.TAB_MAGIC, 500);
                     continue;
                 }
             }
