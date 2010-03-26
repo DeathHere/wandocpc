@@ -116,7 +116,6 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         for (int i = 0; i < 20; i++) {
             startExpArry[i] = skills.getCurrentSkillExp(i);
         }
-
         return oreInitialize(); //get coal ratio
     }
 

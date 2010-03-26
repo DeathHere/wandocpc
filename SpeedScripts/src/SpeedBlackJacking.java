@@ -17,15 +17,12 @@
  */
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Map;
-import java.util.TreeMap;
 import org.rsbot.bot.Bot;
-import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
@@ -33,11 +30,8 @@ import org.rsbot.script.Constants;
 import org.rsbot.script.Random;
 import org.rsbot.script.Script;
 import org.rsbot.script.ScriptManifest;
-import org.rsbot.script.Skills;
-import org.rsbot.script.randoms.BankPins;
 import org.rsbot.script.randoms.antiban.BreakHandler;
-import org.rsbot.script.wrappers.RSInterface;
-import org.rsbot.script.wrappers.RSInterfaceComponent;
+import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Thieving",
@@ -60,7 +54,7 @@ name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
         "</body></html>")
 public class SpeedBlackJacking extends Script implements ServerMessageListener, PaintListener {
 
-    protected final int banditID = 1879;
+    protected final int[] npcIDs = {1895, 7478, 1879};
     /**
      * 1993 - Wine
      * 1994 - Noted Wine
@@ -68,10 +62,24 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     protected final int[] foods = {
         1993
     };
+    protected final int[] blackJack = {};
     // Find these in server msg
+    protected final String serMsg[] = {" "};
     protected final String hit = "unconscious";
     protected final String fail = "glances";
     protected final String totalFail = "stunned";
+    private RSTile loc;
+    private boolean recordInitial = false;
+    private int[] startExpArry;
+    
+    protected boolean initialized() {
+        loc = getLocation();
+        startExpArry = new int[30];
+        for (int i = 0; i < 20; i++) {
+            startExpArry[i] = skills.getCurrentSkillExp(i);
+        }
+        return equipmentContainsOneOf(blackJack);
+    }
 
     // Paint vars
     private Image magicIcon;
@@ -84,7 +92,92 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      */
     @Override
     public int loop() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (!isLoggedIn()) {
+            Bot.disableRandoms = false;
+            return 1000;
+        }
+        if (recordInitial) {
+            if (!initialized()) {
+                log("Error: bar identification failure");
+                return -1;
+            } else {
+                recordInitial = false;
+            }
+        }
+        if (distanceBetween(loc, getLocation()) > 10) {
+            if (checkForRandoms()) {
+                loc = getLocation();
+                return 1;
+            }
+        }
+        setCameraAltitude(true);
+        return 1;
+    }
+
+    protected boolean rob() {
+        int npcID = 0;
+        int level = skills.getCurrentSkillLevel(Constants.STAT_THIEVING);
+        if (level < 45) {
+            npcID = npcIDs[0];
+        } else if (level < 55) {
+            npcID = npcIDs[1];
+        } else {
+            npcID = npcIDs[2];
+        }
+        while (!isPaused  && !checkForRandoms()) {
+            RSNPC npc = getNearestNPCByID(npcID);
+            if (npc == null) {
+                return false;
+            }
+            if(serMsg[0].contains("Perhaps"))
+            {
+                log("Other bandit too close. Please move.");
+                wait(random(5000,6000));
+                return false;
+            }
+            serMsg[0] = " ";
+            atNPC(npc, "Knock");
+            if(serMsg[0].contains(totalFail))
+            {
+                wait(random(2500,3500));
+                continue;
+            }
+            int animation = getFirstNpcAnim(npc);
+            if (animation == 12413) {
+                atNPC(npc, "Pick");
+                wait(random(250, 750));
+                if (serMsg[0].contains(hit)) {
+                    atNPC(npc, "Pick");
+                }
+            }
+        }
+        return true;
+    }
+
+    public int getFirstNpcAnim(RSNPC npc) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < 1000) {
+            if (npc.getAnimation() != -1) {
+                return npc.getAnimation();
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Checks and handles random events
+     * @return if there is a random event
+     */
+    private boolean checkForRandoms() {
+        for (final Random random : Bot.getScriptHandler().getRandoms()) {
+            if (Bot.disableBreakHandler && (random instanceof BreakHandler)) {
+                continue;
+            }
+            if (random.runRandom()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -92,7 +185,9 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      * @param e
      */
     public void serverMessageRecieved(ServerMessageEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        synchronized (serMsg) {
+            serMsg[0] = e.getMessage();
+        }
     }
 
     /**
@@ -102,8 +197,13 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      */
     @Override
     public boolean onStart(Map<String, String> map) {
-
+        recordInitial = true;
         return true;
+    }
+
+    @Override
+    public void onFinish() {
+        super.onFinish();
     }
 
     public void paintIcons(Graphics g, int x, int y) {
