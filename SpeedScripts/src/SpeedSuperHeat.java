@@ -564,7 +564,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             antiBan();
             bank.open();
             errorCounter = 0;
-            return 550;
+            waitForIface(bank.getInterface(), 1000);
+            return 250;
         } catch (Exception e) {
             Bot.disableRandoms = false;
             log("Something really fucked up:" + e.getMessage());
