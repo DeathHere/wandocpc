@@ -222,7 +222,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
             // End method no more items
             if (map.isEmpty()) {
-                wait(750);
+                wait(550);
                 moveMouse(578, 405, 10, 10);
                 wait(150);
                 clickMouse(true); //cast spell at empty space
@@ -272,7 +272,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         double speedfactor = lagFactor;
         //moveMouse(92, 35, 5, 5);
-        lagFactor *= 1.8;
+        lagFactor *= 1.3;
         int errCount = 0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
@@ -300,7 +300,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             } else if (ore < withdrawlFactor) {
                 withdraw(oreID, withdrawlFactor - ore);
             }
-            wait(random(700, 1000));
+            wait(random(550, 750));
             ore = getInventoryCount(oreID);
             errCount++;
             if (errCount > 3 || isPaused) {
@@ -498,7 +498,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             heating = false;
             bank.open();
             errorCounter = 0;
-            return 1000;
+            return 550;
         } catch (Exception e) {
             Bot.disableRandoms = false;
             log("Something really fucked up:" + e.getMessage());
@@ -622,7 +622,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return !heating ? (int) (random(8, 11) * Math.pow(lagFactor, .30)) : random(7, 9);
+        return !heating ? (int) (random(7, 10) * Math.pow(lagFactor, .30)) : random(5, 7);
     }
 
     /**
