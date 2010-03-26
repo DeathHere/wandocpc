@@ -164,9 +164,9 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             {
                 atObject(getNearestObjectByID(6261), "Climb-up");
                 waitForAnim(3000);
-                wait(random(500,750));
+                wait(random(2000,4000));
                 atObject(getNearestObjectByID(6260), "Climb-down");
-                wait(random(750,1500));
+                wait(random(1000,3000));
                 continue;
             }
             int animation = getFirstNpcAnim(npc);
@@ -213,7 +213,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     public void serverMessageRecieved(ServerMessageEvent e) {
         synchronized (serMsg) {
             String msg = e.getMessage();
-            if(msg.contains(hit) || msg.contains(fail) || msg.contains(combat) || msg.contains(totalFail))
+            if(msg.contains(hit) || msg.contains(fail) || msg.contains(combat) || msg.contains(totalFail) || msg.contains("Perhaps"))
             serMsg[0] = e.getMessage();
         }
     }
