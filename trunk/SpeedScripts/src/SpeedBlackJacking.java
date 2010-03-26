@@ -174,7 +174,12 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                 continue;
             } else if (serMsg[0].contains(combat)) {
                 atObject(getNearestObjectByID(6261), "Climb-up");
-                waitForAnim(5000);
+                start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 1000) {
+                    if (animationIs(828)) {
+                        break;
+                    }
+                }
                 wait(random(2000, 4000));
                 atObject(getNearestObjectByID(6260), "Climb-down");
                 wait(random(1000, 3000));
