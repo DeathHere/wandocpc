@@ -21,6 +21,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.Map;
 import org.rsbot.bot.Bot;
 import org.rsbot.event.events.ServerMessageEvent;
@@ -35,7 +37,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSTile;
 
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Thieving",
-name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
+name = "SpeedBlackJacking", version = 1.0, description = "<html><head>" +
         "<style type=\"text/css\">" +
         "body {" +
         "   color: #FFFFFF;" +
@@ -62,7 +64,9 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     protected final int[] foods = {
         1993
     };
-    protected final int[] blackJack = {};
+    protected final int[] blackJack = {
+        4600
+    };
     // Find these in server msg
     protected final String serMsg[] = {" "};
     protected final String hit = "unconscious";
@@ -82,8 +86,8 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     }
 
     // Paint vars
-    private Image magicIcon;
-    private Image smithingIcon;
+    private Image blkJIcon;
+    private Image thievingIcon;
     private Image coinsIcon;
 
     /**
@@ -197,6 +201,15 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      */
     @Override
     public boolean onStart(Map<String, String> map) {
+        /** Getting the images for the various icons in paint */
+        try {
+            thievingIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/thieving.gif"));
+            coinsIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/coins.gif"));
+            blkJIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/blackjack.gif"));
+        }
+        catch(Exception e) {
+            log("Unable to load picture icons");
+        }
         recordInitial = true;
         return true;
     }
@@ -207,9 +220,9 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     }
 
     public void paintIcons(Graphics g, int x, int y) {
-        g.drawImage(coinsIcon, x + 20, y + 20, null);
-        g.drawImage(magicIcon, x + 140, y + 20, null);
-        g.drawImage(smithingIcon, x + 280, y + 20, null);
+        g.drawImage(thievingIcon, x + 20, y + 20, null);
+        g.drawImage(blkJIcon, x + 100, y + 20, null);
+        g.drawImage(coinsIcon, x + 200, y + 20, null);
     }
 
     public void paintRect(Graphics g, int x, int y, int width, int height) {
@@ -259,8 +272,8 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      * Paints stuff on screen
      * @param render
      */
-    public void onRepaint(Graphics render) {
-        
+    public void onRepaint(Graphics g) {
+        paintRect(g, 5, 200, 500, 200);
     }
     
 }
