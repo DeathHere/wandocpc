@@ -301,7 +301,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             } else if (ore < withdrawlFactor) {
                 withdraw(oreID, withdrawlFactor - ore);
             }
-            waitForItem(oreID, 600);
+            waitForItem(oreID, 750);
             ore = getInventoryCount(oreID);
             errCount++;
             if (errCount > 3 || isPaused) {
@@ -312,8 +312,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         errCount = 0;
         if (coalRatio > 0) {
             while (!checkOres() && bank.isOpen()) {
-                bank.withdraw(coalID, 0);
-                if (waitForItem(coalID, 500)) {
+                withdraw(coalID, 0);
+                if (waitForItem(coalID, 750)) {
                     break;
                 }
                 errCount++;
@@ -479,7 +479,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             } else {
                 Bot.disableRandoms = true;
             }
-            antiBan();
+
             setCameraAltitude(true);
             if (!checkOres()) {
                 errors = 0;
@@ -520,6 +520,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return 1;
             }
             heating = false;
+            antiBan();
             bank.open();
             errorCounter = 0;
             return 550;
@@ -625,6 +626,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      * How to not get screwed over by Jagax
      */
     public void antiBan() {
+        if (bank.isOpen()) {
+            return;
+        }
         switch (random(0, 50)) {
             case 4:
             case 5:
