@@ -147,9 +147,11 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                 if (p != null) {
                     moveMouse(p);
                     String[] options = {"Drink", "Eat"};
+                    wait(random(250,500));
                     atMenu(options);
+                    wait(random(250,500));
                 } else {
-                    serMsg[0] = "combat";
+                    serMsg[0] = combat;
                 }
             }
             RSNPC npc = getNearestNPCByID(npcID);
