@@ -273,7 +273,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         double speedfactor = lagFactor;
         //moveMouse(92, 35, 5, 5);
-        lagFactor *= 1.3;
+        lagFactor *= 1.5;
         int errCount = 0;
         int counter = 0; //to find maximum withdrawl size
         int[] inventoryArray = getInventoryArray();
@@ -301,7 +301,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             } else if (ore < withdrawlFactor) {
                 withdraw(oreID, withdrawlFactor - ore);
             }
-            wait(random(550, 750));
+            waitForItem(oreID, 600);
             ore = getInventoryCount(oreID);
             errCount++;
             if (errCount > 3 || isPaused) {
@@ -313,7 +313,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         if (coalRatio > 0) {
             while (!checkOres() && bank.isOpen()) {
                 bank.withdraw(coalID, 0);
-                wait(random(750, 950));
+                if (waitForItem(coalID, 500)) {
+                    break;
+                }
                 errCount++;
                 if (errCount > 3 || isPaused) {
                     lagFactor = speedfactor;
@@ -644,7 +646,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return !heating ? (int) (random(8, 10) * Math.pow(lagFactor, .30)) : random(6, 8);
+        return !heating ? (int) (random(9, 11) * Math.pow(lagFactor, .30)) : random(7, 9);
     }
 
     /**
