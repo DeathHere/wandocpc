@@ -19,6 +19,7 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.util.Map;
@@ -72,6 +73,11 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     protected final String fail = "glances";
     protected final String totalFail = "stunned";
 
+    // Paint vars
+    private Image magicIcon;
+    private Image smithingIcon;
+    private Image coinsIcon;
+
     /**
      * 
      * @return
@@ -90,14 +96,6 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     }
 
     /**
-     *
-     * @param render
-     */
-    public void onRepaint(Graphics render) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
      * 
      * @param map
      * @return
@@ -106,6 +104,63 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     public boolean onStart(Map<String, String> map) {
 
         return true;
+    }
+
+    public void paintIcons(Graphics g, int x, int y) {
+        g.drawImage(coinsIcon, x + 20, y + 20, null);
+        g.drawImage(magicIcon, x + 140, y + 20, null);
+        g.drawImage(smithingIcon, x + 280, y + 20, null);
+    }
+
+    public void paintRect(Graphics g, int x, int y, int width, int height) {
+        // Top left corner
+        g.setColor(new Color(155, 152, 146));
+        g.fillRect(x + 2, y - 0, 5, 4);
+        // Top border
+        g.setColor(new Color(148, 145, 138));
+        g.drawLine(x + 6, y, x + width, y);
+        g.setColor(new Color(138, 135, 128));
+        g.drawLine(x + 6, y + 1, x + width - 1, y + 1);
+        g.setColor(new Color(128, 125, 118));
+        g.drawLine(x + 6, y + 2, x + width - 2, y + 2);
+        g.setColor(new Color(118, 115, 108));
+        g.drawLine(x + 6, y + 3, x + width - 3, y + 3);
+        g.setColor(new Color(65, 62, 55));
+        g.drawLine(x + 6, y + 4, x + width - 4, y + 4);
+        // Fill black center
+        g.setColor(new Color(0, 0, 0, 210));
+        g.fillRect(x + 6, y + 5, width - 8, height - 8);
+        // Left border
+        g.setColor(new Color(148, 145, 138));
+        g.drawLine(x + 2, y + 4, x + 2, y + height - 1);
+        g.setColor(new Color(138, 135, 128));
+        g.drawLine(x + 3, y + 4, x + 3, y + height - 2);
+        g.setColor(new Color(128, 125, 118));
+        g.drawLine(x + 4, y + 4, x + 4, y + height - 3);
+        g.setColor(new Color(118, 115, 108));
+        g.drawLine(x + 5, y + 4, x + 5, y + height - 4);
+        // Right border
+        g.setColor(new Color(47, 45, 35));
+        g.drawLine(x + width - 0, y + 1, x + width - 0, y + height);
+        g.drawLine(x + width - 1, y + 2, x + width - 1, y + height - 1);
+        g.drawLine(x + width - 2, y + 3, x + width - 2, y + height - 2);
+        g.drawLine(x + width - 3, y + 4, x + width - 3, y + height - 3);
+        // Bottom border
+        g.setColor(new Color(47, 45, 35));
+        g.drawLine(x + 2, y + height + 0, x + width - 1, y + height + 0);
+        g.drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1);
+        g.drawLine(x + 3, y + height - 2, x + width - 3, y + height - 2);
+        g.drawLine(x + 4, y + height - 3, x + width - 4, y + height - 3);
+        // Icons
+        paintIcons(g, x, y);
+    }
+
+    /**
+     * Paints stuff on screen
+     * @param render
+     */
+    public void onRepaint(Graphics render) {
+        
     }
     
 }

@@ -756,24 +756,26 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         g.setColor(new Color(0, 0, 0, 210));
         g.fillRect(x + 6, y + 5, width - 8, height - 8);
         // Left border
-        g.setColor(new Color(87, 85, 78));
+        g.setColor(new Color(148, 145, 138));
         g.drawLine(x + 2, y + 4, x + 2, y + height - 1);
+        g.setColor(new Color(138, 135, 128));
         g.drawLine(x + 3, y + 4, x + 3, y + height - 2);
+        g.setColor(new Color(128, 125, 118));
         g.drawLine(x + 4, y + 4, x + 4, y + height - 3);
+        g.setColor(new Color(118, 115, 108));
         g.drawLine(x + 5, y + 4, x + 5, y + height - 4);
         // Right border
-        g.setColor(new Color(67, 65, 55));
+        g.setColor(new Color(47, 45, 35));
         g.drawLine(x + width - 0, y + 1, x + width - 0, y + height);
         g.drawLine(x + width - 1, y + 2, x + width - 1, y + height - 1);
         g.drawLine(x + width - 2, y + 3, x + width - 2, y + height - 2);
         g.drawLine(x + width - 3, y + 4, x + width - 3, y + height - 3);
-        //g.drawLine(x + width - 5, y + 5, x + width - 5, y + height - 4);
         // Bottom border
-        g.setColor(new Color(67, 65, 55));
-        g.drawLine(x + 1, y + height + 0, x + width - 1, y + height + 0);
+        g.setColor(new Color(47, 45, 35));
+        g.drawLine(x + 2, y + height + 0, x + width - 1, y + height + 0);
         g.drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1);
         g.drawLine(x + 3, y + height - 2, x + width - 3, y + height - 2);
-        g.drawLine(x + 3, y + height - 3, x + width - 4, y + height - 3);
+        g.drawLine(x + 4, y + height - 3, x + width - 4, y + height - 3);
         // Icons
         paintIcons(g, x, y);
     }
