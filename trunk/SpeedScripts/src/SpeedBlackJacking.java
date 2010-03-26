@@ -68,17 +68,40 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
         1993
     };
 
+    /**
+     * 
+     * @return
+     */
     @Override
     public int loop() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @param e
+     */
     public void serverMessageRecieved(ServerMessageEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     *
+     * @param render
+     */
     public void onRepaint(Graphics render) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * 
+     * @param map
+     * @return
+     */
+    @Override
+    public boolean onStart(Map<String, String> map) {
+
+        return true;
     }
     
 }
