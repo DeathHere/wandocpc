@@ -243,11 +243,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                         clickMouse(true);
                         return true;
                     }
-                    waitForTab(Constants.TAB_MAGIC, 500);
-                    if (getCurrentTab() == Constants.TAB_MAGIC) {
+                    if (waitForTab(Constants.TAB_MAGIC, 500)) {
                         break;
-                    } else {
-                        clickMouse(true);
                     }
                     wait(random(250, 500));
                     waitCheck++;
@@ -361,7 +358,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 break;
             default: // Withdraw x
                 if (atInterface(item, false)) {
-                    wait(random(500,800));
+                    wait(random(500, 800));
                     java.util.ArrayList<String> mactions = getMenuActions();
                     boolean found = false;
                     for (int i = 0; i < mactions.size(); i++) {
