@@ -276,7 +276,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      * @param render
      */
     public void onRepaint(Graphics g) {
-        paintRect(g, 5, 200, 500, 200);
+        //paintRect(g, 5, 500, 600, 150);
     }
     
 }
