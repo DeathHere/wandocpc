@@ -130,25 +130,34 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
         } else {
             npcID = npcIDs[2];
         }
-        while (!isPaused  && !checkForRandoms()) {
-            if(getMyPlayer().getHPPercent() < random(40,60))
-            {
+        while (!isPaused && !checkForRandoms()) {
+            serMsg[0] = " ";
+            if (getMyPlayer().getHPPercent() < random(45, 60)) {
+                Point p = null;
                 for (int food : foods) {
-                    atInventoryItem(food, "Drink");
-                    atInventoryItem(food, "Eat");
+                    int[] inventory = getInventoryArray();
+                    for (int i = 0; i < 28; i++) {
+                        int inv = inventory[i];
+                        if (inv == food) {
+                            p = getInventoryItemPoint(i);
+                        }
+                    }
+                }
+                p.translate(5, 5);
+                if (p != null) {
+                    moveMouse(p);
+                    String[] options = {"Drink", "Eat"};
+                    atMenu(options);
+                } else {
+                    serMsg[0] = "combat";
                 }
             }
             RSNPC npc = getNearestNPCByID(npcID);
             if (npc == null) {
                 return false;
             }
-            if(serMsg[0].contains("Perhaps"))
-            {
-                log("Other bandit too close. Please move.");
-                wait(random(5000,6000));
-                return false;
-            }
-            serMsg[0] = " ";
+
+
             atNPC(npc, "Knock");
             long start = System.currentTimeMillis();
             while (System.currentTimeMillis() - start < 1000) {
@@ -156,17 +165,19 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                     break;
                 }
             }
-            if(serMsg[0].contains(totalFail))
-            {
-                wait(random(2500,3500));
+            if (serMsg[0].contains("Perhaps")) {
+                log("Other bandit too close. Please move.");
+                wait(random(5000, 6000));
+                return false;
+            } else if (serMsg[0].contains(totalFail)) {
+                wait(random(2500, 3500));
                 continue;
-            } else if (serMsg[0].contains(combat))
-            {
+            } else if (serMsg[0].contains(combat)) {
                 atObject(getNearestObjectByID(6261), "Climb-up");
-                waitForAnim(3000);
-                wait(random(2000,4000));
+                waitForAnim(5000);
+                wait(random(2000, 4000));
                 atObject(getNearestObjectByID(6260), "Climb-down");
-                wait(random(1000,3000));
+                wait(random(1000, 3000));
                 continue;
             }
             int animation = getFirstNpcAnim(npc);
@@ -175,7 +186,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                 atNPC(npc, "Pick");
                 wait(random(250, 750));
             }
-            wait(random(750,1500));
+            wait(random(750, 1500));
         }
         return true;
     }
