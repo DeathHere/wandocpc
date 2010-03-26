@@ -67,6 +67,10 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     protected final int[] foods = {
         1993
     };
+    // Find these in server msg
+    protected final String hit = "unconscious";
+    protected final String fail = "glances";
+    protected final String totalFail = "stunned";
 
     /**
      * 
