@@ -148,7 +148,8 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                     moveMouse(p);
                     String[] options = {"Drink", "Eat"};
                     wait(random(250,500));
-                    atMenu(options);
+                    if(!atMenu(options))
+                    clickMouse(true);
                     wait(random(250,500));
                 } else {
                     serMsg[0] = combat;
