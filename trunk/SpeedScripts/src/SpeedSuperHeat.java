@@ -193,6 +193,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 return true;
             }
             // Cast the spell
+            wait(random(125, 250));
             if (!castSpell(Constants.SPELL_SUPERHEAT_ITEM)) {
                 return false;
             }
@@ -421,7 +422,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         if (getInventoryCount(coalID) > 24 || errorCounter != 0) {
-            if (bank.depositAllExcept(561, 554)) {
+            if (depositAllExcept(561, 554)) {
                 return true;
             } else {
                 //log("Error: depositing items problem");
@@ -429,12 +430,47 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
         }
         // Deposit all but runes and extra coal
-        if (bank.depositAllExcept(561, 554, coalID)) {
+        if (depositAllExcept(561, 554, coalID)) {
             return true;
         } else {
             //log("Error: depositing items problem");
             return false;
         }
+    }
+
+    public boolean depositAllExcept(final int... items) {
+        int inventoryCount = getInventoryCount();
+        int[] inventoryArray = getInventoryArray();
+        outer:
+        for (int off = 0; off < inventoryArray.length; off++) {
+            if (inventoryArray[off] == -1) {
+                continue;
+            }
+            for (final int item : items) {
+                if (inventoryArray[off] == item) {
+                    continue outer;
+                }
+            }
+
+            for (int tries = 0; tries < 5; tries++) {
+                atInventoryItem(inventoryArray[off], "Deposit-All");
+                long start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 1000) {
+                    if (inventoryContains(inventoryArray[off])) {
+                        return true;
+                    }
+                }
+                if (getInventoryCount() < inventoryCount) {
+                    break;
+                }
+            }
+            if (getInventoryCount() >= inventoryCount) {
+                return false;
+            }
+            inventoryArray = getInventoryArray();
+            inventoryCount = getInventoryCount();
+        }
+        return true;
     }
 
     /**
