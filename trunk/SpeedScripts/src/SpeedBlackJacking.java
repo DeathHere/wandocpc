@@ -72,6 +72,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     protected final String hit = "unconscious";
     protected final String fail = "glances";
     protected final String totalFail = "stunned";
+    protected final String combat = "combat";
     private RSTile loc;
     private boolean recordInitial = false;
     private int[] startExpArry;
