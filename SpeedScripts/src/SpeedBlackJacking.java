@@ -143,7 +143,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                         }
                     }
                 }
-                p.translate(5, 5);
+                p.translate(15, 15);
                 if (p != null) {
                     moveMouse(p);
                     String[] options = {"Drink", "Eat"};
