@@ -452,7 +452,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
             }
 
-            inner: for (int tries = 0; tries < 5; tries++) {
+            inner:
+            for (int tries = 0; tries < 5; tries++) {
                 atInventoryItem(inventoryArray[off], "Deposit-All");
                 long start = System.currentTimeMillis();
                 while (System.currentTimeMillis() - start < 1000) {
@@ -545,8 +546,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     return 1;
                 }
             }
-            if(waitForItem(oreID, 500) && waitForItem(coalID, 500) && !checkOres())
+            if (!(waitForItem(oreID, 500) && waitForItem(coalID, 500) && checkOres())) {
                 return 1;
+            }
             bank.close();
             openTab(Constants.TAB_MAGIC);
             if (!superHeat()) {
