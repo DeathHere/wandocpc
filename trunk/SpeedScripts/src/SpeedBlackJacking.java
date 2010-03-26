@@ -59,6 +59,15 @@ name = "SpeedSuperHeat", version = 1.0, description = "<html><head>" +
         "</body></html>")
 public class SpeedBlackJacking extends Script implements ServerMessageListener, PaintListener {
 
+    protected final int banditID = 1879;
+    /**
+     * 1993 - Wine
+     * 1994 - Noted Wine
+     */
+    protected final int[] foods = {
+        1993
+    };
+
     @Override
     public int loop() {
         throw new UnsupportedOperationException("Not supported yet.");
