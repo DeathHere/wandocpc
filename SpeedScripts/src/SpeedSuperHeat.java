@@ -452,12 +452,12 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
             }
 
-            for (int tries = 0; tries < 5; tries++) {
+            inner: for (int tries = 0; tries < 5; tries++) {
                 atInventoryItem(inventoryArray[off], "Deposit-All");
                 long start = System.currentTimeMillis();
                 while (System.currentTimeMillis() - start < 1000) {
-                    if (inventoryContains(inventoryArray[off])) {
-                        return true;
+                    if (!inventoryContains(inventoryArray[off])) {
+                        break inner;
                     }
                 }
                 if (getInventoryCount() < inventoryCount) {
