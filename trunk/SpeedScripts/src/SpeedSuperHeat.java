@@ -303,7 +303,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             } else if (ore < withdrawlFactor) {
                 withdraw(oreID, withdrawlFactor - ore);
             }
-            waitForItem(oreID, 1050);
+            waitForItem(oreID, 1750);
+            wait(random(125, 375));
             ore = getInventoryCount(oreID);
             errCount++;
             if (errCount > 3 || isPaused) {
