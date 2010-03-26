@@ -246,7 +246,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     } else {
                         clickMouse(true);
                     }
-                    wait(random(750, 1250));
+                    wait(random(400,600));
                     waitCheck++;
                 } while (getCurrentTab() != Constants.TAB_MAGIC);
             }
