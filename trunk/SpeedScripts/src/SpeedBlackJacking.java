@@ -143,18 +143,24 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             }
             serMsg[0] = " ";
             atNPC(npc, "Knock");
+            wait(random(250,500));
             if(serMsg[0].contains(totalFail))
             {
                 wait(random(2500,3500));
                 continue;
+            } else if (serMsg[0].contains("combat"))
+            {
+                atObject(getNearestObjectByID(6261), "Climb-up");
+                wait(random(250,500));
+                atObject(getNearestObjectByID(6260), "Climb-down");
+                wait(random(750,1500));
+                continue;
             }
             int animation = getFirstNpcAnim(npc);
-            if (animation == 12413) {
+            atNPC(npc, "Pick");
+            if (animation == 12413 || serMsg[0].contains(hit)) {
                 atNPC(npc, "Pick");
                 wait(random(250, 750));
-                if (serMsg[0].contains(hit)) {
-                    atNPC(npc, "Pick");
-                }
             }
             wait(random(750,1500));
         }
