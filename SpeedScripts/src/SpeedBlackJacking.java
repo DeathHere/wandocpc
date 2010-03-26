@@ -131,6 +131,13 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             npcID = npcIDs[2];
         }
         while (!isPaused  && !checkForRandoms()) {
+            if(getMyPlayer().getHPPercent() < random(40,60))
+            {
+                for (int food : foods) {
+                    atInventoryItem(food, "Drink");
+                    atInventoryItem(food, "Eat");
+                }
+            }
             RSNPC npc = getNearestNPCByID(npcID);
             if (npc == null) {
                 return false;
@@ -143,15 +150,21 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             }
             serMsg[0] = " ";
             atNPC(npc, "Knock");
-            wait(random(250,500));
+            long start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < 1000) {
+                if (serMsg.length > 2) {
+                    break;
+                }
+            }
             if(serMsg[0].contains(totalFail))
             {
                 wait(random(2500,3500));
                 continue;
-            } else if (serMsg[0].contains("combat"))
+            } else if (serMsg[0].contains(combat))
             {
                 atObject(getNearestObjectByID(6261), "Climb-up");
-                wait(random(250,500));
+                waitForAnim(3000);
+                wait(random(500,750));
                 atObject(getNearestObjectByID(6260), "Climb-down");
                 wait(random(750,1500));
                 continue;
@@ -199,6 +212,8 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
      */
     public void serverMessageRecieved(ServerMessageEvent e) {
         synchronized (serMsg) {
+            String msg = e.getMessage();
+            if(msg.contains(hit) || msg.contains(fail) || msg.contains(combat) || msg.contains(totalFail))
             serMsg[0] = e.getMessage();
         }
     }
