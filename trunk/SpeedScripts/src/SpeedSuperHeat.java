@@ -545,8 +545,8 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     return 1;
                 }
             }
-            if(!checkOres())
-                return -1;
+            if(waitForItem(oreID, 500) && waitForItem(coalID, 500) && !checkOres())
+                return 1;
             bank.close();
             openTab(Constants.TAB_MAGIC);
             if (!superHeat()) {
