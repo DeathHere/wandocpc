@@ -207,8 +207,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
             for (String s : getMenuActions()) {
                 if (s.contains("Cast Superheat ") && s.contains("ore")) {
+                    wait(random(125,250));
                     clickMouse(true);
-                    waitForTab(Constants.TAB_MAGIC, 500);
+                    waitForTab(Constants.TAB_MAGIC, 1000);
                     continue;
                 }
             }
@@ -244,7 +245,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                         clickMouse(true);
                         return true;
                     }
-                    if (waitForTab(Constants.TAB_MAGIC, 500)) {
+                    if (waitForTab(Constants.TAB_MAGIC, 1000)) {
                         break;
                     }
                     wait(random(250, 500));
@@ -650,7 +651,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return !heating ? (int) (random(9, 11) * Math.pow(lagFactor, .30)) : random(7, 9);
+        return !heating ? (int) (random(9, 11) * Math.pow(lagFactor, .30)) : random(8, 10);
     }
 
     /**
