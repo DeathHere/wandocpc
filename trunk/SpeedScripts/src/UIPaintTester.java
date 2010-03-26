@@ -773,7 +773,7 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         g.drawLine(x + 1, y + height + 0, x + width - 1, y + height + 0);
         g.drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1);
         g.drawLine(x + 3, y + height - 2, x + width - 3, y + height - 2);
-        g.drawLine(x + 4, y + height - 3, x + width - 4, y + height - 3);
+        g.drawLine(x + 3, y + height - 3, x + width - 4, y + height - 3);
         // Icons
         paintIcons(g, x, y);
     }
