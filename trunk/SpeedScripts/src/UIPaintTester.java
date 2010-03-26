@@ -19,8 +19,11 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Toolkit;
+import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 import org.rsbot.bot.Bot;
@@ -102,6 +105,9 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
     private int xpHour = 0;
     private int[] startExpArry = null;
     private boolean heating = false;
+    private Image magicIcon;
+    private Image smithingIcon;
+    private Image coinsIcon;
 
     /**
      * Start stuff
@@ -518,6 +524,16 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
      */
     @Override
     public boolean onStart(Map<String, String> map) {
+        /** Getting the images for the various icons in paint */
+        try {
+            magicIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/magic.png"));
+            coinsIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/coins.png"));
+            smithingIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/smithing.png"));
+        }
+        catch(Exception e) {
+            log("Unable to load picture icons");
+        }
+
         /** Reading html inputs */
         lagFactor = Double.parseDouble(map.get("lag"));
         log("Lag Factor: " + lagFactor);
@@ -702,7 +718,7 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         g.fillPolygon(po);
         g.drawPolygon(po);
 
-        paintRect(g, 5, 300, 200, 100);
+        paintRect(g, 5, 200, 400, 200);
 
         /**
         //Skill xp increase check
@@ -715,10 +731,16 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         }*/
     }
 
+    public void paintIcons(Graphics g, int x, int y) {
+        g.drawImage(coinsIcon, x + 20, y + 20, null);
+        g.drawImage(magicIcon, x + 140, y + 20, null);
+        g.drawImage(smithingIcon, x + 280, y + 20, null);
+    }
+
     public void paintRect(Graphics g, int x, int y, int width, int height) {
         // Top left corner
         g.setColor(new Color(155, 152, 146));
-        g.fillRect(x + 1, y, 5, 5);
+        g.fillRect(x + 2, y - 0, 5, 4);
         // Top border
         g.setColor(new Color(148, 145, 138));
         g.drawLine(x + 6, y, x + width, y);
@@ -731,16 +753,29 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         g.setColor(new Color(65, 62, 55));
         g.drawLine(x + 6, y + 4, x + width - 4, y + 4);
         // Fill black center
-        g.setColor(new Color(0, 0, 0, 120));
+        g.setColor(new Color(0, 0, 0, 210));
         g.fillRect(x + 6, y + 5, width - 8, height - 8);
         // Left border
         g.setColor(new Color(87, 85, 78));
-        g.drawLine(x + 1, y + 5, x, y + height);
-        g.drawLine(x + 1, y + 5, x + 1, y + height - 1);
-        g.drawLine(x + 1, y + 5, x, y + height);
-        g.drawLine(x + 1, y + 5, x + 2, y + height - 2);
-        g.drawLine(x + 1, y + 5, x, y + height);
-        g.drawLine(x + 1, y + 5, x + 3, y + height - 3);
+        g.drawLine(x + 2, y + 4, x + 2, y + height - 1);
+        g.drawLine(x + 3, y + 4, x + 3, y + height - 2);
+        g.drawLine(x + 4, y + 4, x + 4, y + height - 3);
+        g.drawLine(x + 5, y + 4, x + 5, y + height - 4);
+        // Right border
+        g.setColor(new Color(67, 65, 55));
+        g.drawLine(x + width - 0, y + 1, x + width - 0, y + height);
+        g.drawLine(x + width - 1, y + 2, x + width - 1, y + height - 1);
+        g.drawLine(x + width - 2, y + 3, x + width - 2, y + height - 2);
+        g.drawLine(x + width - 3, y + 4, x + width - 3, y + height - 3);
+        //g.drawLine(x + width - 5, y + 5, x + width - 5, y + height - 4);
+        // Bottom border
+        g.setColor(new Color(67, 65, 55));
+        g.drawLine(x + 1, y + height + 0, x + width - 1, y + height + 0);
+        g.drawLine(x + 2, y + height - 1, x + width - 2, y + height - 1);
+        g.drawLine(x + 3, y + height - 2, x + width - 3, y + height - 2);
+        g.drawLine(x + 4, y + height - 3, x + width - 4, y + height - 3);
+        // Icons
+        paintIcons(g, x, y);
     }
 
     /**
