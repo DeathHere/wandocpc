@@ -198,16 +198,18 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             }
             int waitCheck = 0;
             // Wait for the inventory to open
-            while (getCurrentTab() != Constants.TAB_INVENTORY) {
-                wait(random(50, 150));
-                if (waitCheck > 20) {
-                    wait(750);
-                    moveMouse(578, 405);
-                    wait(150);
+            if (!waitForTab(Constants.TAB_INVENTORY, 1000)) {
+                wait(750);
+                moveMouse(578, 405);
+                wait(150);
+                clickMouse(true);
+                return false;
+            }
+            for (String s : getMenuActions()) {
+                if (s.contains("Cast Superheat ") && s.contains("ore")) {
                     clickMouse(true);
-                    return false;
+                    continue;
                 }
-                waitCheck++;
             }
             // Get the last position of the ore
             int[] inventoryArray = getInventoryArray();
@@ -233,20 +235,21 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                     if (waitCheck > 3) {
                         return false;
                     }
-                    wait(random(500, 750));
                     moveMouse(itemPos.x + 10, itemPos.y + 10, 5, 5); //mouse mouse to ore
-                    wait(random(500, 750));
-                    atMenu("Cast Superheat");
+                    wait(random(125, 250));
+                    atMenu("Cast Superheat ");
                     //log("Amount of ore left: " + getInventoryCount(oreID));
-                    if (getCurrentTab() == Constants.TAB_MAGIC) {
-                        break;
-                    } else if (getInventoryCount(oreID) <= 1) {
+                    if (getInventoryCount(oreID) <= 1) {
                         clickMouse(true);
                         return true;
+                    }
+                    waitForTab(Constants.TAB_MAGIC, 500);
+                    if (getCurrentTab() == Constants.TAB_MAGIC) {
+                        break;
                     } else {
                         clickMouse(true);
                     }
-                    wait(random(400,600));
+                    wait(random(250, 500));
                     waitCheck++;
                 } while (getCurrentTab() != Constants.TAB_MAGIC);
             }
@@ -358,7 +361,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 break;
             default: // Withdraw x
                 if (atInterface(item, false)) {
-                    wait(random(600, 900));
+                    wait(random(500,800));
                     java.util.ArrayList<String> mactions = getMenuActions();
                     boolean found = false;
                     for (int i = 0; i < mactions.size(); i++) {
@@ -375,8 +378,29 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
                 }
                 break;
         }
+        waitForItem(itemID, 1000);
         if ((getInventoryCount(true) > inventoryCount) || (getInventoryCount(true) == 28)) {
             return true;
+        }
+        return false;
+    }
+
+    public boolean waitForItem(int itemID, int time) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < time) {
+            if (inventoryContains(itemID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean waitForTab(int tab, int time) {
+        long start = System.currentTimeMillis();
+        while (System.currentTimeMillis() - start < time) {
+            if (getCurrentTab() == tab) {
+                return true;
+            }
         }
         return false;
     }
@@ -622,7 +646,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return !heating ? (int) (random(7, 10) * Math.pow(lagFactor, .30)) : random(5, 7);
+        return !heating ? (int) (random(8, 10) * Math.pow(lagFactor, .30)) : random(6, 8);
     }
 
     /**
