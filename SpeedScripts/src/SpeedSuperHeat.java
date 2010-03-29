@@ -314,6 +314,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
         }
         errCount = 0;
         if (getInventoryCount(oreID) < 1) {
+            lagFactor = speedfactor;
             return false;
         }
         if (coalRatio > 0) {
