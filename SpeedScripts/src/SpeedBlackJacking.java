@@ -56,7 +56,7 @@ name = "SpeedBlackJacking", version = 1.0, description = "<html><head>" +
         "</body></html>")
 public class SpeedBlackJacking extends Script implements ServerMessageListener, PaintListener {
 
-    protected final int[] npcIDs = {1895, 7478, 1879};
+    protected final int[] npcIDs = {1895, 7478, 1879, 1879};
     /**
      * 1993 - Wine
      * 1994 - Noted Wine
@@ -76,6 +76,8 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
     private RSTile loc;
     private boolean recordInitial = false;
     private int[] startExpArry;
+    private long startTime;
+    private int startExp;
     
     protected boolean initialized() {
         loc = getLocation();
@@ -83,7 +85,11 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
         for (int i = 0; i < 20; i++) {
             startExpArry[i] = skills.getCurrentSkillExp(i);
         }
-        return equipmentContainsOneOf(blackJack);
+        startTime = System.currentTimeMillis();
+        // Save the initial exp
+        startExp = skills.getCurrentSkillExp(Constants.STAT_THIEVING);
+        //return equipmentContainsOneOf(blackJack);
+        return true;
     }
 
     // Paint vars
@@ -127,9 +133,11 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             npcID = npcIDs[0];
         } else if (level < 55) {
             npcID = npcIDs[1];
-        } else {
+        } else if (level < 65) {
             npcID = npcIDs[2];
-        }
+        } else {
+			npcID = npcIDs[3];
+		}
         while (!isPaused && !checkForRandoms()) {
             serMsg[0] = " ";
             if (getMyPlayer().getHPPercent() < random(45, 60)) {
@@ -150,7 +158,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                     wait(random(250,500));
                     if(!atMenu(options))
                     clickMouse(true);
-                    wait(random(250,500));
+                    wait(random(500,1500));
                 } else {
                     serMsg[0] = combat;
                 }
@@ -160,10 +168,25 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                 return false;
             }
 
+            long start = System.currentTimeMillis();
+            if (serMsg[0].contains(combat)) {
+                atObject(getNearestObjectByID(6261), "Climb-up");
+                start = System.currentTimeMillis();
+                while (System.currentTimeMillis() - start < 5000) {
+                    if (animationIs(828)) {
+                        break;
+                    }
+                }
+                wait(random(2000, 4000));
+                atObject(getNearestObjectByID(6260), "Climb-down");
+                wait(random(1000, 3000));
+                continue;
+            }
+
 
             atNPC(npc, "Knock");
-            long start = System.currentTimeMillis();
-            while (System.currentTimeMillis() - start < 1000) {
+            start = System.currentTimeMillis();
+            while (System.currentTimeMillis() - start < 600) {
                 if (serMsg.length > 2) {
                     break;
                 }
@@ -175,7 +198,8 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             } else if (serMsg[0].contains(totalFail)) {
                 wait(random(2500, 3500));
                 continue;
-            } else if (serMsg[0].contains(combat)) {
+            }
+            if (serMsg[0].contains(combat)) {
                 atObject(getNearestObjectByID(6261), "Climb-up");
                 start = System.currentTimeMillis();
                 while (System.currentTimeMillis() - start < 5000) {
@@ -191,10 +215,11 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             int animation = getFirstNpcAnim(npc);
             atNPC(npc, "Pick");
             if (animation == 12413 || serMsg[0].contains(hit)) {
+                wait(random(125, 150));
                 atNPC(npc, "Pick");
                 wait(random(250, 750));
             }
-            wait(random(750, 1500));
+            wait(random(900, 1700));
         }
         return true;
     }
@@ -236,6 +261,17 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
             serMsg[0] = e.getMessage();
         }
     }
+    
+    /**
+     * Gives output of details for the player's actions,
+     * eg. exp and levels gained
+     * @return
+     */
+    public String status() {
+        String s = "";
+        s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_THIEVING) - startExp);
+        return s;
+    }
 
     /**
      * 
@@ -259,6 +295,11 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
 
     @Override
     public void onFinish() {
+        long timeDiff = (System.currentTimeMillis() - startTime) / 1000;
+        int hours = (int) ((timeDiff) / 3600);
+        int min = (int) ((timeDiff) / 60) - hours * 60;
+        log("Script Ran for: " + hours + " hours " + min + " min.");
+        log(status());
         super.onFinish();
     }
 

@@ -681,13 +681,9 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         if (recordInitial) {
             return;
         }
-        //refreshCounter++;
+
         // Font setting
         g.setFont(new Font("Century Gothic", Font.BOLD, 13));
-
-        // Position reference var set
-        int x = 0;
-        int y = 28;
 
         // Run time calculation
         long millis = System.currentTimeMillis() - startTime;
@@ -696,10 +692,21 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         final long minutes = millis / (1000 * 60);
         millis -= minutes * 1000 * 60;
         final long seconds = millis / 1000;
-        paintBar(g, x, y, "SpeedSuperHeat Total Runtime: " + hours + " - "
-                + minutes + " : " + seconds);
+        g.drawString("SpeedSuperHeat Total Runtime: " + hours + " - "
+                + minutes + " : " + seconds, 50, 240);
 
-        g.drawString("Version " + version, 436, y + 13);
+        // Version
+        g.drawString("Version " + version, 400, 240);
+
+        // Text information
+        int gained = (skills.getCurrentSkillExp(skill) - start);
+        String exp = Integer.toString(skills.getXPToNextLevel(skill));
+        g.drawString(Integer.toString(skills.getPercentToNextLevel(skill)) + "%",
+                458, y + 13);
+        g.drawString("To lvl: " + exp, 200, y + 13);
+        xpHour = (int) (gained * 3600000.0
+                / ((double) System.currentTimeMillis() - (double) startTime));
+        g.drawString("/hr: " + Integer.toString(Math.round(xpHour)), 335, y + 13);
 
         // Get mouse
         final Mouse mouse = Bot.getClient().getMouse();
@@ -718,17 +725,8 @@ public class UIPaintTester extends Script implements ServerMessageListener, Pain
         g.fillPolygon(po);
         g.drawPolygon(po);
 
+        // Paint the border box and icons
         paintRect(g, 5, 200, 400, 200);
-
-        /**
-        //Skill xp increase check
-        for (int i = 0; i < 20; i++) {
-            if ((startExpArry != null)
-                    && ((skills.getCurrentSkillExp(i) - startExpArry[i]) > 0)) {
-                paintSkillBar(g, x, y + 15, i, startExpArry[i]);
-                y += 15;
-            }
-        }*/
     }
 
     public void paintIcons(Graphics g, int x, int y) {
