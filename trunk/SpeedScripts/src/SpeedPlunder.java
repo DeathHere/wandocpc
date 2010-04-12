@@ -63,6 +63,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     private Image thievingIcon;
     private Image coinsIcon;
 
+    private enum Events {
+        Bank, AtLadder, Climb, InsideBank, OutsideBank, East, North, West,
+        South, InPyramid, ChatMummy, Etc
+    }
+
     /**
      * Checks and handles random events
      * @return if there is a random event
@@ -112,7 +117,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     * Prints the xp gained and other script related info
+     * Prints the xp gained and other script related info when script exiting
      */
     @Override
     public void onFinish() {
@@ -125,7 +130,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     *
+     * Runs the main looping structure of the script
      * @return
      */
     @Override
@@ -134,12 +139,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     *
+     * Receives msgs from the server and do stuff accordingly
      * @param e
      */
     public void serverMessageRecieved(ServerMessageEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    //-------------------------------PAINT--------------------------------------
 
     /**
      * Paints the good looking and informative stuff on screen
@@ -162,12 +169,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     * Paints the border of the paint
+     * Paints the border of the paint dynamically via the input values
      * @param g graphics obj
-     * @param x where
-     * @param y where
-     * @param width blah
-     * @param height blah
+     * @param x where on screen
+     * @param y where on screen
+     * @param width width of the border
+     * @param height height of the border
      */
     public void paintRect(Graphics g, int x, int y, int width, int height) {
         // Top left corner
@@ -210,6 +217,101 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         g.drawLine(x + 4, y + height - 3, x + width - 4, y + height - 3);
         // Icons
         paintIcons(g, x, y);
+    }
+
+    //--------------------------------WALKING-----------------------------------
+
+    /**
+     * 
+     * @param tile
+     * @return
+     */
+    private RSTile checkTile(final RSTile tile) {
+        if (tileOnMap(tile)) {
+            return tile;
+        }
+        final RSTile loc = getMyPlayer().getLocation();
+        final RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2, (loc.getY() + tile.getY()) / 2);
+        return tileOnMap(walk) ? walk : checkTile(walk);
+    }
+
+    /**
+     * Checks the tiles in a path to find the closest, and therefore that
+     * closest tile is the start location
+     * @param path RSTile path to search through for start
+     * @return index of the start location in the RSTile path
+     */
+    private int start(final RSTile[] path) {
+        int start = 0;
+        for (int a = path.length - 1; a > 0; a--) {
+            if (tileOnMinimap(path[a])) {
+                start = a;
+                break;
+            }
+        }
+        return start;
+    }
+
+    /**
+     *
+     * @param tile
+     * @return
+     */
+    private boolean tileOnMinimap(final RSTile tile) {
+        final Point p = tileToMinimap(tile);
+        return Math.sqrt(Math.pow(627 - p.x, 2) + Math.pow(85 - p.y, 2)) < random(
+                60, 74);
+    }
+
+    /**
+     *
+     * @param path
+     * @return
+     */
+    private boolean walkPath(final RSTile[] path) {
+        for (int i = start(path); i < path.length; i++) {
+            if (!isRunning() && getEnergy() > random(40, 60)) {
+                clickMouse(random(707, 762), random(90, 121), true);
+            }
+            walkTo(randomizeTile(path[i], 1, 1));
+            waitToMove(2000);
+            if (path[i] == path[path.length - 1]) {
+                break;
+            }
+            while (!tileOnMinimap(path[i + 1])) {
+                if (!getMyPlayer().isMoving()) {
+                    walkTo(checkTile(randomizeTile(path[i + 1], 1, 1)));
+                }
+                /**
+                if (antiban) {
+                    Antiban.run();
+                }
+                 */
+            }
+        }
+        while (getMyPlayer().isMoving()) {
+            //Antiban.run();
+        }
+        return distanceTo(path[path.length - 1]) <= 4;
+    }
+
+    /**
+     *
+     * @param tile
+     * @return
+     */
+    private boolean walkToTile(final RSTile tile) {
+        if (!tileOnMap(tile)) {
+            return false;
+        }
+        walkTo(tile);
+        if (waitToMove(1500)) {
+            while (getMyPlayer().isMoving()) {
+                wait(15);
+            }
+            return true;
+        }
+        return false;
     }
 
 }
