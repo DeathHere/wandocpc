@@ -57,22 +57,28 @@ name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
 public class SpeedPlunder extends Script implements ServerMessageListener, PaintListener {
 
     // Logic vars
-    private long startTime;
+    public long startTime;
+    public Events action = Events.Wait;
     // Paint vars
-    private Image blkJIcon;
-    private Image thievingIcon;
-    private Image coinsIcon;
+    public Image blkJIcon;
+    public Image thievingIcon;
+    public Image coinsIcon;
 
-    private enum Events {
-        Bank, AtLadder, Climb, InsideBank, OutsideBank, East, North, West,
-        South, InPyramid, ChatMummy, Etc
+    /**
+     * Lists all the possible actions performed by the player's character
+     */
+    public enum Events {
+        Bank, ToBankNpc, ToLadder, ClimbUp, ClimbDown, ToBank, GoEast, GoNorth,
+        GoWest, GoSouth, IntoPyramid, OutPyramid, ToMummy, ChatMummy,
+        ToSpears, DisTrap, SearchJars, CheckDoors, OpenChest, Eat,
+        PotAnti, AttackNpc, Wait
     }
 
     /**
      * Checks and handles random events
      * @return if there is a random event
      */
-    private boolean checkForRandoms() {
+    public boolean checkForRandoms() {
         for (final Random random : Bot.getScriptHandler().getRandoms()) {
             if (Bot.disableBreakHandler && (random instanceof BreakHandler)) {
                 continue;
@@ -94,6 +100,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         //s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_THIEVING) - startExp);
         return s;
     }
+
+    //-------------------------OVERRIDES & IMPLEMENTS---------------------------
 
     /**
      * Performs operations like fetching pictures and initialize values
@@ -131,7 +139,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     /**
      * Runs the main looping structure of the script
-     * @return
+     * @return time in msec to next loop cycle
      */
     @Override
     public int loop() {
@@ -222,26 +230,32 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     //--------------------------------WALKING-----------------------------------
 
     /**
-     * 
-     * @param tile
-     * @return
+     * Recursive algorithm to find where to click to hit the direction of a tile
+     * off screen. It takes the average of the X and Y of the player's position
+     * and the RSTile to walk to, and if the average (midpoint) is on the screen
+     * then move. If the midpoint is not on the screen, it takes the midpoint
+     * again and see if that midpoint is on screen. Move if it is. Or do...
+     * @param tile where to move to
+     * @return the place to click on minimap that is towards the direction of
+     * the tile you want to go to
      */
-    private RSTile checkTile(final RSTile tile) {
+    public RSTile checkTile(final RSTile tile) {
         if (tileOnMap(tile)) {
             return tile;
         }
         final RSTile loc = getMyPlayer().getLocation();
-        final RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2, (loc.getY() + tile.getY()) / 2);
+        final RSTile walk = new RSTile((loc.getX() + tile.getX()) / 2,
+                (loc.getY() + tile.getY()) / 2);
         return tileOnMap(walk) ? walk : checkTile(walk);
     }
 
     /**
      * Checks the tiles in a path to find the closest, and therefore that
-     * closest tile is the start location
-     * @param path RSTile path to search through for start
-     * @return index of the start location in the RSTile path
+     * closest tile is the findStartTile location
+     * @param path RSTile path to search through for findStartTile
+     * @return index of the findStartTile location in the RSTile path
      */
-    private int start(final RSTile[] path) {
+    public int findStartTile(final RSTile[] path) {
         int start = 0;
         for (int a = path.length - 1; a > 0; a--) {
             if (tileOnMinimap(path[a])) {
@@ -253,31 +267,35 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     *
+     * Checks to see if the tile in question is on the minimap
      * @param tile
-     * @return
+     * @return if the tile is on the minimap
      */
-    private boolean tileOnMinimap(final RSTile tile) {
+    public boolean tileOnMinimap(final RSTile tile) {
         final Point p = tileToMinimap(tile);
-        return Math.sqrt(Math.pow(627 - p.x, 2) + Math.pow(85 - p.y, 2)) < random(
-                60, 74);
+        return Math.sqrt(Math.pow(627 - p.x, 2) + Math.pow(85 - p.y, 2))
+                < random(60, 74);
     }
 
     /**
-     *
-     * @param path
-     * @return
+     * Gets the player to walk a specified RSTile[] pathway
+     * @param path the points to walk
+     * @return if the walk cycle has been completed
      */
-    private boolean walkPath(final RSTile[] path) {
-        for (int i = start(path); i < path.length; i++) {
+    public boolean walkPath(final RSTile[] path) {
+        for (int i = findStartTile(path); i < path.length; i++) {
+            // If there is enough energy, hit the run button
             if (!isRunning() && getEnergy() > random(40, 60)) {
                 clickMouse(random(707, 762), random(90, 121), true);
             }
+            // Walk to the current point on path
             walkTo(randomizeTile(path[i], 1, 1));
             waitToMove(2000);
+            // If you are already at the last path point, stop
             if (path[i] == path[path.length - 1]) {
                 break;
             }
+            // If the point is off screen, move to it via the minimap
             while (!tileOnMinimap(path[i + 1])) {
                 if (!getMyPlayer().isMoving()) {
                     walkTo(checkTile(randomizeTile(path[i + 1], 1, 1)));
@@ -289,6 +307,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                  */
             }
         }
+        // If the player is still moving, perform some antiban actions
         while (getMyPlayer().isMoving()) {
             //Antiban.run();
         }
@@ -296,11 +315,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     *
-     * @param tile
-     * @return
+     * Walks to a specified tile in an orderly manner
+     * @param tile where to move to
+     * @return whether the movement has been completed
      */
-    private boolean walkToTile(final RSTile tile) {
+    public boolean walkToTile(final RSTile tile) {
         if (!tileOnMap(tile)) {
             return false;
         }
@@ -313,5 +332,4 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         }
         return false;
     }
-
 }
