@@ -140,7 +140,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
 		}
         while (!isPaused && !checkForRandoms()) {
             serMsg[0] = " ";
-            if (getMyPlayer().getHPPercent() < random(45, 60)) {
+            if (getMyPlayer().getHPPercent() < random(35, 55)) {
                 Point p = null;
                 for (int food : foods) {
                     int[] inventory = getInventoryArray();
@@ -157,7 +157,7 @@ public class SpeedBlackJacking extends Script implements ServerMessageListener, 
                     String[] options = {"Drink", "Eat"};
                     wait(random(250,500));
                     if(!atMenu(options))
-                    clickMouse(true);
+                        clickMouse(true);
                     wait(random(500,1500));
                 } else {
                     serMsg[0] = combat;

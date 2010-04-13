@@ -48,17 +48,25 @@ name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
         "<body>" +
         "<center>" +
         "<img src=\"http://www.wandocpc.site90.com/images/screenshots/superheat.jpg\"" +
-        "alt=\"SpeedSuperHeat\">" +
+        "alt=\"SpeedPlunder\">" +
         "<hr>" +
         "<center>Created by LightSpeed & Pirateblanc</center>" +
         "<hr>" +
         "</center>" +
+        "<p>" +
+        "Script to make you gain levels in theiving." +
+        "</p>" +
         "</body></html>")
 public class SpeedPlunder extends Script implements ServerMessageListener, PaintListener {
 
     // Logic vars
     public long startTime;
     public Events action = Events.Wait;
+    public final int[] foodIDs = {
+        379, // Lobster
+        
+    };
+    
     // Paint vars
     public Image blkJIcon;
     public Image thievingIcon;
@@ -73,6 +81,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         ToSpears, DisTrap, SearchJars, CheckDoors, OpenChest, Eat,
         PotAnti, AttackNpc, Wait
     }
+
+    //--------------------------SCRIPT HELPERS----------------------------------
 
     /**
      * Checks and handles random events
@@ -101,6 +111,37 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         return s;
     }
 
+    /**
+     * Eats the first food of any type according to the foodIDs in the player's
+     * inventory
+     * @return if a food was eaten, false means out of food
+     */
+    public boolean eat() {
+        Point p = null;
+        for (int food : foodIDs) {
+            int[] inventory = getInventoryArray();
+            for (int i = 0; i < 28; i++) {
+                int inv = inventory[i];
+                if (inv == food) {
+                    p = getInventoryItemPoint(i);
+                    break;
+                }
+            }
+        }
+        p.translate(15, 15);
+        if (p != null) {
+            moveMouse(p);
+            String[] options = {"Drink", "Eat"};
+            wait(random(250, 500));
+            if (!atMenu(options)) {
+                clickMouse(true);
+            }
+            wait(random(500, 1500));
+            return true;
+        }
+        return false;
+    }
+
     //-------------------------OVERRIDES & IMPLEMENTS---------------------------
 
     /**
@@ -113,9 +154,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         startTime = System.currentTimeMillis();
         /** Getting the images for the various icons in paint */
         /*try {
-            thievingIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/thieving.png"));
-            coinsIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/coins.png"));
-            blkJIcon = Toolkit.getDefaultToolkit().getImage(new URL("http://www.wandocpc.site90.com/images/icons/blackjack.png"));
+            thievingIcon = Toolkit.getDefaultToolkit().getImage(
+         new URL("http://www.wandocpc.site90.com/images/icons/thieving.png"));
+            coinsIcon = Toolkit.getDefaultToolkit().getImage(
+         new URL("http://www.wandocpc.site90.com/images/icons/coins.png"));
+            blkJIcon = Toolkit.getDefaultToolkit().getImage(
+         new URL("http://www.wandocpc.site90.com/images/icons/blackjack.png"));
         }
         catch(Exception e) {
             log("Unable to load picture icons");
@@ -143,7 +187,36 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     @Override
     public int loop() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // Default return time
+        int retTime = 100;
+        action = Events.Wait;
+
+        // Process actions
+        if (getMyPlayer().getHPPercent() < random(35, 55))
+            action = Events.Eat;
+
+        switch(action) {
+            case AttackNpc:
+                break;
+            case Bank:
+                break;
+            case ChatMummy:
+                break;
+            case CheckDoors:
+                break;
+            case ClimbDown:
+                break;
+            case ClimbUp:
+                break;
+            case DisTrap:
+                break;
+            case Eat:
+                eat();
+                break;
+            default:
+                break;
+        }
+        return retTime;
     }
 
     /**
