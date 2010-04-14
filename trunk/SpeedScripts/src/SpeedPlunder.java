@@ -25,6 +25,7 @@ import java.awt.Toolkit;
 import java.net.URL;
 import java.util.Map;
 import org.rsbot.bot.Bot;
+import org.rsbot.bot.input.Mouse;
 import org.rsbot.event.events.ServerMessageEvent;
 import org.rsbot.event.listeners.PaintListener;
 import org.rsbot.event.listeners.ServerMessageListener;
@@ -36,6 +37,11 @@ import org.rsbot.script.randoms.antiban.BreakHandler;
 import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSTile;
 
+/**
+ * Manifest in html so RSBot can read our script.
+ * Script was started April 10, 2010 and finished ? ?, 2010.
+ * @author LightSpeed Pirateblanc
+ */
 @ScriptManifest(authors = {"LightSpeed, Pirateblanc"}, category = "Thieving",
 name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
         "<style type=\"text/css\">" +
@@ -57,29 +63,100 @@ name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
         "Script to make you gain levels in theiving." +
         "</p>" +
         "</body></html>")
+/**
+ * ----------------------------- AUTHOR NOTE -----------------------------------
+ * This script is designed to be run when you are near the banker in the
+ * bank under Sophanem in the southern edges of the Runesape desert.
+ * Please do not start the script at any other location (eg. in the pyramid,
+ * on the ground floor of the bank, at the temple) as this may cause the script
+ * to crash.
+ *
+ * Also please make sure you have enough food and anti-poison potions in the
+ * visible tab of your bank, preferably in the first row, if you plan to leave
+ * this script on for a long period of time.
+ *
+ * Please visit out website at http://www.?.com and make a donation to support
+ * our efforts if you enjoy this script or any other of our scripts.
+ * Enjoy Speed Plundering, and thank you for using our script. ^_^
+ * -----------------------------------------------------------------------------
+ */
 public class SpeedPlunder extends Script implements ServerMessageListener, PaintListener {
 
-    // Logic vars
+    /** ---------------------------- Logic vars ---------------------------- */
+    
     public long startTime;
+    /** 
+     * Events is a enum that represents is updated and changed during the
+     * looping structure and it tells the player which methods/actions should
+     * be performed during this looping cycle
+     */
     public Events action = Events.Wait;
     public final int[] foodIDs = {
         379, // Lobster
         
     };
+    /**
+     * The highest lvl of room in the pyramid you can plunder.
+     * It is always best to hit all the jars in the top room and then
+     * some of the jars in the second best room the player can access.
+     * This creates the best experience combination
+     */
+    public int roomToHit = 0;
+    public int thievingLvl = skills.getCurrentSkillLevel(Constants.STAT_THIEVING);
+    public long startExp;
+
+    /* ------------------------- RSTile path arrays ------------------------- */
+
+    // This section is organized so that that variable names are in 3 parts
+    // [where] [direction] [direction if reversed]
+    // Eg. bankInOut = [bank][In][Out] which means the route to the bank
+    // currently going into the bank, but if reversed via reversePath() it
+    // exits the bank and leads to the perimeter of the pyramid
+
+    public RSTile[] bankInOut = {
+        new RSTile(3303, 2800),
+        new RSTile(3310, 2800)
+    };
+
+    public RSTile[] bankerToFrom = {
+        new RSTile(2799, 5162),
+        new RSTile(2799, 5162)
+    };
     
-    // Paint vars
+    /* ----------------------------- Paint vars ----------------------------- */
+
     public Image blkJIcon;
     public Image thievingIcon;
     public Image coinsIcon;
 
     /**
-     * Lists all the possible actions performed by the player's character
+     * Lists all the possible actions performed by the player's character.
+     * These are modified in the loop and used in the loop's switch statement
      */
     public enum Events {
-        Bank, ToBankNpc, ToLadder, ClimbUp, ClimbDown, ToBank, GoEast, GoNorth,
-        GoWest, GoSouth, IntoPyramid, OutPyramid, ToMummy, ChatMummy,
-        ToSpears, DisTrap, SearchJars, CheckDoors, OpenChest, Eat,
-        PotAnti, AttackNpc, Wait
+        Bank,               // Talk and interact with the banker
+        ToBankNpc,          // Walks from the bottom of the ladder to the banker
+        ToLadder,           // Walks from the banker to the ladder
+        ClimbUp,            // Climbs...
+        ClimbDown,          // Go down...
+        ToBank,             // Returns from the pyramid to the ladder
+        GoEast,             // Go the the pyramid in the direction specified
+        GoNorth,            // -> Look at previous entry
+        GoWest,             // -> Look at previous entry
+        GoSouth,            // -> Look at previous entry
+        IntoPyramid,        // Enters the pyramid via the nearest entrance
+        OutPyramid,         // Exits the pyramid. This can be used in many places
+        ToMummy,            // Walks 5 coordinates north next to the mummy
+        ChatMummy,          // Starts the minigame via mummy
+        ToSpears,           // Walks to the traps in the start of the level
+        DisTrap,            // Disarms the trap (Might have some issues)
+        SearchJars,         // Searches a number of jars 
+        CheckDoors,         // Searches all 4 doors in each room for passage
+        OpenChest,          // Searches the golden chest in the middle of the room
+        Eat,                // Eat 1 piece of food
+        PotAnti,            // Drinks some anti-poison potion, normal + super
+        AttackNpc,          // If player is attacked, attack back
+        Wait
     }
 
     //--------------------------SCRIPT HELPERS----------------------------------
@@ -107,8 +184,13 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public String status() {
         String s = "";
-        //s += "Exp Gained: " + (skills.getCurrentSkillExp(Constants.STAT_THIEVING) - startExp);
+        s += "Exp Gained: " +
+                (skills.getCurrentSkillExp(Constants.STAT_THIEVING) - startExp);
         return s;
+    }
+
+    public void walkToBank() {
+        
     }
 
     /**
@@ -152,6 +234,28 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     @Override
     public boolean onStart(Map<String, String> map) {
         startTime = System.currentTimeMillis();
+        startExp = skills.getCurrentSkillExp(Constants.STAT_THIEVING);
+        
+        // Check some player stats to determine how the script should run
+        // in the pyramid and if extra food is required
+        if (thievingLvl > 90)
+            roomToHit = 8;
+        else if (thievingLvl > 80)
+            roomToHit = 7;
+        else if (thievingLvl > 70)
+            roomToHit = 6;
+        else if (thievingLvl > 60)
+            roomToHit = 5;
+        else if (thievingLvl > 50)
+            roomToHit = 4;
+        else if (thievingLvl > 40)
+            roomToHit = 3;
+        else if (thievingLvl > 30)
+            roomToHit = 2;
+        else if (thievingLvl > 20)
+            roomToHit = 1;
+
+
         /** Getting the images for the various icons in paint */
         /*try {
             thievingIcon = Toolkit.getDefaultToolkit().getImage(
@@ -191,10 +295,18 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         int retTime = 100;
         action = Events.Wait;
 
+        // Checks if the player is logged in
+        if (!isLoggedIn()) {
+            log("Please login first! And be in the underground bank.");
+            return -1;
+        }
+
         // Process actions
         if (getMyPlayer().getHPPercent() < random(35, 55))
             action = Events.Eat;
 
+        // For what each actions mean, check the declaration of (action)
+        // for further documentation
         switch(action) {
             case AttackNpc:
                 break;
@@ -221,7 +333,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     /**
      * Receives msgs from the server and do stuff accordingly
-     * @param e
+     * @param e stuff the server sends in its broadcast
      */
     public void serverMessageRecieved(ServerMessageEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -231,10 +343,27 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     /**
      * Paints the good looking and informative stuff on screen
-     * @param render
+     * @param g graphics obj
      */
-    public void onRepaint(Graphics render) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void onRepaint(Graphics g) {
+
+        // Gets mouse
+        final Mouse mouse = Bot.getClient().getMouse();
+        final int mouse_x = mouse.getMouseX();
+        final int mouse_y = mouse.getMouseY();
+        final int mouse_press_x = mouse.getMousePressX();
+        final int mouse_press_y = mouse.getMousePressY();
+        final long mouse_press_time = mouse.getMousePressTime();
+
+        // Draws mouse
+        Polygon po = new Polygon();
+        po.addPoint(mouse_x, mouse_y);
+        po.addPoint(mouse_x, mouse_y + 15);
+        po.addPoint(mouse_x + 10, mouse_y + 10);
+        g.setColor(new Color(110, 9, 128, 180));
+        g.fillPolygon(po);
+        g.drawPolygon(po);
+        
     }
 
     /**
