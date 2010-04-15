@@ -38,7 +38,7 @@ import org.rsbot.script.wrappers.RSNPC;
 import org.rsbot.script.wrappers.RSTile;
 
 /**
- * Manifest in html so RSBot can read our script.
+ * Manifest in html/etc... so RSBot can read our script.
  * Script was started April 10, 2010 and finished ? ?, 2010.
  * @author LightSpeed Pirateblanc
  */
@@ -75,8 +75,9 @@ name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
  * visible tab of your bank, preferably in the first row, if you plan to leave
  * this script on for a long period of time.
  *
- * Please visit out website at http://www.?.com and make a donation to support
- * our efforts if you enjoy this script or any other of our scripts.
+ * Please visit out website at http://www.?.com 
+ * and make a donation to support our efforts if you enjoy this
+ * script or any other of our scripts.
  * Enjoy Speed Plundering, and thank you for using our script. ^_^
  * -----------------------------------------------------------------------------
  */
@@ -122,12 +123,34 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(2799, 5162),
         new RSTile(2799, 5162)
     };
+
+    public RSTile[] northTo = {
+        new RSTile(3303, 2800),
+        new RSTile(3289, 2802)
+    };
+
+    public RSTile[] southTo = {
+        new RSTile(3303, 2800),
+        new RSTile(3289, 2802)
+    };
+
+    public RSTile[] eastTo = {
+        new RSTile(3303, 2800),
+        new RSTile(3289, 2802)
+    };
+
+    public RSTile[] westTo = {
+        new RSTile(3303, 2800),
+        new RSTile(3289, 2802)
+    };
     
     /* ----------------------------- Paint vars ----------------------------- */
 
     public Image blkJIcon;
     public Image thievingIcon;
     public Image coinsIcon;
+
+    /* ----------------------------- Action vars ----------------------------- */
 
     /**
      * Lists all the possible actions performed by the player's character.
@@ -146,7 +169,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         GoSouth,            // -> Look at previous entry
         IntoPyramid,        // Enters the pyramid via the nearest entrance
         OutPyramid,         // Exits the pyramid. This can be used in many places
-        ToMummy,            // Walks 5 coordinates north next to the mummy
+        ToMummy,            // Walks 5 coordinates north, now next to the mummy
         ChatMummy,          // Starts the minigame via mummy
         ToSpears,           // Walks to the traps in the start of the level
         DisTrap,            // Disarms the trap (Might have some issues)
@@ -156,10 +179,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         Eat,                // Eat 1 piece of food
         PotAnti,            // Drinks some anti-poison potion, normal + super
         AttackNpc,          // If player is attacked, attack back
-        Wait
+        Wait,               //
+        FirstStart          // Initial value when program starts
     }
 
-    //--------------------------SCRIPT HELPERS----------------------------------
+    //--------------------------- SCRIPT HELPERS -------------------------------
 
     /**
      * Checks and handles random events
@@ -189,8 +213,51 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         return s;
     }
 
-    public void walkToBank() {
+    public void walkToMummy() {
         
+    }
+
+    /**
+     * Walks the path designated by the current value in (action)
+     */
+    public void walkDesignatedPath() {
+        RSTile[] usedPath = null;
+        boolean reverse = false;
+        switch (action) {
+            case ToBank:
+                usedPath = bankInOut;
+                break;
+            case ToBankNpc:
+                usedPath = bankerToFrom;
+                break;
+            case ToLadder:
+                usedPath = bankerToFrom;
+                reverse = true;
+                break;
+            case GoEast:
+                usedPath = eastTo;
+                break;
+            case GoNorth:
+                usedPath = northTo;
+                break;
+            case GoSouth:
+                usedPath = southTo;
+                break;
+            case GoWest:
+                usedPath = westTo;
+                break;
+            default:
+                log("Something wrong in walkDesignatedPath()");
+                break;
+        }
+
+        // Performs the action required by using the preestablished values
+        if (reverse) {
+            walkPath(reversePath(usedPath));
+        }
+        else {
+            walkPath(usedPath);
+        }
     }
 
     /**
@@ -224,12 +291,16 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         return false;
     }
 
-    //-------------------------OVERRIDES & IMPLEMENTS---------------------------
+    public void bank() {
+        
+    }
+
+    //------------------------ OVERRIDES & IMPLEMENTS --------------------------
 
     /**
      * Performs operations like fetching pictures and initialize values
-     * @param map
-     * @return
+     * @param map idk
+     * @return idk
      */
     @Override
     public boolean onStart(Map<String, String> map) {
@@ -293,7 +364,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     public int loop() {
         // Default return time
         int retTime = 100;
-        action = Events.Wait;
 
         // Checks if the player is logged in
         if (!isLoggedIn()) {
@@ -301,9 +371,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             return -1;
         }
 
-        // Process actions
+        /** Checks important stats */
         if (getMyPlayer().getHPPercent() < random(35, 55))
             action = Events.Eat;
+
+        // Checks the previous action and increment the value to the next
+        // correct action accordingly
+        switch(action) {
+            case FirstStart:
+                action = Events.Bank;
+                break;
+            case Bank:
+                action = Events.ToLadder;
+                break;
+            default:
+                break;
+        }
 
         // For what each actions mean, check the declaration of (action)
         // for further documentation
@@ -311,6 +394,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case AttackNpc:
                 break;
             case Bank:
+                bank();
                 break;
             case ChatMummy:
                 break;
@@ -324,6 +408,27 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case Eat:
                 eat();
+                break;
+            case GoEast:
+                walkDesignatedPath();
+                break;
+            case GoWest:
+                walkDesignatedPath();
+                break;
+            case GoSouth:
+                walkDesignatedPath();
+                break;
+            case GoNorth:
+                walkDesignatedPath();
+                break;
+            case ToBank:
+                walkDesignatedPath();
+                break;
+            case ToBankNpc:
+                walkDesignatedPath();
+                break;
+            case ToLadder:
+                walkDesignatedPath();
                 break;
             default:
                 break;
@@ -339,7 +444,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    //-------------------------------PAINT--------------------------------------
+    //------------------------------ PAINT -------------------------------------
 
     /**
      * Paints the good looking and informative stuff on screen
@@ -429,7 +534,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         paintIcons(g, x, y);
     }
 
-    //--------------------------------WALKING-----------------------------------
+    //------------------------------- WALKING ----------------------------------
 
     /**
      * Recursive algorithm to find where to click to hit the direction of a tile
