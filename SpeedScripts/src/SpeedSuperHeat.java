@@ -680,8 +680,9 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
             case 5:
             case 6: {
                 openTab(TAB_STATS);
-                moveMouse(578, 405, 5, 5);
-                wait(random(750, 1000));
+                moveMouse(580, 360, 10, 10);
+                if(getCurrentTab() == TAB_STATS)
+                wait(random(1000, 1250));
                 break;
             }
             default: {
@@ -696,7 +697,7 @@ public class SpeedSuperHeat extends Script implements ServerMessageListener, Pai
      */
     @Override
     protected int getMouseSpeed() {
-        return !heating ? (int) (random(9, 11) * Math.pow(lagFactor, .30)) : random(10, 12);
+        return !heating ? (int) (random(7, 9) * Math.pow(lagFactor, .30)) : random(6, 8);
     }
 
     /**
