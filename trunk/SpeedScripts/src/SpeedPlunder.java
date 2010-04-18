@@ -85,14 +85,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     /** ---------------------------- Logic vars ---------------------------- */
     
-    public long startTime;
+    private long startTime;
     /** 
      * Events is a enum that represents is updated and changed during the
      * looping structure and it tells the player which methods/actions should
      * be performed during this looping cycle
      */
-    public Events action = Events.Wait;
-    public final int[] foodIDs = {
+    private Events action = Events.Wait;
+    private final int[] foodIDs = {
         379, // Lobster
         
     };
@@ -102,9 +102,16 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * some of the jars in the second best room the player can access.
      * This creates the best experience combination
      */
-    public int roomToHit = 0;
-    public int thievingLvl = skills.getCurrentSkillLevel(Constants.STAT_THIEVING);
-    public long startExp;
+    private int roomToHit = 0;
+    private int thievingLvl = skills.getCurrentSkillLevel(Constants.STAT_THIEVING);
+    private long startExp;
+    /**
+     * Did the player find the chamber with the mummy yet.
+     * This variable is used to determine walk cycle attempts to the 4 sides
+     * of the pyramid. South/North/East and West (Random). If the mummy has
+     * been found, end searching and proceed to chat with the mummy.
+     */
+    private boolean foundMummy = false;
 
     /* ------------------------- RSTile path arrays ------------------------- */
 
@@ -114,41 +121,41 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     // currently going into the bank, but if reversed via reversePath() it
     // exits the bank and leads to the perimeter of the pyramid
 
-    public RSTile[] bankInOut = {
+    private RSTile[] bankInOut = {
         new RSTile(3303, 2800),
         new RSTile(3310, 2800)
     };
 
-    public RSTile[] bankerToFrom = {
+    private RSTile[] bankerToFrom = {
         new RSTile(2799, 5162),
         new RSTile(2799, 5162)
     };
 
-    public RSTile[] northTo = {
+    private RSTile[] northTo = {
         new RSTile(3303, 2800),
         new RSTile(3289, 2802)
     };
 
-    public RSTile[] southTo = {
+    private RSTile[] southTo = {
         new RSTile(3303, 2800),
         new RSTile(3289, 2802)
     };
 
-    public RSTile[] eastTo = {
+    private RSTile[] eastTo = {
         new RSTile(3303, 2800),
         new RSTile(3289, 2802)
     };
 
-    public RSTile[] westTo = {
+    private RSTile[] westTo = {
         new RSTile(3303, 2800),
         new RSTile(3289, 2802)
     };
     
     /* ----------------------------- Paint vars ----------------------------- */
 
-    public Image blkJIcon;
-    public Image thievingIcon;
-    public Image coinsIcon;
+    private Image blkJIcon;
+    private Image thievingIcon;
+    private Image coinsIcon;
 
     /* ----------------------------- Action vars ----------------------------- */
 
@@ -156,7 +163,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * Lists all the possible actions performed by the player's character.
      * These are modified in the loop and used in the loop's switch statement
      */
-    public enum Events {
+    private enum Events {
         Bank,               // Talk and interact with the banker
         ToBankNpc,          // Walks from the bottom of the ladder to the banker
         ToLadder,           // Walks from the banker to the ladder
@@ -167,7 +174,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         GoNorth,            // -> Look at previous entry
         GoWest,             // -> Look at previous entry
         GoSouth,            // -> Look at previous entry
-        IntoPyramid,        // Enters the pyramid via the nearest entrance
+        EnterPyramid,       // Enters the pyramid via the nearest entrance
         OutPyramid,         // Exits the pyramid. This can be used in many places
         ToMummy,            // Walks 5 coordinates north, now next to the mummy
         ChatMummy,          // Starts the minigame via mummy
@@ -213,12 +220,19 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         return s;
     }
 
+    /**
+     * Moves the player 3~5 spaces up the inside of the pyramid start chamber,
+     * so we can speak to the mummy in an unbot like fasion.
+     */
     public void walkToMummy() {
-        
+        RSTile curTile = getMyPlayer().getLocation();
+        walkToTile(new RSTile(curTile.getX(), curTile.getY() + random(3, 5)));
+        wait(2000);
     }
 
     /**
-     * Walks the path designated by the current value in (action)
+     * Walks the path designated by the current value in (action).
+     * Look at the loop() to see how it is used.
      */
     public void walkDesignatedPath() {
         RSTile[] usedPath = null;
@@ -251,13 +265,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
         }
 
-        // Performs the action required by using the preestablished values
+        // Performs the walking required by using the preestablished (usedPath)
         if (reverse) {
             walkPath(reversePath(usedPath));
         }
         else {
             walkPath(usedPath);
         }
+        log("Ending Walk");
     }
 
     /**
@@ -291,8 +306,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         return false;
     }
 
+    /**
+     * This method should bank intelligently
+     */
     public void bank() {
-        
+        log("Banking");
+        wait(2000);
+    }
+
+    /**
+     * Generic method to perform an action at an object
+     * @param objID ID of the nearest obj to look for
+     * @param action String command to execute at the object
+     */
+    public void interactWith(int objID, String action) {
+        atObject(getNearestObjectByID(objID), action);
+        wait(random(2000, 4000));
     }
 
     //------------------------ OVERRIDES & IMPLEMENTS --------------------------
@@ -384,6 +413,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case Bank:
                 action = Events.ToLadder;
                 break;
+            case ToLadder:
+                action = Events.ClimbUp;
+                break;
+            case ClimbUp:
+                action = Events.GoSouth;
+                break;
             default:
                 break;
         }
@@ -401,6 +436,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case CheckDoors:
                 break;
             case ClimbDown:
+                interactWith(20277, "Climb-up");
                 break;
             case ClimbUp:
                 break;
@@ -429,6 +465,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ToLadder:
                 walkDesignatedPath();
+                break;
+            case EnterPyramid:
+                
                 break;
             default:
                 break;
