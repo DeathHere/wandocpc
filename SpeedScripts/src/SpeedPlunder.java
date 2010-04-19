@@ -112,6 +112,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * been found, end searching and proceed to chat with the mummy.
      */
     private boolean foundMummy = false;
+    private final int npcMummyID = 4476;
 
     /* ------------------------- RSTile path arrays ------------------------- */
 
@@ -179,6 +180,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         GoSouth,            // -> Look at previous entry
         EnterPyramid,       // Enters the pyramid via the nearest entrance
         OutPyramid,         // Exits the pyramid. This can be used in many places
+        CheckMummy,         // Checks the area for the mummy npc
         ToMummy,            // Walks 5 coordinates north, now next to the mummy
         ChatMummy,          // Starts the minigame via mummy
         ToSpears,           // Walks to the traps in the start of the level
@@ -404,10 +406,15 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             return -1;
         }
 
-        /** Checks important stats */
+        /** Checks important stuff before the 2 main switches */
         if (getMyPlayer().getHPPercent() < random(35, 55))
             action = Events.Eat;
 
+        if (foundMummy) {
+            action = Events.ChatMummy;
+        }
+
+        // --- Logic switch ---
         // Checks the previous action and increment the value to the next
         // correct action accordingly
         switch(action) {
@@ -423,10 +430,23 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case ClimbUp:
                 action = Events.GoSouth;
                 break;
+            case GoSouth:
+                action = Events.CheckMummy;
+                break;
+            case GoNorth:
+                action = Events.CheckMummy;
+                break;
+            case GoEast:
+                action = Events.CheckMummy;
+                break;
+            case GoWest:
+                action = Events.CheckMummy;
+                break;
             default:
                 break;
         }
 
+        // --- Perform action switch ---
         // For what each actions mean, check the declaration of (action)
         // for further documentation
         switch(action) {
@@ -434,6 +454,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case Bank:
                 bank();
+                break;
+            case CheckMummy:
+                foundMummy = false;
+                RSNPC mummy = getNearestNPCByID(npcMummyID);
+                if (mummy != null) {
+                    foundMummy = true;
+                }
+                wait(random(500, 1000));
                 break;
             case ChatMummy:
                 break;
