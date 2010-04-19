@@ -91,7 +91,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * looping structure and it tells the player which methods/actions should
      * be performed during this looping cycle
      */
-    private Events action = Events.Wait;
+    private Events action = Events.FirstStart;
     private final int[] foodIDs = {
         379, // Lobster
         
@@ -126,9 +126,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(3310, 2800)
     };
 
-    private RSTile[] bankerToFrom = {
-        new RSTile(2799, 5162),
-        new RSTile(2799, 5162)
+    private RSTile[] bankerTo = {
+        new RSTile(2799, 5168)
+    };
+
+    private RSTile[] ladderTo = {
+        new RSTile(2799, 5160)
     };
 
     private RSTile[] northTo = {
@@ -138,17 +141,17 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     private RSTile[] southTo = {
         new RSTile(3303, 2800),
-        new RSTile(3289, 2802)
+        new RSTile(3289, 2788)
     };
 
     private RSTile[] eastTo = {
         new RSTile(3303, 2800),
-        new RSTile(3289, 2802)
+        new RSTile(3296, 2796)
     };
 
     private RSTile[] westTo = {
         new RSTile(3303, 2800),
-        new RSTile(3289, 2802)
+        new RSTile(3282, 2795)
     };
     
     /* ----------------------------- Paint vars ----------------------------- */
@@ -242,11 +245,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 usedPath = bankInOut;
                 break;
             case ToBankNpc:
-                usedPath = bankerToFrom;
+                usedPath = bankerTo;
                 break;
             case ToLadder:
-                usedPath = bankerToFrom;
-                reverse = true;
+                usedPath = ladderTo;
                 break;
             case GoEast:
                 usedPath = eastTo;
@@ -273,6 +275,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             walkPath(usedPath);
         }
         log("Ending Walk");
+        wait(random(1000, 2000));
     }
 
     /**
@@ -320,8 +323,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * @param action String command to execute at the object
      */
     public void interactWith(int objID, String action) {
+        log("Doing: " + action + " to " + Integer.toString(objID));
         atObject(getNearestObjectByID(objID), action);
-        wait(random(2000, 4000));
+        wait(random(1000, 3000));
     }
 
     //------------------------ OVERRIDES & IMPLEMENTS --------------------------
@@ -436,9 +440,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case CheckDoors:
                 break;
             case ClimbDown:
-                interactWith(20277, "Climb-up");
+                log("Climbing Down");
                 break;
             case ClimbUp:
+                log("Climbing Up");
+                interactWith(20277, "Climb-up");
                 break;
             case DisTrap:
                 break;
@@ -446,15 +452,19 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 eat();
                 break;
             case GoEast:
+                log("East");
                 walkDesignatedPath();
                 break;
             case GoWest:
+                log("West");
                 walkDesignatedPath();
                 break;
             case GoSouth:
+                log("South");
                 walkDesignatedPath();
                 break;
             case GoNorth:
+                log("North");
                 walkDesignatedPath();
                 break;
             case ToBank:
@@ -637,6 +647,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             // Walk to the current point on path
             walkTo(randomizeTile(path[i], 1, 1));
             waitToMove(2000);
+            if (getMyPlayer().isMoving()) {
+                wait(2000);
+            }
             // If you are already at the last path point, stop
             if (path[i] == path[path.length - 1]) {
                 break;
