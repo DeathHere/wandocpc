@@ -135,22 +135,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     };
 
     private RSTile[] northTo = {
-        new RSTile(3303, 2800),
+        new RSTile(3303, 2798),
         new RSTile(3289, 2802)
     };
 
     private RSTile[] southTo = {
-        new RSTile(3303, 2800),
+        new RSTile(3303, 2798),
         new RSTile(3289, 2788)
     };
 
     private RSTile[] eastTo = {
-        new RSTile(3303, 2800),
+        new RSTile(3303, 2798),
         new RSTile(3296, 2796)
     };
 
     private RSTile[] westTo = {
-        new RSTile(3303, 2800),
+        new RSTile(3303, 2798),
         new RSTile(3282, 2795)
     };
     
@@ -454,18 +454,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case GoEast:
                 log("East");
                 walkDesignatedPath();
+                interactWith(16546, "Search");
                 break;
             case GoWest:
                 log("West");
                 walkDesignatedPath();
+                interactWith(16544, "Search");
                 break;
             case GoSouth:
                 log("South");
                 walkDesignatedPath();
+                interactWith(16545, "Search");
                 break;
             case GoNorth:
                 log("North");
                 walkDesignatedPath();
+                interactWith(16543, "Search");
                 break;
             case ToBank:
                 walkDesignatedPath();
@@ -490,7 +494,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * @param e stuff the server sends in its broadcast
      */
     public void serverMessageRecieved(ServerMessageEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        log("Received Msg: " + e.getMessage());
     }
 
     //------------------------------ PAINT -------------------------------------
@@ -647,8 +651,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             // Walk to the current point on path
             walkTo(randomizeTile(path[i], 1, 1));
             waitToMove(2000);
-            if (getMyPlayer().isMoving()) {
-                wait(2000);
+            while (getMyPlayer().isMoving()) {
+                wait(3000);
             }
             // If you are already at the last path point, stop
             if (path[i] == path[path.length - 1]) {
