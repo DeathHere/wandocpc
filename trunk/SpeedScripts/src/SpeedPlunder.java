@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.util.LinkedList;
 import java.util.Map;
 import org.rsbot.bot.Bot;
 import org.rsbot.bot.input.Mouse;
@@ -113,6 +114,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     private boolean foundMummy = false;
     private final int npcMummyID = 4476;
+    private LinkedList<Events> checkOrder = new LinkedList<Events>();
 
     /* ------------------------- RSTile path arrays ------------------------- */
 
@@ -319,6 +321,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         wait(2000);
     }
 
+    public void shuffleCheckOrder() {
+        
+    }
+
     /**
      * Generic method to perform an action at an object
      * @param objID ID of the nearest obj to look for
@@ -361,6 +367,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         else if (thievingLvl > 20)
             roomToHit = 1;
 
+        checkOrder.add(Events.GoEast);
+        checkOrder.add(Events.GoWest);
+        checkOrder.add(Events.GoNorth);
 
         /** Getting the images for the various icons in paint */
         /*try {
@@ -442,6 +451,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case GoWest:
                 action = Events.CheckMummy;
                 break;
+            case CheckMummy:
+                action = Events.OutPyramid;
+                break;
             default:
                 break;
         }
@@ -461,7 +473,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 if (mummy != null) {
                     foundMummy = true;
                 }
-                wait(random(500, 1000));
+                wait(random(500, 3000));
                 break;
             case ChatMummy:
                 break;
