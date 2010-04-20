@@ -162,8 +162,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     // exits the bank and leads to the perimeter of the pyramid
     // ! This naming is no longer used, but could be helpful !
 
-    private RSTile[] bankInOut = {
-        new RSTile(3303, 2800),
+    private RSTile[] bankTo = {
+        new RSTile(3313, 2799),
         new RSTile(3310, 2800)
     };
 
@@ -297,7 +297,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         boolean reverse = false;
         switch (action) {
             case ToBank:
-                usedPath = bankInOut;
+                usedPath = bankTo;
                 break;
             case ToBankNpc:
                 usedPath = bankerTo;
@@ -565,6 +565,34 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case ChatMummy:
                 action = Events.ToSpears;
                 break;
+            case ToBank:
+                action = Events.ClimbDown;
+                break;
+            case ClimbDown:
+                action = Events.ToBankNpc;
+                break;
+            case ToBankNpc:
+                action = Events.Bank;
+                break;
+            case OutPyramid:
+                log("Exiting the pyramid");
+                // If the player needs to resupply
+                if (isBankingNeeded()) {
+                    action = Events.ToBank;
+                    break;
+                }
+                // If the player has just exited a game and no need to bank
+                if (inGame) {
+                    curCheckDir = 0;
+                    shuffleCheckOrder();
+                    action = Events.GoSouth;
+                    break;
+                }
+                // If the player is still searching for the mummy chamber,
+                // proceed with the checkOrder
+                action = checkOrder.get(curCheckDir);
+                curCheckDir++;
+                break;
             default:
                 break;
         }
@@ -596,6 +624,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ClimbDown:
                 log("Climbing Down");
+                interactWith(20287, "Climb-down");
                 break;
             case ClimbUp:
                 log("Climbing Up");
@@ -640,25 +669,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ToSpears:
                 log("ToSpears");
-                break;
-            case OutPyramid:
-                log("Exiting the pyramid");
-                // If the player needs to resupply
-                if (isBankingNeeded()) {
-                    action = Events.ToBank;
-                    break;
-                }
-                // If the player has just exited a game and no need to bank
-                if (inGame) {
-                    curCheckDir = 0;
-                    shuffleCheckOrder();
-                    action = Events.GoSouth;
-                    break;
-                }
-                // If the player is still searching for the mummy chamber,
-                // proceed with the checkOrder
-                action = checkOrder.get(curCheckDir);
-                curCheckDir++;
                 break;
             default:
                 break;
