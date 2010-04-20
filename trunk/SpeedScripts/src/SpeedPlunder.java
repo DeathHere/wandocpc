@@ -61,7 +61,18 @@ name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
         "<hr>" +
         "</center>" +
         "<p>" +
-        "Script to make you gain levels in theiving." +
+        "Script to make you gain levels in thieving. All options are in GUI." +
+        "Please make sure food (trout to shark are supported) and anti-poison " +
+        "or super anti-poison are visible in your bank tab." +
+        "</p>" +
+        "<p>" +
+        "This script is designed to use the underground bank in Sophanem as a way" +
+        "to resupply the player. Therefore you must have completed the two quests" +
+        "that give you access to Sophanem and the bank." +
+        "</p>" +
+        "<p>" +
+        "It is also recommended you only use this script after thieving Lv 61 to " +
+        "gain the best amount of xp." +
         "</p>" +
         "</body></html>")
 /**
@@ -481,24 +492,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case ChatMummy:
                 action = Events.ToSpears;
                 break;
-            case OutPyramid:
-                // If the player needs to resupply
-                if (isBankingNeeded()) {
-                    action = Events.ToBank;
-                    break;
-                }
-                // If the player has just exited a game and no need to bank
-                if (inGame) {
-                    curCheckDir = 0;
-                    shuffleCheckOrder();
-                    action = Events.GoSouth;
-                    break;
-                }
-                // If the player is still searching for the mummy chamber,
-                // proceed with the checkOrder
-                action = checkOrder.get(curCheckDir);
-                curCheckDir++;
-                break;
             default:
                 break;
         }
@@ -571,6 +564,24 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ToSpears:
                 log("ToSpears");
+                break;
+            case OutPyramid:
+                // If the player needs to resupply
+                if (isBankingNeeded()) {
+                    action = Events.ToBank;
+                    break;
+                }
+                // If the player has just exited a game and no need to bank
+                if (inGame) {
+                    curCheckDir = 0;
+                    shuffleCheckOrder();
+                    action = Events.GoSouth;
+                    break;
+                }
+                // If the player is still searching for the mummy chamber,
+                // proceed with the checkOrder
+                action = checkOrder.get(curCheckDir);
+                curCheckDir++;
                 break;
             default:
                 break;
