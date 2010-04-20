@@ -63,12 +63,13 @@ name = "SpeedPlunder", version = 1.0, description = "<html><head>" +
         "<p>" +
         "Script to make you gain levels in thieving. All options are in GUI." +
         "Please make sure food (trout to shark are supported) and anti-poison " +
-        "or super anti-poison are visible in your bank tab." +
+        "or super anti-poison (all dosages supported) are visible in your" +
+        "current bank tab." +
         "</p>" +
         "<p>" +
         "This script is designed to use the underground bank in Sophanem as a way" +
         "to resupply the player. Therefore you must have completed the two quests" +
-        "that give you access to Sophanem and the bank." +
+        "that give you access to Sophanem and its bank." +
         "</p>" +
         "<p>" +
         "It is also recommended you only use this script after thieving Lv 61 to " +
@@ -105,8 +106,17 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     private Events action = Events.FirstStart;
     private final int[] foodIDs = {
-        379, // Lobster
-        
+        379, // Lobsters
+    };
+    private final int[] potIDs = {
+        500, // Anti-poison (4)
+        500, // Anti-poison (3)
+        500, // Anti-poison (2)
+        500, // Anti-poison (1)
+        512, // Super anti-poison (4)
+        512, // Super anti-poison (3)
+        512, // Super anti-poison (2)
+        512, // Super anti-poison (1)
     };
     /**
      * The highest lvl of room in the pyramid you can plunder.
@@ -126,6 +136,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     private boolean foundMummy = false;
     private boolean inGame = false;
     private final int npcMummyID = 4476;
+    /**
+     * How random should the wait time be, plus minus this number.
+     * In other words random(wait - waitTimeRand, wait + waitTimeRand).
+     * A wait of less than 0 is handled by the designated method.
+     */
+    private final int waitTimeRand = 500;
     /**
      * The order the sides of pyramid should be checked for the mummy npc.
      * Note that the South side is excluded as it should always be checked first
@@ -205,7 +221,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         //EnterPyramid,(deprecated)       // Enters the pyramid via the nearest entrance
         OutPyramid,         // Exits the pyramid. This can be used in many places
         CheckMummy,         // Checks the area for the mummy npc
-        ToMummy,            // Walks 5 coordinates north, now next to the mummy
+        //ToMummy,(deprecated)            // Walks 5 coordinates north, now next to the mummy
         ChatMummy,          // Starts the minigame via mummy
         ToSpears,           // Walks to the traps in the start of the level
         DisTrap,            // Disarms the trap (Might have some issues)
@@ -247,6 +263,19 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         s += "Exp Gained: " +
                 (skills.getCurrentSkillExp(Constants.STAT_THIEVING) - startExp);
         return s;
+    }
+
+    /**
+     * Performs the clicking required to start and end the conversation with
+     * the guardian mummy in order to move the player into the minigame.
+     */
+    public void talkToMummy() {
+        RSNPC mummy = getNearestNPCByID(npcMummyID);
+        wait(500);
+        atNPC(mummy, "Start");
+        wait(1000);
+        atMenu("Continue");
+        wait(5000);
     }
 
     /**
@@ -334,16 +363,60 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         }
         return false;
     }
-    
+
+    /**
+     * Checks the player's inventory for items in (foodIDs) and (potIDs) to see
+     * if it is advantages to bank so as to not die.
+     * @return is banking right now a good idea
+     */
     public boolean isBankingNeeded() {
-        return false;
+        boolean hasFood = false;
+        boolean hasPotion = false;
+        // Gets the player's inventory as an array of int
+        int[] inventory = getInventoryArray();
+        // Searches through the player's inventory for the required items
+        // The breaks are used for efficiency
+        for (int item : inventory) {
+            // Checks the foods
+            for (int foodID : foodIDs) {
+                if (foodID == item) {
+                    hasFood = true;
+                    break;
+                }
+            }
+            // Checks the potions
+            for (int potID : potIDs) {
+                if (potID == item) {
+                    hasPotion = true;
+                    break;
+                }
+            }
+            if (hasFood && hasPotion)
+                break;
+        }
+        return !(hasFood && hasPotion);
     }
 
     /**
-     * This method should bank intelligently
+     * This method should bank intelligently, and then performs checks to see
+     * whether the banking was successful or not (aka stupid rs lag)
      */
     public void bank() {
         log("Banking");
+        // Force bank open checking
+        do {
+            bank.open();
+            wait(2000);
+        }
+        while (!bank.isOpen());
+        // Forces deposit
+        do {
+            bank.depositAll();
+            wait(2000);
+        }
+        while (getInventoryCount() != 0);
+        // 
+        log("Withdrawing stuff");
         wait(2000);
     }
 
@@ -514,7 +587,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 wait(random(500, 3000));
                 break;
             case ChatMummy:
+                log("Walking to mummy");
+                walkToMummy();
                 log("Chatting with mummy");
+                talkToMummy();
                 break;
             case CheckDoors:
                 break;
@@ -597,10 +673,21 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         log("Received Msg: " + e.getMessage());
     }
 
+    /**
+     * Makes the all the wait time in the script random plus minus 500
+     * @param how long to wait in millisecs
+     */
+    @Override
+    public void wait(int time) {
+        super.wait(random((time - waitTimeRand < 0) ? 0 : waitTimeRand - 500,
+                waitTimeRand + 500));
+    }
+
     //------------------------------ PAINT -------------------------------------
 
     /**
      * Paints the good looking and informative stuff on screen
+     * eg. the virtual mouse and the script runtime details.
      * @param g graphics obj
      */
     public void onRepaint(Graphics g) {
