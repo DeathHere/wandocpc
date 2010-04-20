@@ -109,12 +109,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     /**
      * Did the player find the chamber with the mummy yet.
      * This variable is used to determine walk cycle attempts to the 4 sides
-     * of the pyramid. South/North/East and West (Random). If the mummy has
+     * of the pyramid. North, East, and West (Random). If the mummy has
      * been found, end searching and proceed to chat with the mummy.
      */
     private boolean foundMummy = false;
+    private boolean inGame = false;
     private final int npcMummyID = 4476;
+    /**
+     * The order the sides of pyramid should be checked for the mummy npc.
+     * Note that the South side is excluded as it should always be checked first
+     */
     private LinkedList<Events> checkOrder = new LinkedList<Events>();
+    /**
+     * Mainly used to keep track of the iteration through (checkOrder).
+     * Should always contain a value from 0 to 2
+     */
+    private int curCheckDir = 0;
 
     /* ------------------------- RSTile path arrays ------------------------- */
 
@@ -123,6 +133,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     // Eg. bankInOut = [bank][In][Out] which means the route to the bank
     // currently going into the bank, but if reversed via reversePath() it
     // exits the bank and leads to the perimeter of the pyramid
+    // ! This naming is no longer used, but could be helpful !
 
     private RSTile[] bankInOut = {
         new RSTile(3303, 2800),
@@ -180,7 +191,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         GoNorth,            // -> Look at previous entry
         GoWest,             // -> Look at previous entry
         GoSouth,            // -> Look at previous entry
-        EnterPyramid,       // Enters the pyramid via the nearest entrance
+        //EnterPyramid,(deprecated)       // Enters the pyramid via the nearest entrance
         OutPyramid,         // Exits the pyramid. This can be used in many places
         CheckMummy,         // Checks the area for the mummy npc
         ToMummy,            // Walks 5 coordinates north, now next to the mummy
@@ -312,6 +323,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         }
         return false;
     }
+    
+    public boolean isBankingNeeded() {
+        return false;
+    }
 
     /**
      * This method should bank intelligently
@@ -321,12 +336,19 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         wait(2000);
     }
 
+    /**
+     * Changes the order the player checks the chambers of the pyramid for the
+     * mummy. This however does not affect the South chamber, as that room should
+     * always be checked first. For anti-ban purposes only, no real value.
+     */
     public void shuffleCheckOrder() {
-        
+        for (int i = 0; i < 30; i++) {
+            checkOrder.add(checkOrder.remove(checkOrder.size() - 1));
+        }
     }
 
     /**
-     * Generic method to perform an action at an object
+     * Generic method to perform an action on an object
      * @param objID ID of the nearest obj to look for
      * @param action String command to execute at the object
      */
@@ -367,11 +389,13 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         else if (thievingLvl > 20)
             roomToHit = 1;
 
+        // Initialize the checkOrder and shuffle it for use
         checkOrder.add(Events.GoEast);
         checkOrder.add(Events.GoWest);
         checkOrder.add(Events.GoNorth);
+        shuffleCheckOrder();
 
-        /** Getting the images for the various icons in paint */
+        /** Fetching the images for the various icons in paint */
         /*try {
             thievingIcon = Toolkit.getDefaultToolkit().getImage(
          new URL("http://www.wandocpc.site90.com/images/icons/thieving.png"));
@@ -454,6 +478,24 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case CheckMummy:
                 action = Events.OutPyramid;
                 break;
+            case OutPyramid:
+                // If the player needs to resupply
+                if (isBankingNeeded()) {
+                    action = Events.ToBank;
+                    break;
+                }
+                // If the player has just exited a game and no need to bank
+                if (inGame) {
+                    curCheckDir = 0;
+                    shuffleCheckOrder();
+                    action = Events.GoSouth;
+                    break;
+                }
+                // If the player is still searching for the mummy chamber,
+                // proceed with the checkOrder
+                action = checkOrder.get(curCheckDir);
+                curCheckDir++;
+                break;
             default:
                 break;
         }
@@ -489,6 +531,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case DisTrap:
                 break;
             case Eat:
+                log("Eating");
                 eat();
                 break;
             case GoEast:
@@ -512,16 +555,15 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 interactWith(16543, "Search");
                 break;
             case ToBank:
+                log("ToBank");
                 walkDesignatedPath();
                 break;
             case ToBankNpc:
+                log("ToBanker");
                 walkDesignatedPath();
                 break;
             case ToLadder:
                 walkDesignatedPath();
-                break;
-            case EnterPyramid:
-                
                 break;
             default:
                 break;
