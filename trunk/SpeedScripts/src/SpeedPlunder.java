@@ -642,6 +642,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 log("ToSpears");
                 break;
             case OutPyramid:
+                log("Exiting the pyramid");
                 // If the player needs to resupply
                 if (isBankingNeeded()) {
                     action = Events.ToBank;
