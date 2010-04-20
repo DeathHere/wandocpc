@@ -478,6 +478,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case CheckMummy:
                 action = Events.OutPyramid;
                 break;
+            case ChatMummy:
+                action = Events.ToSpears;
+                break;
             case OutPyramid:
                 // If the player needs to resupply
                 if (isBankingNeeded()) {
@@ -518,6 +521,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 wait(random(500, 3000));
                 break;
             case ChatMummy:
+                log("Chatting with mummy");
                 break;
             case CheckDoors:
                 break;
@@ -564,6 +568,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ToLadder:
                 walkDesignatedPath();
+                break;
+            case ToSpears:
+                log("ToSpears");
                 break;
             default:
                 break;
