@@ -410,8 +410,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void bank() {
         log("Banking");
-        walkToTile(getNearestObjectByID(20325).getLocation());
         try {
+            walkToTile(getNearestObjectByID(20325).getLocation());
             // Force bank open checking
             do {
                 interactWith(20325, "Use-quickly");
