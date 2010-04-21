@@ -105,6 +105,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * be performed during this looping cycle
      */
     private Events action = Events.FirstStart;
+    private Events queuedAction = null;
     private final int[] foodIDs = {
         379, // Lobsters
     };
@@ -163,8 +164,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     // ! This naming is no longer used, but could be helpful !
 
     private RSTile[] bankTo = {
-        new RSTile(3313, 2799),
-        new RSTile(3310, 2800)
+        new RSTile(3305, 2799),
+        new RSTile(3313, 2798)
     };
 
     private RSTile[] bankerTo = {
@@ -266,6 +267,13 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
+     * 
+     */
+    public void rotateCamera() {
+        setCameraRotation(random(263, 281));
+    }
+
+    /**
      * Performs the clicking required to start and end the conversation with
      * the guardian mummy in order to move the player into the minigame.
      */
@@ -330,7 +338,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             walkPath(usedPath);
         }
         log("Ending Walk");
-        wait(random(1000, 2000));
     }
 
     /**
@@ -403,21 +410,27 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void bank() {
         log("Banking");
-        // Force bank open checking
-        do {
-            bank.open();
-            wait(2000);
+        walkToTile(getNearestObjectByID(20325).getLocation());
+        try {
+            // Force bank open checking
+            do {
+                interactWith(20325, "Use-quickly");
+                wait(1500);
+            }
+            while (!bank.isOpen());
+            // Forces deposit
+            do {
+                bank.depositAll();
+                wait(1500);
+            }
+            while (getInventoryCount() != 0);
+            //
+            log("Withdrawing stuff");
         }
-        while (!bank.isOpen());
-        // Forces deposit
-        do {
-            bank.depositAll();
-            wait(2000);
+        catch (NullPointerException e) {
+            action = Events.OutPyramid;
         }
-        while (getInventoryCount() != 0);
-        // 
-        log("Withdrawing stuff");
-        wait(2000);
+        wait(500);
     }
 
     /**
@@ -439,7 +452,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     public void interactWith(int objID, String action) {
         log("Doing: " + action + " to " + Integer.toString(objID));
         atObject(getNearestObjectByID(objID), action);
-        wait(random(1000, 3000));
+        wait(random(2000, 3000));
     }
 
     //------------------------ OVERRIDES & IMPLEMENTS --------------------------
@@ -515,7 +528,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     @Override
     public int loop() {
         // Default return time
-        int retTime = 100;
+        int retTime = 500;
 
         // Checks if the player is logged in
         if (!isLoggedIn()) {
@@ -527,6 +540,21 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         if (getMyPlayer().getHPPercent() < random(35, 55))
             action = Events.Eat;
 
+        if (action.equals(Events.FirstStart)) {
+            rotateCamera();
+            action = Events.ToBankNpc;
+            return retTime;
+        }
+
+        try {
+            if (tileOnMap(getNearestObjectByID(16459).getLocation())) {
+                action = Events.OutPyramid;
+            }
+        }
+        catch (NullPointerException e) {
+            
+        }
+
         if (foundMummy) {
             action = Events.ChatMummy;
         }
@@ -535,9 +563,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         // Checks the previous action and increment the value to the next
         // correct action accordingly
         switch(action) {
-            case FirstStart:
-                action = Events.Bank;
-                break;
             case Bank:
                 action = Events.ToLadder;
                 break;
@@ -546,18 +571,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ClimbUp:
                 action = Events.GoSouth;
-                break;
-            case GoSouth:
-                action = Events.CheckMummy;
-                break;
-            case GoNorth:
-                action = Events.CheckMummy;
-                break;
-            case GoEast:
-                action = Events.CheckMummy;
-                break;
-            case GoWest:
-                action = Events.CheckMummy;
                 break;
             case CheckMummy:
                 action = Events.OutPyramid;
@@ -574,8 +587,26 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case ToBankNpc:
                 action = Events.Bank;
                 break;
+            case GoEast:
+                action = Events.CheckMummy;
+                break;
+            case GoWest:
+                action = Events.CheckMummy;
+                break;
+            case GoSouth:
+                action = Events.CheckMummy;
+                break;
+            case GoNorth:
+                action = Events.CheckMummy;
+                break;
             case OutPyramid:
                 log("Exiting the pyramid");
+                try {
+                    interactWith(16459, "Leave Tomb");
+                }
+                catch (NullPointerException e) {
+                    log("Not in pyramid, could not exit");
+                }
                 // If the player needs to resupply
                 if (isBankingNeeded()) {
                     action = Events.ToBank;
@@ -612,7 +643,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 if (mummy != null) {
                     foundMummy = true;
                 }
-                wait(random(500, 3000));
+                wait(random(5000, 1500));
+                log("Mummy found: " + foundMummy);
                 break;
             case ChatMummy:
                 log("Walking to mummy");
@@ -624,11 +656,24 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ClimbDown:
                 log("Climbing Down");
-                interactWith(20287, "Climb-down");
+                try {
+                    interactWith(20275, "Climb-down");
+                }
+                catch (NullPointerException e) {
+                    log("Could not find down ladder");
+                }
+                wait(3000);
                 break;
             case ClimbUp:
+                wait(random(1000, 1500));
                 log("Climbing Up");
-                interactWith(20277, "Climb-up");
+                try {
+                    interactWith(20277, "Climb-up");
+                }
+                catch (NullPointerException e) {
+                    log("Could not find up ladder");
+                }
+                wait(3000);
                 break;
             case DisTrap:
                 break;
@@ -640,21 +685,25 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 log("East");
                 walkDesignatedPath();
                 interactWith(16546, "Search");
+                wait(1000);
                 break;
             case GoWest:
                 log("West");
                 walkDesignatedPath();
                 interactWith(16544, "Search");
+                wait(1000);
                 break;
             case GoSouth:
                 log("South");
                 walkDesignatedPath();
                 interactWith(16545, "Search");
+                wait(1000);
                 break;
             case GoNorth:
                 log("North");
                 walkDesignatedPath();
                 interactWith(16543, "Search");
+                wait(1000);
                 break;
             case ToBank:
                 log("ToBank");
@@ -669,6 +718,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ToSpears:
                 log("ToSpears");
+                break;
+            case Wait:
+                wait(5000);
+                action = queuedAction;
+                queuedAction = null;
                 break;
             default:
                 break;
@@ -690,8 +744,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     @Override
     public void wait(int time) {
-        super.wait(random((time - waitTimeRand < 0) ? 0 : waitTimeRand - 500,
-                waitTimeRand + 500));
+        //super.wait(random((time - waitTimeRand < 0) ? 0 : waitTimeRand - 500,
+                //waitTimeRand + 500));
+        super.wait(time);
     }
 
     //------------------------------ PAINT -------------------------------------
@@ -850,7 +905,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             walkTo(randomizeTile(path[i], 1, 1));
             waitToMove(2000);
             while (getMyPlayer().isMoving()) {
-                wait(3000);
+                wait(1000);
             }
             // If you are already at the last path point, stop
             if (path[i] == path[path.length - 1]) {
