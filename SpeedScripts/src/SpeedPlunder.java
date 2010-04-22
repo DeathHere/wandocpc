@@ -106,18 +106,29 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     private Events action = Events.FirstStart;
     private Events queuedAction = null;
+    /**
+     * List of food ids this script can handle. Note that when withdrawing food
+     * from the bank, only 1 food id will be withdrawn. The item that exist and
+     * is the first to exist following the order of the foodIDs array will be the
+     * food used.
+     */
     private final int[] foodIDs = {
-        379, // Lobsters
+        379, // Lobsters 1st choice
+        // 2nd choice
+        // etc...
     };
+    /**
+     * Same as food ids. The ids will be used before the last ones
+     */
     private final int[] potIDs = {
-        500, // Anti-poison (4)
-        500, // Anti-poison (3)
-        500, // Anti-poison (2)
-        500, // Anti-poison (1)
+        512, // Super anti-poison (1)
+        512, // Super anti-poison (2)
         512, // Super anti-poison (4)
         512, // Super anti-poison (3)
-        512, // Super anti-poison (2)
-        512, // Super anti-poison (1)
+        500, // Anti-poison (1)
+        500, // Anti-poison (2)
+        500, // Anti-poison (4)
+        500, // Anti-poison (3)
     };
     /**
      * The highest lvl of room in the pyramid you can plunder.
@@ -279,11 +290,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void talkToMummy() {
         RSNPC mummy = getNearestNPCByID(npcMummyID);
-        wait(500);
         atNPC(mummy, "Start");
-        wait(1000);
+        wait(random(600, 900));
         atMenu("Continue");
-        wait(5000);
+        wait(random(2000, 3000));
     }
 
     /**
@@ -293,7 +303,17 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     public void walkToMummy() {
         RSTile curTile = getMyPlayer().getLocation();
         walkToTile(new RSTile(curTile.getX(), curTile.getY() + random(3, 5)));
-        wait(2000);
+        wait(random(200, 600));
+    }
+
+    /**
+     * Moves the player nearer to the spear traps, so the player can do stuff
+     * to the spears.
+     */
+    public void walkToSpears() {
+        RSTile curTile = getMyPlayer().getLocation();
+        walkToTile(new RSTile(curTile.getX() + random(4, 5), curTile.getY()));
+        wait(random(200, 600));
     }
 
     /**
@@ -415,17 +435,34 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             // Force bank open checking
             do {
                 interactWith(20325, "Use-quickly");
-                wait(1500);
+                wait(random(1400, 1700));
             }
             while (!bank.isOpen());
             // Forces deposit
             do {
                 bank.depositAll();
-                wait(1500);
+                wait(random(1400, 1700));
             }
             while (getInventoryCount() != 0);
-            //
-            log("Withdrawing stuff");
+            // Forces withdraw of foods and potions
+            do {
+                log("Withdrawing potions");
+                for (int potID : potIDs) {
+                    if (bank.withdraw(potID, 3)) {
+                        break;
+                    }
+                    wait(random(900, 1400));
+                }
+                log("Withdrawing foods");
+                for (int foodID : foodIDs) {
+                    if (bank.withdraw(foodID, 10)) {
+                        break;
+                    }
+                    wait(random(900, 1400));
+                }
+                wait(random(500, 1000));
+            }
+            while (isBankingNeeded());
         }
         catch (NullPointerException e) {
             action = Events.OutPyramid;
@@ -556,6 +593,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         }
 
         if (foundMummy) {
+            shuffleCheckOrder();
             action = Events.ChatMummy;
         }
 
@@ -662,7 +700,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 catch (NullPointerException e) {
                     log("Could not find down ladder");
                 }
-                wait(3000);
+                wait(random(3000, 3500));
                 break;
             case ClimbUp:
                 wait(random(1000, 1500));
@@ -673,7 +711,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 catch (NullPointerException e) {
                     log("Could not find up ladder");
                 }
-                wait(3000);
+                wait(random(3000, 3500));
                 break;
             case DisTrap:
                 break;
@@ -685,25 +723,25 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 log("East");
                 walkDesignatedPath();
                 interactWith(16546, "Search");
-                wait(1000);
+                wait(random(1000, 1300));
                 break;
             case GoWest:
                 log("West");
                 walkDesignatedPath();
                 interactWith(16544, "Search");
-                wait(1000);
+                wait(random(1000, 1300));
                 break;
             case GoSouth:
                 log("South");
                 walkDesignatedPath();
                 interactWith(16545, "Search");
-                wait(1000);
+                wait(random(1000, 1300));
                 break;
             case GoNorth:
                 log("North");
                 walkDesignatedPath();
                 interactWith(16543, "Search");
-                wait(1000);
+                wait(random(1000, 1300));
                 break;
             case ToBank:
                 log("ToBank");
