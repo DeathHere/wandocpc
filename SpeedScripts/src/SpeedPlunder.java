@@ -137,6 +137,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * This creates the best experience combination
      */
     private int roomToHit = 0;
+    /**
+     * Keeps track which room the player is currently in.
+     * 1~8. -1 means not inside the pyramid.
+     */
+    private int curRoom = -1;
     private int thievingLvl = skills.getCurrentSkillLevel(Constants.STAT_THIEVING);
     private long startExp;
     /**
@@ -206,7 +211,187 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(3303, 2798),
         new RSTile(3282, 2795)
     };
-    
+
+    /* ---------------------- RSTile locations of jars ---------------------- */
+
+    /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
+    private Object[][][] roomJars = {
+        // Room #1 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #2 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #3 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #4 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #5 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #6 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #7 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #8 jars
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }}
+    };
+
+    /* --------------------- RSTile locations of doors ---------------------- */
+
+    /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
+    private Object[][][] roomDoors = {
+        // Room #1 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #2 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #3 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #4 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #5 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #6 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #7 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }},
+        // Room #8 doors
+       {{ new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 },
+        { new RSTile(3303, 2798), 0 }}
+    };
+
     /* ----------------------------- Paint vars ----------------------------- */
 
     private Image blkJIcon;
@@ -217,7 +402,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     /**
      * Lists all the possible actions performed by the player's character.
-     * These are modified in the loop and used in the loop's switch statement
+     * These are modified in the loop and used in the loop's switch statement.
+     * If actions are deprecated, that means that action has been taken care of
+     * some where else.
      */
     private enum Events {
         Bank,               // Talk and interact with the banker
@@ -278,7 +465,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     * 
+     * Moves the camera into the current angle so that the player can click on
+     * stupid RS ladders correctly. If the rotation is 0 or 90, the interact
+     * method to click on the ladders miss!
      */
     public void rotateCamera() {
         setCameraRotation(random(263, 281));
@@ -294,6 +483,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         wait(random(600, 900));
         atMenu("Continue");
         wait(random(2000, 3000));
+        curRoom = 1;
     }
 
     /**
@@ -638,6 +828,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 action = Events.CheckMummy;
                 break;
             case OutPyramid:
+                curRoom = -1;
                 log("Exiting the pyramid");
                 try {
                     interactWith(16459, "Leave Tomb");
@@ -756,9 +947,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ToSpears:
                 log("ToSpears");
+                walkToSpears();
                 break;
             case Wait:
-                wait(5000);
+                wait(random(5000, 7000));
                 action = queuedAction;
                 queuedAction = null;
                 break;
