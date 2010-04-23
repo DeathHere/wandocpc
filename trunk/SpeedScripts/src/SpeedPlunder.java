@@ -121,14 +121,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * Same as food ids. The ids will be used before the last ones
      */
     private final int[] potIDs = {
-        512, // Super anti-poison (1)
-        512, // Super anti-poison (2)
-        512, // Super anti-poison (4)
-        512, // Super anti-poison (3)
-        500, // Anti-poison (1)
-        500, // Anti-poison (2)
-        500, // Anti-poison (4)
-        500, // Anti-poison (3)
+        181, // Super anti-poison (1)
+        181, // Super anti-poison (2)
+        181, // Super anti-poison (4)
+        181, // Super anti-poison (3)
+        175, // Anti-poison (1)
+        175, // Anti-poison (2)
+        175, // Anti-poison (4)
+        175, // Anti-poison (3)
     };
     /**
      * The highest lvl of room in the pyramid you can plunder.
@@ -194,7 +194,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     private RSTile[] northTo = {
         new RSTile(3303, 2798),
-        new RSTile(3289, 2802)
+        new RSTile(3289, 2801)
     };
 
     private RSTile[] southTo = {
@@ -204,12 +204,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
     private RSTile[] eastTo = {
         new RSTile(3303, 2798),
-        new RSTile(3296, 2796)
+        new RSTile(3296, 2794)
     };
 
     private RSTile[] westTo = {
         new RSTile(3303, 2798),
-        new RSTile(3282, 2795)
+        new RSTile(3282, 2794)
     };
 
     /* ---------------------- RSTile locations of jars ---------------------- */
@@ -481,19 +481,25 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         RSNPC mummy = getNearestNPCByID(npcMummyID);
         atNPC(mummy, "Start");
         wait(random(600, 900));
-        atMenu("Continue");
+        if (clickContinue()) {
+            inGame = true;
+            curRoom = 1;
+        }
         wait(random(2000, 3000));
-        curRoom = 1;
     }
 
     /**
      * Moves the player 3~5 spaces up the inside of the pyramid start chamber,
      * so we can speak to the mummy in an unbot like fasion.
      */
-    public void walkToMummy() {
+    public void walkToMummy(boolean back) {
+        int m = 1;
+        if (back) {
+            m = -1;
+        }
         RSTile curTile = getMyPlayer().getLocation();
-        walkToTile(new RSTile(curTile.getX(), curTile.getY() + random(3, 5)));
-        wait(random(200, 600));
+        walkToTile(new RSTile(curTile.getX(), curTile.getY() + m*random(4, 5)));
+        wait(random(200, 400));
     }
 
     /**
@@ -637,19 +643,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             // Forces withdraw of foods and potions
             do {
                 log("Withdrawing potions");
-                for (int potID : potIDs) {
+                bank.withdraw(potIDs[0], 3);
+                /**for (int potID : potIDs) {
                     if (bank.withdraw(potID, 3)) {
                         break;
                     }
                     wait(random(900, 1400));
-                }
+                }*/
+                wait(random(900, 1400));
                 log("Withdrawing foods");
-                for (int foodID : foodIDs) {
+                bank.withdraw(foodIDs[0], 10);
+                /*for (int foodID : foodIDs) {
                     if (bank.withdraw(foodID, 10)) {
                         break;
                     }
                     wait(random(900, 1400));
-                }
+                }*/
                 wait(random(500, 1000));
             }
             while (isBankingNeeded());
@@ -667,7 +676,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void shuffleCheckOrder() {
         for (int i = 0; i < 30; i++) {
-            checkOrder.add(checkOrder.remove(checkOrder.size() - 1));
+            checkOrder.add(checkOrder.remove(random(0, checkOrder.size() - 1)));
         }
     }
 
@@ -804,7 +813,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 action = Events.OutPyramid;
                 break;
             case ChatMummy:
-                action = Events.ToSpears;
+                if (inGame) {
+                    action = Events.ToSpears;
+                }
                 break;
             case ToBank:
                 action = Events.ClimbDown;
@@ -831,6 +842,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 curRoom = -1;
                 log("Exiting the pyramid");
                 try {
+                    walkToMummy(true);
                     interactWith(16459, "Leave Tomb");
                 }
                 catch (NullPointerException e) {
@@ -867,6 +879,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 bank();
                 break;
             case CheckMummy:
+                wait(random(1000, 1200));
+                walkToMummy(false);
                 foundMummy = false;
                 RSNPC mummy = getNearestNPCByID(npcMummyID);
                 if (mummy != null) {
@@ -876,8 +890,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 log("Mummy found: " + foundMummy);
                 break;
             case ChatMummy:
-                log("Walking to mummy");
-                walkToMummy();
                 log("Chatting with mummy");
                 talkToMummy();
                 break;
@@ -913,13 +925,13 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case GoEast:
                 log("East");
                 walkDesignatedPath();
-                interactWith(16546, "Search");
+                interactWith(16544, "Search");
                 wait(random(1000, 1300));
                 break;
             case GoWest:
                 log("West");
                 walkDesignatedPath();
-                interactWith(16544, "Search");
+                interactWith(16546, "Search");
                 wait(random(1000, 1300));
                 break;
             case GoSouth:
