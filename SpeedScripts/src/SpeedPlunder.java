@@ -217,133 +217,133 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
     private Object[][][] roomJars = {
         // Room #1 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #2 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #3 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #4 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #5 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #6 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #7 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #8 jars
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }}
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }}
     };
 
     /* --------------------- RSTile locations of doors ---------------------- */
@@ -351,45 +351,45 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
     private Object[][][] roomDoors = {
         // Room #1 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #2 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #3 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #4 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #5 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #6 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #7 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }},
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
         // Room #8 doors
-       {{ new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 },
-        { new RSTile(3303, 2798), 0 }}
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }}
     };
 
     /* ----------------------------- Paint vars ----------------------------- */
@@ -471,6 +471,58 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void rotateCamera() {
         setCameraRotation(random(263, 281));
+    }
+
+    /**
+     * Gets the player to search the doors in order listed in the array
+     */
+    public void searchDoors() {
+        for (int i = 0; i < 4; i++) {
+            RSTile doorLocation = (RSTile) roomDoors[curRoom][i][0];
+            // Forces the player to walk to the door being checked
+            do {
+                walkToTile(doorLocation);
+                wait(random(50, 100));
+            }
+            while (distanceBetween(getMyPlayer().getLocation(),
+                    doorLocation) > 2);
+            RSTile oldLocation = getMyPlayer().getLocation();
+            interactWith(getObjectAt(doorLocation).getID(), "Pick");
+            wait(random(2000, 2500));
+            if (!getMyPlayer().getLocation().equals(oldLocation)) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Checks all the jars in the current room in order as specified by the
+     * array. Therefore, the array should be listed in the order that is most
+     * efficient for checking. i.e. Closest jars to the door should be at the
+     * top of the array, and the array should go in order with respect to the
+     * actually physical layout of the jars.
+     */
+    public void searchJars() {
+        for (int i = 0; i < 15; i++) {
+            RSTile jarLocation = (RSTile) roomJars[curRoom][i][0];
+            // Forces the player to walk to the jar being searched
+            do {
+                walkToTile(jarLocation);
+                wait(random(50, 100));
+            }
+            while (distanceBetween(getMyPlayer().getLocation(),
+                    jarLocation) > 2);
+            // Forces the player to search the jar successfully
+            do {
+                int oldThievingXp = skills.getCurrentSkillExp(Constants.STAT_THIEVING);
+                interactWith(getObjectAt(jarLocation).getID(), "Search");
+                wait(random(50, 100));
+                if (oldThievingXp != skills.getCurrentSkillExp(Constants.STAT_THIEVING)) {
+                    roomJars[curRoom][i][1] = true;
+                }
+            }
+            while (!((Boolean) roomJars[curRoom][i][1]));
+        }
     }
 
     /**
@@ -558,6 +610,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             walkPath(usedPath);
         }
         log("Ending Walk");
+    }
+
+    /**
+     * Checks the player hp. Note that the hp is reported
+     * @return
+     */
+    public boolean isEatingRequired() {
+        return getMyPlayer().getHPPercent() < random(45, 65);
     }
 
     /**
@@ -898,9 +958,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 talkToMummy();
                 break;
             case CheckDoors:
+                searchDoors();
                 break;
             case SearchJars:
-                
+                searchJars();
                 break;
             case ClimbDown:
                 log("Climbing Down");
