@@ -481,11 +481,15 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         RSNPC mummy = getNearestNPCByID(npcMummyID);
         atNPC(mummy, "Start");
         wait(random(600, 900));
-        if (clickContinue()) {
+        moveMouse(300, 600);
+        wait(random(500, 700));
+        clickMouse(true);
+        wait(random(2000, 3000));
+        if (distanceBetween(getMyPlayer().getLocation(),
+                new RSTile(3000, 3000)) < 5) {
             inGame = true;
             curRoom = 1;
         }
-        wait(random(2000, 3000));
     }
 
     /**
@@ -894,6 +898,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 talkToMummy();
                 break;
             case CheckDoors:
+                break;
+            case SearchJars:
+                
                 break;
             case ClimbDown:
                 log("Climbing Down");
