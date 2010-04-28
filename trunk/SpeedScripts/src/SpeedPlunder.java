@@ -212,9 +212,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(3282, 2794)
     };
 
+    /**
+     * The tile the player should move to inorder to access the spears.
+     */
+    private RSTile[] roomSpears = {
+        new RSTile(3303, 2798),
+        new RSTile(3303, 2798),
+        new RSTile(3303, 2798),
+        new RSTile(3303, 2798),
+        new RSTile(3303, 2798),
+        new RSTile(3303, 2798),
+        new RSTile(3303, 2798)
+    };
+
     /* ---------------------- RSTile locations of jars ---------------------- */
 
-    /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
+    /** Organized as [Room #][RSTile][Boolean, checked or not] */
     private Object[][][] roomJars = {
         // Room #1 jars
        {{ new RSTile(3303, 2798), false },
@@ -563,8 +576,16 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * to the spears.
      */
     public void walkToSpears() {
+        /**
         RSTile curTile = getMyPlayer().getLocation();
         walkToTile(new RSTile(curTile.getX() + random(4, 5), curTile.getY()));
+         * */
+        do {
+            walkToTile(roomSpears[curRoom]);
+            wait(random(1500, 2200));
+        }
+        while (distanceBetween(getMyPlayer().getLocation(),
+                roomSpears[curRoom]) < 3);
         wait(random(200, 600));
     }
 
