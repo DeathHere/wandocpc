@@ -152,6 +152,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     private boolean foundMummy = false;
     private boolean inGame = false;
+    private boolean debug = true;
+    private boolean openChest = false;
     private final int npcMummyID = 4476;
     /**
      * How random should the wait time be, plus minus this number.
@@ -242,13 +244,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false }},
         // Room #2 jars
        {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
@@ -274,13 +272,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false }},
         // Room #4 jars
        {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
@@ -306,13 +300,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false }},
         // Room #6 jars
        {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
@@ -338,13 +328,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false }},
         // Room #8 jars
        {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
@@ -438,7 +424,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         ToSpears,           // Walks to the traps in the start of the level
         DisTrap,            // Disarms the trap (Might have some issues)
         SearchJars,         // Searches a number of jars 
-        CheckDoors,         // Searches all 4 doors in each room for passage
+        SearchDoors,         // Searches all 4 doors in each room for passage
         OpenChest,          // Searches the golden chest in the middle of the room
         Eat,                // Eat 1 piece of food
         PotAnti,            // Drinks some anti-poison potion, normal + super
@@ -464,7 +450,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         }
         return false;
     }
-
+    
     /**
      * Gives output of details for the player's actions,
      * eg. exp and levels gained
@@ -876,6 +862,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             
         }
 
+        if (inGame && isBankingNeeded()) {
+            action = Events.OutPyramid;
+        }
+
         if (foundMummy) {
             shuffleCheckOrder();
             action = Events.ChatMummy;
@@ -901,6 +891,32 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 if (inGame) {
                     action = Events.ToSpears;
                 }
+                break;
+            case ToSpears:
+                action = Events.DisTrap;
+                break;
+            case DisTrap:
+                if (curRoom == roomToHit || curRoom == roomToHit-1) {
+                    if (openChest) {
+                        action = Events.OpenChest;
+                    }
+                    else {
+                        action = Events.SearchJars;
+                    }
+                }
+                else {
+                    action = Events.SearchDoors;
+                }
+                break;
+            case OpenChest:
+                action = Events.SearchJars;
+                break;
+            case SearchJars:
+                action = Events.SearchDoors;
+                break;
+            case SearchDoors:
+                action = Events.DisTrap;
+                curRoom++;
                 break;
             case ToBank:
                 action = Events.ClimbDown;
@@ -978,7 +994,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 log("Chatting with mummy");
                 talkToMummy();
                 break;
-            case CheckDoors:
+            case SearchDoors:
                 searchDoors();
                 break;
             case SearchJars:
@@ -1070,7 +1086,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     * Makes the all the wait time in the script random plus minus 500
+     * Makes the all the wait time in the script random plus minus 500.
+     * Did not work very well, might fix later.
      * @param how long to wait in millisecs
      */
     @Override
@@ -1078,6 +1095,16 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         //super.wait(random((time - waitTimeRand < 0) ? 0 : waitTimeRand - 500,
                 //waitTimeRand + 500));
         super.wait(time);
+    }
+
+    /**
+     * Easier way to print action text only if debugging
+     * @param msg what to print
+     */
+    @Override
+    public void log(String msg) {
+        if (debug)
+            super.log(msg);
     }
 
     //------------------------------ PAINT -------------------------------------
