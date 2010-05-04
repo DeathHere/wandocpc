@@ -171,6 +171,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * Should always contain a value from 0 to 2
      */
     private int curCheckDir = 0;
+    private RSTile oldLoc = null;
 
     /* ------------------------- RSTile path arrays ------------------------- */
 
@@ -218,10 +219,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * The tile the player should move to inorder to access the spears.
      */
     private RSTile[] roomSpears = {
-        new RSTile(3303, 2798),
-        new RSTile(3303, 2798),
-        new RSTile(3303, 2798),
-        new RSTile(3303, 2798),
+        new RSTile(1929, 4473),
+        new RSTile(1956, 4474),
+        new RSTile(1978, 4466),
+        new RSTile(1930, 4454),
         new RSTile(3303, 2798),
         new RSTile(3303, 2798),
         new RSTile(3303, 2798)
@@ -350,20 +351,20 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
     private Object[][][] roomDoors = {
         // Room #1 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
+       {{ new RSTile(1931, 4472), false },
+        { new RSTile(1932, 4466), false },
+        { new RSTile(1924, 4472), false },
+        { new RSTile(1923, 4466), false }},
         // Room #2 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
+       {{ new RSTile(1957, 4472), false },
+        { new RSTile(1960, 4468), false },
+        { new RSTile(1959, 4465), false },
+        { new RSTile(1949, 4465), false }},
         // Room #3 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
+       {{ new RSTile(1969, 4460), false },
+        { new RSTile(1980, 4458), false },
+        { new RSTile(1976, 4453), false },
+        { new RSTile(1974, 4453), false }},
         // Room #4 doors
        {{ new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
@@ -528,16 +529,20 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * Performs the clicking required to start and end the conversation with
      * the guardian mummy in order to move the player into the minigame.
      */
-    public void talkToMummy() {
+    public void chatMummy() {
         RSNPC mummy = getNearestNPCByID(npcMummyID);
         atNPC(mummy, "Start");
         wait(random(600, 900));
-        moveMouse(300, 600);
+        moveMouse(200, 450, 25, 5);
+        wait(random(500, 700));
+        clickMouse(true);
+        wait(random(500, 700));
+        moveMouse(250, 450, 10, 5);
         wait(random(500, 700));
         clickMouse(true);
         wait(random(2000, 3000));
         if (distanceBetween(getMyPlayer().getLocation(),
-                new RSTile(3000, 3000)) < 5) {
+                new RSTile(1927, 4477)) < 3) {
             inGame = true;
             curRoom = 1;
         }
@@ -752,12 +757,68 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
+     *
+     */
+    public void checkMummy() {
+        do {
+            wait(1000);
+        } while (getLocation().equals(oldLoc));
+        walkToMummy(false);
+        foundMummy = false;
+        RSNPC mummy = getNearestNPCByID(npcMummyID);
+        if (mummy != null) {
+            foundMummy = true;
+        }
+        wait(random(500, 900));
+        log("Mummy found: " + foundMummy);
+    }
+
+    /**
+     * 
+     */
+    public void outPyramid() {
+        curRoom = -1;
+        log("Exiting the pyramid");
+        try {
+            walkToMummy(true);
+            interactWith(16459, "Leave Tomb");
+        }
+        catch (NullPointerException e) {
+            log("Not in pyramid, could not exit");
+        }
+        // If the player needs to resupply
+        if (isBankingNeeded()) {
+            action = Events.ToBank;
+            return;
+        }
+        // If the player has just exited a game and no need to bank.
+        // OR
+        // If the player has checked all rooms, but still could not find
+        // mummy. This means something was missed, or the mummy changed
+        // rooms. So, go back and recheck.
+        if (inGame || curCheckDir == 2) {
+            curCheckDir = 0;
+            shuffleCheckOrder();
+            action = Events.GoSouth;
+            inGame = false;
+            return;
+        }
+
+        // If the player is still searching for the mummy chamber,
+        // proceed with the checkOrder
+        action = checkOrder.get(curCheckDir);
+        curCheckDir++;
+    }
+
+    /**
      * Generic method to perform an action on an object
      * @param objID ID of the nearest obj to look for
      * @param action String command to execute at the object
      */
     public void interactWith(int objID, String action) {
         log("Doing: " + action + " to " + Integer.toString(objID));
+        atObject(getNearestObjectByID(objID), action);
+        wait(random(250, 400));
         atObject(getNearestObjectByID(objID), action);
         wait(random(2000, 3000));
     }
@@ -792,6 +853,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             roomToHit = 2;
         else if (thievingLvl > 20)
             roomToHit = 1;
+        log("Max Room: " + roomToHit);
 
         // Initialize the checkOrder and shuffle it for use
         checkOrder.add(Events.GoEast);
@@ -849,17 +911,33 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
 
         if (action.equals(Events.FirstStart)) {
             rotateCamera();
-            action = Events.ToBankNpc;
-            return retTime;
-        }
-
-        try {
-            if (tileOnMap(getNearestObjectByID(16459).getLocation())) {
-                action = Events.OutPyramid;
+            //
+            try {
+                if (tileOnMap(getNearestNPCByID(npcMummyID).getLocation())) {
+                    action = Events.ChatMummy;
+                    return retTime;
+                }
+            } catch (NullPointerException e) {
+                log("Mummy not found on start");
             }
-        }
-        catch (NullPointerException e) {
-            
+            //
+            try {
+                if (action != Events.ChatMummy
+                        && tileOnMap(getNearestObjectByID(16459).getLocation())) {
+                    action = Events.OutPyramid;
+                }
+            } catch (NullPointerException e) {
+                log("Exit not found on start");
+            }
+            //
+            int x = getLocation().getX();
+            int y = getLocation().getY();
+            if (!(y < 2807 && y > 2764 && x > 3274 && x < 3319)) {
+                action = Events.ToBankNpc;
+            } else {
+                action = Events.GoNorth;
+            }
+            return retTime;
         }
 
         if (inGame && isBankingNeeded()) {
@@ -869,6 +947,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         if (foundMummy) {
             shuffleCheckOrder();
             action = Events.ChatMummy;
+            foundMummy = false;
         }
 
         // --- Logic switch ---
@@ -940,31 +1019,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 action = Events.CheckMummy;
                 break;
             case OutPyramid:
-                curRoom = -1;
-                log("Exiting the pyramid");
-                try {
-                    walkToMummy(true);
-                    interactWith(16459, "Leave Tomb");
-                }
-                catch (NullPointerException e) {
-                    log("Not in pyramid, could not exit");
-                }
-                // If the player needs to resupply
-                if (isBankingNeeded()) {
-                    action = Events.ToBank;
-                    break;
-                }
-                // If the player has just exited a game and no need to bank
-                if (inGame) {
-                    curCheckDir = 0;
-                    shuffleCheckOrder();
-                    action = Events.GoSouth;
-                    break;
-                }
-                // If the player is still searching for the mummy chamber,
-                // proceed with the checkOrder
-                action = checkOrder.get(curCheckDir);
-                curCheckDir++;
+                outPyramid();
                 break;
             default:
                 break;
@@ -980,19 +1035,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 bank();
                 break;
             case CheckMummy:
-                wait(random(1000, 1200));
-                walkToMummy(false);
-                foundMummy = false;
-                RSNPC mummy = getNearestNPCByID(npcMummyID);
-                if (mummy != null) {
-                    foundMummy = true;
-                }
-                wait(random(5000, 1500));
-                log("Mummy found: " + foundMummy);
+                checkMummy();
                 break;
             case ChatMummy:
                 log("Chatting with mummy");
-                talkToMummy();
+                chatMummy();
                 break;
             case SearchDoors:
                 searchDoors();
@@ -1031,25 +1078,29 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 log("East");
                 walkDesignatedPath();
                 interactWith(16544, "Search");
-                wait(random(1000, 1300));
+                oldLoc = getLocation();
+                wait(random(1500, 2000));
                 break;
             case GoWest:
                 log("West");
                 walkDesignatedPath();
                 interactWith(16546, "Search");
-                wait(random(1000, 1300));
+                oldLoc = getLocation();
+                wait(random(1500, 2000));
                 break;
             case GoSouth:
                 log("South");
                 walkDesignatedPath();
                 interactWith(16545, "Search");
-                wait(random(1000, 1300));
+                oldLoc = getLocation();
+                wait(random(1500, 2000));
                 break;
             case GoNorth:
                 log("North");
                 walkDesignatedPath();
                 interactWith(16543, "Search");
-                wait(random(1000, 1300));
+                oldLoc = getLocation();
+                wait(random(1500, 2000));
                 break;
             case ToBank:
                 log("ToBank");
