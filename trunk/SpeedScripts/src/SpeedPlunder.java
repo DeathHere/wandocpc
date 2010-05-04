@@ -106,6 +106,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     private Events action = Events.FirstStart;
     private Events queuedAction = null;
+    private Events lastAction = null;
     /**
      * List of food ids this script can handle. Note that when withdrawing food
      * from the bank, only 1 food id will be withdrawn. The item that exist and
@@ -223,7 +224,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(1956, 4474),
         new RSTile(1978, 4466),
         new RSTile(1930, 4454),
-        new RSTile(3303, 2798),
+        new RSTile(1962, 4446),
         new RSTile(3303, 2798),
         new RSTile(3303, 2798)
     };
@@ -248,13 +249,13 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         { new RSTile(1976, 4453), false },
         { new RSTile(1974, 4453), false }},
         // Room #4 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
+       {{ new RSTile(1932, 4450), false },
+        { new RSTile(1937, 4448), false },
+        { new RSTile(1937, 4459), false },
+        { new RSTile(1941, 4456), false }},
         // Room #5 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
+       {{ new RSTile(1962, 4448), false },
+        { new RSTile(1957, 4444), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false }},
         // Room #6 doors
@@ -422,7 +423,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         CheckMummy,         // Checks the area for the mummy npc
         //ToMummy,(deprecated)            // Walks 5 coordinates north, now next to the mummy
         ChatMummy,          // Starts the minigame via mummy
-        ToSpears,           // Walks to the traps in the start of the level
+        //ToSpears,(deprecated           // Walks to the traps in the start of the level
         CheckTrap,          // Disarms the trap (Might have some issues)
         SearchJars,         // Searches a number of jars
         SearchDoors,        // Searches all 4 doors in each room for passage
@@ -530,21 +531,28 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * the guardian mummy in order to move the player into the minigame.
      */
     public void chatMummy() {
-        RSNPC mummy = getNearestNPCByID(npcMummyID);
-        atNPC(mummy, "Start");
-        wait(random(600, 900));
-        moveMouse(200, 450, 25, 5);
-        wait(random(500, 700));
-        clickMouse(true);
-        wait(random(500, 700));
-        moveMouse(250, 450, 10, 5);
-        wait(random(500, 700));
-        clickMouse(true);
-        wait(random(2000, 3000));
-        if (distanceBetween(getMyPlayer().getLocation(),
-                new RSTile(1927, 4477)) < 3) {
+        // Incase mummy changes rooms while you are in the room
+        try {
+            do {
+                RSNPC mummy = getNearestNPCByID(npcMummyID);
+                atNPC(mummy, "Start");
+                wait(random(1000, 1200));
+                moveMouse(200, 450, 25, 5);
+                wait(random(500, 700));
+                clickMouse(true);
+                wait(random(500, 700));
+                moveMouse(270, 450, 10, 5);
+                wait(random(500, 700));
+                clickMouse(true);
+                wait(random(2000, 3000));
+            }
+            while (distanceBetween(getMyPlayer().getLocation(),
+                    new RSTile(1927, 4477)) < 3);
             inGame = true;
             curRoom = 1;
+        }
+        catch (NullPointerException e) {
+            log("Mummy changed rooms");
         }
     }
 
@@ -570,11 +578,11 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         int oldThievingXp = -1;
         do {
             oldThievingXp = skills.getCurrentSkillExp(Constants.STAT_THIEVING);
-            interactWith(getObjectAt(roomSpears[curRoom]).getID(), "Disarm");
-            wait(random(500, 800));
+            interactWith(getObjectAt(roomSpears[curRoom]).getID(), "Pass");
+            wait(random(1500, 1800));
         }
         while (oldThievingXp == skills.getCurrentSkillExp(Constants.STAT_THIEVING));
-        wait(random(500, 1000));
+        wait(random(300, 700));
     }
 
     /**
@@ -914,6 +922,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     public int loop() {
         // Default return time
         int retTime = 500;
+        lastAction = action;
 
         // Checks if the player is logged in
         if (!isLoggedIn()) {
@@ -940,7 +949,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             try {
                 if (tileOnMap(getNearestObjectByID(16459).getLocation())) {
                     action = Events.OutPyramid;
-                    return retTime;
                 }
             } catch (NullPointerException e) {
                 log("Exit not found on start");
@@ -949,11 +957,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             int x = getLocation().getX();
             int y = getLocation().getY();
             if (!(y < 2807 && y > 2764 && x > 3274 && x < 3319)) {
+                log("Going bank on start");
                 action = Events.ToBankNpc;
             } else {
-                action = Events.GoNorth;
+                log("Going south on start");
+                action = Events.GoSouth;
             }
-            return retTime;
         }
 
         if (inGame && isBankingNeeded()) {
@@ -984,22 +993,22 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 break;
             case ChatMummy:
                 if (inGame) {
-                    action = Events.ToSpears;
+                    action = Events.CheckTrap;
                 }
-                break;
-            case ToSpears:
-                action = Events.CheckTrap;
                 break;
             case CheckTrap:
                 if (curRoom == roomToHit || curRoom == roomToHit-1) {
                     if (openChest) {
+                        log("Opening chest");
                         action = Events.OpenChest;
                     }
                     else {
+                        log("Searching jars");
                         action = Events.SearchJars;
                     }
                 }
                 else {
+                    log("Searching doors");
                     action = Events.SearchDoors;
                 }
                 break;
@@ -1020,7 +1029,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 action = Events.ToBankNpc;
                 break;
             case ToBankNpc:
-                action = Events.Bank;
+                if (lastAction != Events.FirstStart)
+                    action = Events.Bank;
                 break;
             case GoEast:
                 action = Events.CheckMummy;
@@ -1029,7 +1039,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 action = Events.CheckMummy;
                 break;
             case GoSouth:
-                action = Events.CheckMummy;
+                if (lastAction != Events.FirstStart)
+                    action = Events.CheckMummy;
                 break;
             case GoNorth:
                 action = Events.CheckMummy;
@@ -1084,8 +1095,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 }
                 wait(random(3000, 3500));
                 break;
-            case CheckTrap:
-                break;
             case Eat:
                 log("Eating");
                 eat();
@@ -1129,9 +1138,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             case ToLadder:
                 walkDesignatedPath();
                 break;
-            case ToSpears:
-                log("ToSpears");
-                walkToSpears();
+            case CheckTrap:
+                log("Checking Trap");
+                checkTrap();
                 break;
             case Wait:
                 wait(random(5000, 7000));
