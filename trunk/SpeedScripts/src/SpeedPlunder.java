@@ -227,6 +227,52 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(3303, 2798),
         new RSTile(3303, 2798)
     };
+    
+    /* --------------------- RSTile locations of doors ---------------------- */
+
+    /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
+    private Object[][][] roomDoors = {
+        // Room #1 doors
+       {{ new RSTile(1931, 4472), false },
+        { new RSTile(1932, 4466), false },
+        { new RSTile(1924, 4472), false },
+        { new RSTile(1923, 4466), false }},
+        // Room #2 doors
+       {{ new RSTile(1957, 4472), false },
+        { new RSTile(1960, 4468), false },
+        { new RSTile(1959, 4465), false },
+        { new RSTile(1949, 4465), false }},
+        // Room #3 doors
+       {{ new RSTile(1969, 4460), false },
+        { new RSTile(1980, 4458), false },
+        { new RSTile(1976, 4453), false },
+        { new RSTile(1974, 4453), false }},
+        // Room #4 doors
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
+        // Room #5 doors
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
+        // Room #6 doors
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
+        // Room #7 doors
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }},
+        // Room #8 doors
+       {{ new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false },
+        { new RSTile(3303, 2798), false }}
+    };
 
     /* ---------------------- RSTile locations of jars ---------------------- */
 
@@ -346,52 +392,6 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         { new RSTile(3303, 2798), false }}
     };
 
-    /* --------------------- RSTile locations of doors ---------------------- */
-
-    /** Organized as [Room #][RSTile][0/1 = Not Checked, Checked] */
-    private Object[][][] roomDoors = {
-        // Room #1 doors
-       {{ new RSTile(1931, 4472), false },
-        { new RSTile(1932, 4466), false },
-        { new RSTile(1924, 4472), false },
-        { new RSTile(1923, 4466), false }},
-        // Room #2 doors
-       {{ new RSTile(1957, 4472), false },
-        { new RSTile(1960, 4468), false },
-        { new RSTile(1959, 4465), false },
-        { new RSTile(1949, 4465), false }},
-        // Room #3 doors
-       {{ new RSTile(1969, 4460), false },
-        { new RSTile(1980, 4458), false },
-        { new RSTile(1976, 4453), false },
-        { new RSTile(1974, 4453), false }},
-        // Room #4 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
-        // Room #5 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
-        // Room #6 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
-        // Room #7 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
-        // Room #8 doors
-       {{ new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }}
-    };
-
     /* ----------------------------- Paint vars ----------------------------- */
 
     private Image blkJIcon;
@@ -423,14 +423,14 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         //ToMummy,(deprecated)            // Walks 5 coordinates north, now next to the mummy
         ChatMummy,          // Starts the minigame via mummy
         ToSpears,           // Walks to the traps in the start of the level
-        DisTrap,            // Disarms the trap (Might have some issues)
-        SearchJars,         // Searches a number of jars 
-        SearchDoors,         // Searches all 4 doors in each room for passage
+        CheckTrap,          // Disarms the trap (Might have some issues)
+        SearchJars,         // Searches a number of jars
+        SearchDoors,        // Searches all 4 doors in each room for passage
         OpenChest,          // Searches the golden chest in the middle of the room
         Eat,                // Eat 1 piece of food
         PotAnti,            // Drinks some anti-poison potion, normal + super
         AttackNpc,          // If player is attacked, attack back
-        Wait,               //
+        Wait,               // Waits sometime, then do queuedAction
         FirstStart          // Initial value when program starts
     }
 
@@ -560,6 +560,21 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         RSTile curTile = getMyPlayer().getLocation();
         walkToTile(new RSTile(curTile.getX(), curTile.getY() + m*random(4, 5)));
         wait(random(200, 400));
+    }
+
+    /**
+     * Disarms the spear traps at everyroom.
+     */
+    public void checkTrap() {
+        wait(random(1000, 1500));
+        int oldThievingXp = -1;
+        do {
+            oldThievingXp = skills.getCurrentSkillExp(Constants.STAT_THIEVING);
+            interactWith(getObjectAt(roomSpears[curRoom]).getID(), "Disarm");
+            wait(random(500, 800));
+        }
+        while (oldThievingXp == skills.getCurrentSkillExp(Constants.STAT_THIEVING));
+        wait(random(500, 1000));
     }
 
     /**
@@ -757,7 +772,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     *
+     * Checks to see if the mummy is currently in the chamber
      */
     public void checkMummy() {
         do {
@@ -774,7 +789,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
     }
 
     /**
-     * 
+     * Exits the pyramid. Used both to end the game in an emergency, or while
+     * trying to find the mummy.
      */
     public void outPyramid() {
         curRoom = -1;
@@ -922,9 +938,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
             }
             //
             try {
-                if (action != Events.ChatMummy
-                        && tileOnMap(getNearestObjectByID(16459).getLocation())) {
+                if (tileOnMap(getNearestObjectByID(16459).getLocation())) {
                     action = Events.OutPyramid;
+                    return retTime;
                 }
             } catch (NullPointerException e) {
                 log("Exit not found on start");
@@ -972,9 +988,9 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 }
                 break;
             case ToSpears:
-                action = Events.DisTrap;
+                action = Events.CheckTrap;
                 break;
-            case DisTrap:
+            case CheckTrap:
                 if (curRoom == roomToHit || curRoom == roomToHit-1) {
                     if (openChest) {
                         action = Events.OpenChest;
@@ -994,7 +1010,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 action = Events.SearchDoors;
                 break;
             case SearchDoors:
-                action = Events.DisTrap;
+                action = Events.CheckTrap;
                 curRoom++;
                 break;
             case ToBank:
@@ -1068,7 +1084,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 }
                 wait(random(3000, 3500));
                 break;
-            case DisTrap:
+            case CheckTrap:
                 break;
             case Eat:
                 log("Eating");
