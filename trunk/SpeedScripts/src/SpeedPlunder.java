@@ -225,7 +225,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         new RSTile(1978, 4466),
         new RSTile(1930, 4454),
         new RSTile(1962, 4446),
-        new RSTile(3303, 2798),
+        new RSTile(1925, 4427),
         new RSTile(3303, 2798)
     };
     
@@ -256,10 +256,10 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         // Room #5 doors
        {{ new RSTile(1962, 4448), false },
         { new RSTile(1957, 4444), false },
-        { new RSTile(3303, 2798), false },
-        { new RSTile(3303, 2798), false }},
+        { new RSTile(1953, 4445), false },
+        { new RSTile(1952, 4447), false }},
         // Room #6 doors
-       {{ new RSTile(3303, 2798), false },
+       {{ new RSTile(1923, 4432), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false },
         { new RSTile(3303, 2798), false }},
@@ -478,10 +478,13 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * Gets the player to search the doors in order listed in the array
      */
     public void searchDoors() {
+        log("Cur room: " + curRoom);
         for (int i = 0; i < 4; i++) {
-            RSTile doorLocation = (RSTile) roomDoors[curRoom][i][0];
+            RSTile doorLocation = (RSTile) roomDoors[curRoom-1][i][0];
             // Forces the player to walk to the door being checked
             do {
+                log("Walking to door: " + doorLocation.getX() + ", "
+                        + doorLocation.getY());
                 walkToTile(doorLocation);
                 wait(random(50, 100));
             }
@@ -505,7 +508,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void searchJars() {
         for (int i = 0; i < 15; i++) {
-            RSTile jarLocation = (RSTile) roomJars[curRoom][i][0];
+            RSTile jarLocation = (RSTile) roomJars[curRoom-1][i][0];
             // Forces the player to walk to the jar being searched
             do {
                 walkToTile(jarLocation);
@@ -546,8 +549,8 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
                 clickMouse(true);
                 wait(random(2000, 3000));
             }
-            while (distanceBetween(getMyPlayer().getLocation(),
-                    new RSTile(1927, 4477)) < 3);
+            while (!(distanceBetween(getMyPlayer().getLocation(),
+                    new RSTile(1927, 4477)) < 3));
             inGame = true;
             curRoom = 1;
         }
@@ -574,12 +577,12 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      * Disarms the spear traps at everyroom.
      */
     public void checkTrap() {
-        wait(random(1000, 1500));
+        wait(random(500, 900));
         int oldThievingXp = -1;
         do {
             oldThievingXp = skills.getCurrentSkillExp(Constants.STAT_THIEVING);
-            interactWith(getObjectAt(roomSpears[curRoom]).getID(), "Pass");
-            wait(random(1500, 1800));
+            interactWith(getObjectAt(roomSpears[curRoom-1]).getID(), "Pass");
+            wait(random(5000, 5200));
         }
         while (oldThievingXp == skills.getCurrentSkillExp(Constants.STAT_THIEVING));
         wait(random(300, 700));
@@ -784,16 +787,18 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
      */
     public void checkMummy() {
         do {
-            wait(1000);
+            wait(random(900, 1100));
         } while (getLocation().equals(oldLoc));
-        walkToMummy(false);
+        //walkToMummy(false);
+        wait(random(1500, 1700));
         foundMummy = false;
         RSNPC mummy = getNearestNPCByID(npcMummyID);
+        log("Mummy found: " + foundMummy);
         if (mummy != null) {
             foundMummy = true;
+            walkToMummy(false);
         }
         wait(random(500, 900));
-        log("Mummy found: " + foundMummy);
     }
 
     /**
@@ -804,7 +809,7 @@ public class SpeedPlunder extends Script implements ServerMessageListener, Paint
         curRoom = -1;
         log("Exiting the pyramid");
         try {
-            walkToMummy(true);
+            //walkToMummy(true);
             interactWith(16459, "Leave Tomb");
         }
         catch (NullPointerException e) {
